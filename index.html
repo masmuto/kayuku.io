@@ -322,6 +322,22 @@
         const refreshIcons = () => { if (window.lucide) window.lucide.createIcons(); };
         const formatCurrency = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n || 0);
 
+        // --- APP SETUP LOGIC ---
+        const setupAppUI = () => {
+            if (!userData) return;
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+            document.getElementById('user-info-name').innerText = userData.name;
+            document.getElementById('user-role-badge').innerText = userData.role;
+            if(userData.photo) document.getElementById('user-photo').src = userData.photo;
+            
+            document.querySelectorAll('.admin-only').forEach(el => {
+                userData.role === 'Admin' ? el.classList.remove('hidden') : el.classList.add('hidden');
+            });
+            startSync(); 
+            switchView('dashboard');
+        };
+
         // --- AUTH ---
         const checkSetup = async () => {
             if (!auth.currentUser) return;
@@ -346,14 +362,20 @@
                 const userSnap = await getDoc(userDocRef);
                 
                 if (isSetupMode) {
-                    await setDoc(userDocRef, { email: user.email, name: user.displayName, photo: user.photoURL, role: 'Admin', createdAt: serverTimestamp() });
+                    userData = { email: user.email, name: user.displayName, photo: user.photoURL, role: 'Admin', createdAt: serverTimestamp() };
+                    await setDoc(userDocRef, userData);
                     isSetupMode = false;
-                } else if (!userSnap.exists()) {
-                    // Cek di whitelisted emails
+                    setupAppUI();
+                } else if (userSnap.exists()) {
+                    userData = userSnap.data();
+                    setupAppUI();
+                } else {
                     const authEmailsSnap = await getDocs(query(collection(db, 'artifacts', appId, 'public', 'data', 'authorized_emails'), where("email", "==", user.email)));
                     if (!authEmailsSnap.empty) {
                         const authData = authEmailsSnap.docs[0].data();
-                        await setDoc(userDocRef, { email: user.email, name: user.displayName, photo: user.photoURL, role: authData.role, createdAt: serverTimestamp() });
+                        userData = { email: user.email, name: user.displayName, photo: user.photoURL, role: authData.role, createdAt: serverTimestamp() };
+                        await setDoc(userDocRef, userData);
+                        setupAppUI();
                     } else {
                         await signOut(auth);
                         errEl.innerText = "Akses Ditolak. Email ini belum didaftarkan Admin ke sistem.";
@@ -365,50 +387,48 @@
 
         window.handleBypassLogin = async () => {
             try {
-                const result = await signInAnonymously(auth);
-                const user = result.user;
+                document.getElementById('loading').classList.remove('hidden');
+                let user = auth.currentUser;
+                // Jika belum ada user (meskipun anonymous), lakukan sign in
+                if (!user) {
+                    const result = await signInAnonymously(auth);
+                    user = result.user;
+                }
+                
                 const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', user.uid);
-                await setDoc(userDocRef, {
+                userData = {
                     email: "bypass@woodit.com",
                     name: "Admin Bypass",
                     photo: "https://ui-avatars.com/api/?name=Bypass&background=f59e0b&color=fff",
                     role: 'Admin',
                     createdAt: serverTimestamp()
-                });
-            } catch (err) { console.error("Bypass Error:", err); }
+                };
+                await setDoc(userDocRef, userData);
+                setupAppUI();
+            } catch (err) { 
+                console.error("Bypass Error:", err); 
+                document.getElementById('auth-error').innerText = "Bypass Gagal: " + err.message;
+                document.getElementById('auth-error').classList.remove('hidden');
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
         };
 
         window.handleLogout = () => signOut(auth).then(() => location.reload());
 
         onAuthStateChanged(auth, async (u) => {
-            if (u && !u.isAnonymous) {
+            if (u) {
                 const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', u.uid));
                 if (snap.exists()) {
                     userData = snap.data();
-                    document.getElementById('auth-screen').classList.add('hidden');
-                    document.getElementById('app').classList.remove('hidden');
-                    document.getElementById('user-info-name').innerText = userData.name;
-                    document.getElementById('user-role-badge').innerText = userData.role;
-                    if(userData.photo) document.getElementById('user-photo').src = userData.photo;
-                    
-                    document.querySelectorAll('.admin-only').forEach(el => userData.role === 'Admin' ? el.classList.remove('hidden') : el.classList.add('hidden'));
-                    startSync(); switchView('dashboard');
-                } else { checkSetup(); }
-            } else if (u && u.isAnonymous) {
-                const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', u.uid));
-                if (snap.exists()) {
-                    userData = snap.data();
-                    document.getElementById('auth-screen').classList.add('hidden');
-                    document.getElementById('app').classList.remove('hidden');
-                    document.getElementById('user-info-name').innerText = userData.name;
-                    document.getElementById('user-role-badge').innerText = userData.role;
-                    if(userData.photo) document.getElementById('user-photo').src = userData.photo;
-                    document.querySelectorAll('.admin-only').forEach(el => userData.role === 'Admin' ? el.classList.remove('hidden') : el.classList.add('hidden'));
-                    startSync(); switchView('dashboard');
-                } else { checkSetup(); }
+                    setupAppUI();
+                } else { 
+                    checkSetup(); 
+                }
             } else {
                 document.getElementById('auth-screen').classList.remove('hidden');
                 document.getElementById('app').classList.add('hidden');
+                // Auto anonymous login for checking setup
                 try {
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await signInWithCustomToken(auth, __initial_auth_token).catch(() => signInAnonymously(auth));
