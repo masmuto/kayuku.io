@@ -13,10 +13,8 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
@@ -59,12 +57,10 @@
 
     <!-- Main Application -->
     <div id="app" class="hidden flex flex-col md:flex-row min-h-screen">
-        <!-- Navigasi Sidebar -->
+        <!-- Sidebar Navigation -->
         <aside class="w-full md:w-64 bg-slate-900 text-white p-6 flex flex-col space-y-8 no-print shrink-0">
             <div class="flex items-center space-x-3 px-2">
-                <div class="bg-amber-600 p-2 rounded-lg">
-                    <i data-lucide="package" class="w-6 h-6"></i>
-                </div>
+                <div class="bg-amber-600 p-2 rounded-lg"><i data-lucide="package" class="w-6 h-6"></i></div>
                 <div>
                     <h1 class="text-xl font-bold tracking-tight" id="sidebar-company-name">Wood-IT Log</h1>
                     <p class="text-[10px] text-amber-500 font-bold uppercase tracking-widest">Management System</p>
@@ -73,46 +69,38 @@
 
             <nav class="flex-1 space-y-1 overflow-y-auto" id="main-nav">
                 <button onclick="switchView('dashboard')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-dashboard">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
-                    <span>Dashboard</span>
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i><span>Dashboard</span>
                 </button>
                 <button onclick="switchView('inventory')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-inventory">
-                    <i data-lucide="database" class="w-5 h-5"></i>
-                    <span>Stok Log</span>
+                    <i data-lucide="database" class="w-5 h-5"></i><span>Stok Log</span>
                 </button>
                 <button onclick="switchView('sales')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-sales">
-                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-                    <span>Kayu Keluar</span>
+                    <i data-lucide="shopping-cart" class="w-5 h-5"></i><span>Kayu Keluar</span>
                 </button>
                 <button onclick="switchView('expenses')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-expenses">
-                    <i data-lucide="receipt" class="w-5 h-5"></i>
-                    <span>Biaya & Beban</span>
+                    <i data-lucide="receipt" class="w-5 h-5"></i><span>Biaya & Beban</span>
                 </button>
                 
                 <div class="admin-only hidden pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Laporan & Keuangan</div>
                 <button onclick="switchView('reports')" class="nav-btn admin-only hidden w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-reports">
-                    <i data-lucide="pie-chart" class="w-5 h-5"></i>
-                    <span>Laporan Keuangan</span>
+                    <i data-lucide="pie-chart" class="w-5 h-5"></i><span>Keuangan</span>
                 </button>
                 
                 <div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Kontak & Sistem</div>
                 <button onclick="switchView('suppliers')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-suppliers">
-                    <i data-lucide="truck" class="w-5 h-5"></i>
-                    <span>Data Supplier</span>
+                    <i data-lucide="truck" class="w-5 h-5"></i><span>Supplier</span>
                 </button>
                 <button onclick="switchView('customers')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-customers">
-                    <i data-lucide="users" class="w-5 h-5"></i>
-                    <span>Data Pelanggan</span>
+                    <i data-lucide="users" class="w-5 h-5"></i><span>Pelanggan</span>
                 </button>
                 
                 <button onclick="switchView('settings')" class="nav-btn admin-only hidden w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-settings">
-                    <i data-lucide="settings" class="w-5 h-5"></i>
-                    <span>Pengaturan</span>
+                    <i data-lucide="settings" class="w-5 h-5"></i><span>Pengaturan</span>
                 </button>
             </nav>
 
             <div class="pt-6 border-t border-white/10 flex items-center space-x-3 px-2">
-                <img id="user-photo" class="w-10 h-10 rounded-full border-2 border-amber-500" src="https://ui-avatars.com/api/?name=User" alt="User">
+                <img id="user-photo" class="w-10 h-10 rounded-full border-2 border-amber-500" src="https://ui-avatars.com/api/?name=U" alt="Profile">
                 <div class="flex-1 min-w-0">
                     <div id="user-info-name" class="text-xs font-bold text-white truncate">User</div>
                     <div id="user-role-badge" class="text-[9px] font-bold uppercase text-amber-500">ROLE</div>
@@ -123,82 +111,35 @@
             </div>
         </aside>
 
-        <!-- Konten Utama -->
+        <!-- Main Content -->
         <main class="flex-1 p-4 md:p-10 overflow-y-auto">
-            <div id="loading" class="fixed inset-0 bg-white/80 z-50 flex items-center justify-center transition-opacity no-print">
+            <div id="loading" class="fixed inset-0 bg-white/80 z-50 flex items-center justify-center no-print">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
             </div>
 
             <!-- Dashboard -->
             <section id="view-dashboard" class="space-y-8 no-print">
-                <header>
-                    <h2 class="text-2xl font-bold text-slate-800" id="welcome-title">Dashboard Operasional</h2>
-                    <p class="text-slate-500">Monitoring volume dan aset perusahaan secara real-time.</p>
-                </header>
-
+                <header><h2 class="text-2xl font-bold text-slate-800">Dashboard Operasional</h2></header>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="p-3 bg-amber-100 text-amber-600 rounded-xl"><i data-lucide="boxes" class="w-6 h-6"></i></div>
-                        </div>
-                        <h3 class="text-slate-500 text-sm font-medium">Total Volume Stok</h3>
+                        <div class="p-3 bg-amber-100 text-amber-600 rounded-xl w-fit mb-4"><i data-lucide="boxes" class="w-6 h-6"></i></div>
+                        <h3 class="text-slate-500 text-sm font-medium">Volume Stok</h3>
                         <p class="text-2xl font-black text-slate-900 mt-1" id="stat-total-volume">0.00 m³</p>
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="p-3 bg-green-100 text-green-600 rounded-xl"><i data-lucide="wallet" class="w-6 h-6"></i></div>
-                        </div>
+                        <div class="p-3 bg-green-100 text-green-600 rounded-xl w-fit mb-4"><i data-lucide="wallet" class="w-6 h-6"></i></div>
                         <h3 class="text-slate-500 text-sm font-medium">Nilai Stok (HPP)</h3>
                         <p class="text-2xl font-black text-slate-900 mt-1" id="stat-total-price">Rp 0</p>
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="p-3 bg-red-100 text-red-600 rounded-xl"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></div>
-                        </div>
-                        <h3 class="text-slate-500 text-sm font-medium">Total Hutang</h3>
+                        <div class="p-3 bg-red-100 text-red-600 rounded-xl w-fit mb-4"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></div>
+                        <h3 class="text-slate-500 text-sm font-medium">Hutang</h3>
                         <p class="text-2xl font-black text-red-600 mt-1" id="stat-total-debt">Rp 0</p>
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="p-3 bg-blue-100 text-blue-600 rounded-xl"><i data-lucide="arrow-down-left" class="w-6 h-6"></i></div>
-                        </div>
-                        <h3 class="text-slate-500 text-sm font-medium">Total Piutang</h3>
+                        <div class="p-3 bg-blue-100 text-blue-600 rounded-xl w-fit mb-4"><i data-lucide="arrow-down-left" class="w-6 h-6"></i></div>
+                        <h3 class="text-slate-500 text-sm font-medium">Piutang</h3>
                         <p class="text-2xl font-black text-blue-600 mt-1" id="stat-total-receivable">Rp 0</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Laporan Keuangan (Admin Only) -->
-            <section id="view-reports" class="hidden space-y-8 no-print admin-only">
-                <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Laporan Keuangan</h2>
-                        <p class="text-slate-500">Analisis kinerja bisnis dan arus kas.</p>
-                    </div>
-                </header>
-
-                <div id="report-content-to-export" class="space-y-8">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 space-y-6">
-                            <h3 class="text-lg font-bold text-slate-800 border-b pb-4">Ringkasan Laba Rugi</h3>
-                            <div class="space-y-4 divide-y divide-slate-50 text-sm">
-                                <div class="flex justify-between py-2"><span class="text-slate-500">Total Penjualan</span><span class="font-bold text-blue-600" id="report-total-revenue">Rp 0</span></div>
-                                <div class="flex justify-between py-2"><span class="text-slate-500">Total Pembelian (HPP)</span><span class="font-bold text-red-500" id="report-total-cogs">Rp 0</span></div>
-                                <div class="flex justify-between py-2"><span class="text-slate-500">Total Beban Operasional (-)</span><span class="font-bold text-red-400" id="report-total-expenses">Rp 0</span></div>
-                                <div class="flex justify-between py-4 border-t-2 border-slate-900 font-black text-xl"><span>Estimasi Profit</span><span id="report-net-profit">Rp 0</span></div>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 space-y-6">
-                            <h3 class="text-lg font-bold text-slate-800 border-b pb-4">Arus Kas (Cashflow)</h3>
-                            <div class="space-y-4 text-sm">
-                                <div class="flex justify-between py-2 text-green-600 font-bold"><span>Total Kas Masuk</span><span id="report-cash-in">Rp 0</span></div>
-                                <div class="flex justify-between py-2 text-orange-600 font-bold"><span>Total Kas Keluar</span><span id="report-cash-out">Rp 0</span></div>
-                                <div class="pt-6 mt-6 border-t flex justify-between items-center">
-                                    <span class="font-black text-slate-800 uppercase tracking-widest text-sm">Saldo Kas Aktif</span>
-                                    <span class="font-black text-2xl text-blue-700" id="report-net-cash">Rp 0</span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -206,22 +147,13 @@
             <!-- Stok Log -->
             <section id="view-inventory" class="hidden space-y-6 no-print">
                 <header class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Stok Log</h2>
-                        <p class="text-slate-500">Daftar inventaris log aktif.</p>
-                    </div>
-                    <button onclick="openModal('wood')" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2 rounded-xl shadow-lg font-bold transition-all">Input Nota Baru</button>
+                    <div><h2 class="text-2xl font-bold text-slate-800">Stok Log</h2><p class="text-slate-500">Daftar kayu log yang tersedia di gudang.</p></div>
+                    <button onclick="openModal('wood')" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2 rounded-xl shadow-lg font-bold">Input Nota Baru</button>
                 </header>
                 <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
                     <table class="w-full text-left">
                         <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold">
-                            <tr>
-                                <th class="px-6 py-4">No. Nota</th>
-                                <th class="px-6 py-4">Supplier</th>
-                                <th class="px-6 py-4 text-center">Volume (m³)</th>
-                                <th class="px-6 py-4 text-right">Nilai (IDR)</th>
-                                <th class="px-6 py-4 text-right">Aksi</th>
-                            </tr>
+                            <tr><th class="px-6 py-4">No. Nota</th><th class="px-6 py-4">Supplier</th><th class="px-6 py-4 text-center">Volume (m³)</th><th class="px-6 py-4 text-right">Nilai (IDR)</th><th class="px-6 py-4 text-right">Aksi</th></tr>
                         </thead>
                         <tbody id="inventory-table-body" class="divide-y text-sm"></tbody>
                     </table>
@@ -231,54 +163,71 @@
             <!-- Kayu Keluar -->
             <section id="view-sales" class="hidden space-y-6 no-print">
                 <header class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-800">Kayu Keluar</h2>
-                        <p class="text-slate-500">Catatan pengiriman log ke pelanggan.</p>
-                    </div>
-                    <button onclick="openModal('sales')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl shadow-lg font-bold">Input SJ/Nota Keluar</button>
+                    <div><h2 class="text-2xl font-bold text-slate-800">Kayu Keluar</h2><p class="text-slate-500">Pengiriman log ke pelanggan.</p></div>
+                    <button onclick="openModal('sales')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl shadow-lg font-bold">Input SJ/Nota</button>
                 </header>
-                <div class="bg-white rounded-2xl shadow-sm border overflow-hidden"><table class="w-full text-left"><thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold"><tr><th class="px-6 py-4">SJ / Invoice</th><th class="px-6 py-4">Pelanggan</th><th class="px-6 py-4 text-center">Volume</th><th class="px-6 py-4 text-right">Nilai Jual</th><th class="px-6 py-4 text-right">Aksi</th></tr></thead><tbody id="sales-table-body" class="divide-y text-sm"></tbody></table></div>
+                <div class="bg-white rounded-2xl shadow-sm border overflow-hidden"><table class="w-full text-left"><thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold"><tr><th class="px-6 py-4">Invoice/SJ</th><th class="px-6 py-4">Pelanggan</th><th class="px-6 py-4 text-center">Volume</th><th class="px-6 py-4 text-right">Nilai Jual</th><th class="px-6 py-4 text-right">Aksi</th></tr></thead><tbody id="sales-table-body" class="divide-y text-sm"></tbody></table></div>
             </section>
 
-            <!-- Biaya & Beban -->
+            <!-- Biaya -->
             <section id="view-expenses" class="hidden space-y-6 no-print">
-                <header class="flex items-center justify-between">
-                    <h2 class="text-2xl font-bold text-slate-800">Biaya & Beban</h2>
-                    <button onclick="openModal('expense')" class="bg-rose-500 hover:bg-rose-600 text-white px-6 py-2 rounded-xl shadow-lg font-bold">Input Pengeluaran</button>
-                </header>
+                <header class="flex items-center justify-between"><h2 class="text-2xl font-bold text-slate-800">Biaya & Beban</h2><button onclick="openModal('expense')" class="bg-rose-500 hover:bg-rose-600 text-white px-6 py-2 rounded-xl shadow-lg font-bold">Input Pengeluaran</button></header>
                 <div class="bg-white rounded-2xl shadow-sm border overflow-hidden"><table class="w-full text-left"><thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold"><tr><th class="px-6 py-4">Tgl</th><th class="px-6 py-4">Kategori</th><th class="px-6 py-4">Catatan</th><th class="px-6 py-4 text-right">Nominal</th><th class="px-6 py-4 text-right">Aksi</th></tr></thead><tbody id="expenses-table-body" class="divide-y text-sm"></tbody></table></div>
             </section>
 
-            <!-- Kontak -->
-            <section id="view-suppliers" class="hidden space-y-6 no-print">
-                <header class="flex items-center justify-between"><h2 class="text-2xl font-bold text-slate-800">Data Supplier</h2><button onclick="openModal('contact', 'supplier')" class="bg-slate-800 text-white px-6 py-3 rounded-xl shadow-lg">Tambah Supplier</button></header>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="suppliers-list"></div>
+            <!-- Reports (Admin Only) -->
+            <section id="view-reports" class="hidden space-y-8 no-print admin-only">
+                <h2 class="text-2xl font-bold text-slate-800">Laporan Keuangan</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-2xl border shadow-sm space-y-6">
+                        <h3 class="font-bold text-lg">Ringkasan Laba Rugi</h3>
+                        <div class="space-y-4 text-sm divide-y">
+                            <div class="flex justify-between py-2"><span>Penjualan</span><span class="font-bold text-blue-600" id="rep-sales">Rp 0</span></div>
+                            <div class="flex justify-between py-2"><span>HPP (Beli)</span><span class="font-bold text-red-500" id="rep-cogs">Rp 0</span></div>
+                            <div class="flex justify-between py-2"><span>Beban</span><span class="font-bold text-red-500" id="rep-expenses">Rp 0</span></div>
+                            <div class="flex justify-between py-4 text-xl font-black border-t-2"><span>ESTIMASI PROFIT</span><span id="rep-profit">Rp 0</span></div>
+                        </div>
+                    </div>
+                </div>
             </section>
 
+            <!-- Contacts -->
+            <section id="view-suppliers" class="hidden space-y-6 no-print">
+                <header class="flex items-center justify-between"><h2 class="text-2xl font-bold text-slate-800">Data Supplier</h2><button onclick="openModal('contact', 'supplier')" class="bg-slate-900 text-white px-6 py-2 rounded-xl">Tambah</button></header>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="suppliers-list"></div>
+            </section>
             <section id="view-customers" class="hidden space-y-6 no-print">
-                <header class="flex items-center justify-between"><h2 class="text-2xl font-bold text-slate-800">Data Pelanggan</h2><button onclick="openModal('contact', 'customer')" class="bg-slate-800 text-white px-6 py-3 rounded-xl shadow-lg">Tambah Pelanggan</button></header>
+                <header class="flex items-center justify-between"><h2 class="text-2xl font-bold text-slate-800">Data Pelanggan</h2><button onclick="openModal('contact', 'customer')" class="bg-slate-900 text-white px-6 py-2 rounded-xl">Tambah</button></header>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="customers-list"></div>
             </section>
 
-            <!-- Pengaturan (Admin Only) -->
+            <!-- Settings (Admin Only) -->
             <section id="view-settings" class="hidden space-y-8 no-print admin-only">
-                <header><h2 class="text-2xl font-bold text-slate-800">Pengaturan & Pengguna</h2></header>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-1 bg-white p-8 rounded-2xl shadow-sm border space-y-6">
-                        <h3 class="font-bold text-slate-800 uppercase tracking-widest text-xs">Profil Perusahaan</h3>
-                        <div class="space-y-4">
-                            <input type="text" id="set-comp-name" placeholder="Nama Perusahaan" class="w-full p-3 rounded-xl border">
-                            <textarea id="set-comp-addr" placeholder="Alamat..." class="w-full p-3 rounded-xl border"></textarea>
-                            <button onclick="saveCompanyProfile()" class="w-full py-3 bg-amber-600 text-white font-bold rounded-xl">Simpan</button>
+                <h2 class="text-2xl font-bold text-slate-800">Pengaturan Sistem</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- User Management -->
+                    <div class="bg-white p-8 rounded-2xl border shadow-sm space-y-6">
+                        <h3 class="font-bold text-slate-800">Otorisasi Email Pengguna</h3>
+                        <div class="flex space-x-2">
+                            <input type="email" id="auth-new-email" placeholder="Email Gmail Baru..." class="flex-1 p-3 border rounded-xl text-sm">
+                            <select id="auth-new-role" class="p-3 border rounded-xl text-sm">
+                                <option value="Kasir">Kasir</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                            <button onclick="authorizeEmail()" class="bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-bold">Daftarkan</button>
+                        </div>
+                        <div class="overflow-hidden rounded-xl border">
+                            <table class="w-full text-sm text-left"><thead class="bg-slate-50 font-bold uppercase text-[10px]"><tr><th class="p-4">Email</th><th class="p-4">Role</th><th class="p-4">Aksi</th></tr></thead><tbody id="auth-emails-table" class="divide-y"></tbody></table>
                         </div>
                     </div>
-                    <div class="lg:col-span-2 bg-white p-8 rounded-2xl shadow-sm border">
-                        <h3 class="font-bold text-slate-800 uppercase tracking-widest text-xs mb-6">Manajemen Pengguna</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-sm">
-                                <thead class="bg-slate-50 font-bold uppercase text-[10px] text-slate-400"><tr><th class="p-4">Nama</th><th class="p-4">Email</th><th class="p-4">Peran</th><th class="p-4 text-right">Opsi</th></tr></thead>
-                                <tbody id="users-table-body" class="divide-y"></tbody>
-                            </table>
+                    <!-- Company Profile -->
+                    <div class="bg-white p-8 rounded-2xl border shadow-sm space-y-6">
+                        <h3 class="font-bold text-slate-800">Profil Perusahaan</h3>
+                        <div class="space-y-4">
+                            <input type="text" id="setting-company-name" placeholder="Nama Bisnis" class="w-full p-3 border rounded-xl text-sm">
+                            <textarea id="setting-company-address" placeholder="Alamat Lengkap" class="w-full p-3 border rounded-xl text-sm"></textarea>
+                            <input type="text" id="setting-company-phone" placeholder="No. Telepon" class="w-full p-3 border rounded-xl text-sm">
+                            <button onclick="saveCompanyProfile()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold">Simpan Profil</button>
                         </div>
                     </div>
                 </div>
@@ -287,9 +236,10 @@
     </div>
 
     <!-- Modals -->
+    <!-- Wood Modal -->
     <div id="wood-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print">
-        <div class="bg-white w-full max-w-4xl my-8 rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
-            <div class="p-6 border-b flex justify-between items-center sticky top-0 bg-white z-10"><h3 class="text-lg font-black text-slate-800 uppercase tracking-tight">Input Log Baru</h3><button onclick="closeModal('wood')" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button></div>
+        <div class="bg-white w-full max-w-4xl my-8 rounded-3xl shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="p-6 border-b flex justify-between items-center bg-white sticky top-0 z-10"><h3 class="text-lg font-black text-slate-800 uppercase tracking-tight">Input Log Baru</h3><button onclick="closeModal('wood')" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button></div>
             <div class="flex-1 overflow-y-auto p-8 space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><input type="text" id="wood-nota" placeholder="No. Nota" class="p-4 rounded-2xl border bg-slate-50 outline-none"><select id="wood-supplier-select" class="p-4 rounded-2xl border bg-slate-50 outline-none"></select></div>
                 <div class="grid grid-cols-4 gap-2">
@@ -299,14 +249,14 @@
                     <input type="number" id="log-p" oninput="liveUpdateCalc()" class="p-4 rounded-2xl border bg-slate-50" placeholder="P (cm)"><input type="number" id="log-trim" oninput="liveUpdateCalc()" class="p-4 rounded-2xl border bg-slate-50" placeholder="Trim"><input type="number" id="log-gr" oninput="liveUpdateCalc()" class="p-4 rounded-2xl border bg-slate-50" placeholder="GR">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <input type="text" id="wood-type" class="p-4 rounded-2xl border bg-slate-50" placeholder="Jenis Kayu"><input type="number" id="wood-price" placeholder="Harga (IDR)" class="p-4 rounded-2xl border bg-slate-50">
+                    <input type="text" id="wood-type" class="p-4 rounded-2xl border bg-slate-50" placeholder="Jenis Kayu"><input type="number" id="wood-price" placeholder="Harga Beli (HPP)" class="p-4 rounded-2xl border bg-slate-50">
                 </div>
                 <div class="grid grid-cols-3 gap-4 bg-slate-900 text-white p-6 rounded-3xl">
                     <div class="text-center"><span class="text-[10px] uppercase font-bold text-slate-400">Avg D</span><div id="res-live-avg-d" class="text-xl font-black">0 cm</div></div>
                     <div class="text-center border-x border-white/10"><span class="text-[10px] uppercase font-bold text-slate-400">Vol GR</span><div id="res-live-vol-gr" class="text-xl font-black">0.00 m³</div></div>
                     <div class="text-center"><span class="text-[10px] uppercase font-bold text-slate-400">Vol Neto</span><div id="res-live-vol-wood" class="text-xl font-black text-amber-500">0.00 m³</div></div>
                 </div>
-                <button onclick="addItemToBatch('wood')" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-sm uppercase">+ Tambah Ke Batch</button>
+                <button onclick="addItemToBatch('wood')" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest">+ Tambah Ke Batch</button>
                 <div class="border rounded-2xl overflow-hidden"><table class="w-full text-xs text-left"><thead class="bg-slate-50"><tr><th class="p-3">Kayu</th><th class="p-3 text-center">Neto</th><th class="p-3 text-center">GR</th><th class="p-3 text-right">Aksi</th></tr></thead><tbody id="wood-batch-table" class="divide-y"></tbody></table></div>
             </div>
             <div class="p-6 border-t flex justify-end space-x-3 bg-slate-50"><button onclick="closeModal('wood')" class="px-6 py-3 border rounded-xl font-bold">Batal</button><button onclick="submitBatchToFirebase()" id="btn-save-batch-wood" disabled class="px-10 py-3 bg-amber-600 text-white font-black rounded-xl uppercase shadow-lg">Simpan Seluruh Nota</button></div>
@@ -315,15 +265,16 @@
 
     <!-- Sales Modal -->
     <div id="sales-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print">
-        <div class="bg-white w-full max-w-4xl my-8 rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+        <div class="bg-white w-full max-w-4xl my-8 rounded-3xl shadow-2xl flex flex-col max-h-[90vh]">
             <div class="p-6 border-b flex justify-between items-center bg-white sticky top-0 z-10"><h3 class="text-lg font-black text-slate-800 uppercase tracking-tight">Input Kayu Keluar</h3><button onclick="closeModal('sales')" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button></div>
             <div class="flex-1 overflow-y-auto p-8 space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><input type="text" id="sales-nota" placeholder="No. SJ/Nota" class="p-4 rounded-2xl border bg-slate-50 outline-none"><select id="sales-customer-select" class="p-4 rounded-2xl border bg-slate-50 outline-none"></select></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><input type="text" id="sales-nota" placeholder="No. SJ/Invoice" class="p-4 rounded-2xl border bg-slate-50 outline-none"><select id="sales-customer-select" class="p-4 rounded-2xl border bg-slate-50 outline-none"></select></div>
                 <div class="border-2 border-dashed border-slate-200 rounded-2xl p-6 space-y-4">
+                    <label class="text-[10px] font-bold uppercase text-slate-400">Pilih dari Stok Aktif</label>
                     <select id="sales-stock-select" onchange="fillSalesFromStock()" class="w-full p-4 rounded-xl border bg-slate-50 outline-none"></select>
                     <div class="grid grid-cols-2 gap-4"><input type="text" id="sales-wood-type" class="p-4 rounded-2xl border bg-slate-50" placeholder="Jenis"><input type="number" step="0.01" id="sales-wood-vol" class="p-4 rounded-2xl border bg-slate-50" placeholder="Volume"></div>
                     <input type="number" id="sales-wood-price" placeholder="Harga Jual" class="w-full p-4 rounded-2xl border bg-slate-50">
-                    <button onclick="addItemToBatch('sales')" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-sm uppercase">+ Tambah</button>
+                    <button onclick="addItemToBatch('sales')" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest">+ Tambah Ke Batch</button>
                 </div>
                 <div class="border rounded-2xl overflow-hidden"><table class="w-full text-xs text-left"><tbody id="sales-batch-table" class="divide-y"></tbody></table></div>
             </div>
@@ -331,47 +282,25 @@
         </div>
     </div>
 
-    <!-- Expense Modal -->
-    <div id="expense-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm no-print">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 space-y-6">
-            <h3 class="font-bold text-slate-800 uppercase tracking-widest text-xs">Input Biaya/Beban</h3>
-            <div class="space-y-4">
-                <select id="exp-cat" class="w-full p-3 rounded-xl border"><option value="Operasional">Operasional</option><option value="Gaji">Gaji</option><option value="BBM">BBM</option><option value="Lainnya">Lainnya</option></select>
-                <input type="number" id="exp-amt" placeholder="Nominal Rp" class="w-full p-3 rounded-xl border">
-                <textarea id="exp-note" placeholder="Keterangan..." class="w-full p-3 rounded-xl border"></textarea>
-                <button onclick="submitExpense()" class="w-full py-4 bg-rose-500 text-white font-bold rounded-2xl">Simpan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Contact Modal -->
-    <div id="contact-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm no-print">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 space-y-6">
-            <h3 id="contact-modal-title" class="font-bold text-slate-800 uppercase tracking-widest text-xs">Tambah Kontak</h3>
-            <div class="space-y-4">
-                <input type="hidden" id="contact-type">
-                <input type="text" id="contact-name" placeholder="Nama..." class="w-full p-3 rounded-xl border">
-                <button onclick="submitContact()" class="w-full py-4 bg-slate-900 text-white font-bold rounded-2xl">Simpan Kontak</button>
-            </div>
-        </div>
-    </div>
+    <!-- Other Modals Placeholder (Expense, Contact) -->
+    <div id="expense-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 no-print"><div class="bg-white w-full max-w-md p-8 rounded-3xl space-y-4"><h3>Input Pengeluaran</h3><input type="text" id="exp-cat" placeholder="Kategori" class="w-full p-3 border rounded-xl"><input type="number" id="exp-amt" placeholder="Nominal" class="w-full p-3 border rounded-xl"><textarea id="exp-note" placeholder="Keterangan" class="w-full p-3 border rounded-xl"></textarea><button onclick="submitExpense()" class="w-full py-3 bg-rose-500 text-white rounded-xl font-bold">Simpan</button></div></div>
+    <div id="contact-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 no-print"><div class="bg-white w-full max-w-md p-8 rounded-3xl space-y-4"><h3>Tambah Kontak</h3><input type="hidden" id="contact-type"><input type="text" id="contact-name" placeholder="Nama..." class="w-full p-3 border rounded-xl"><button onclick="submitContact()" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold">Simpan</button></div></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, onSnapshot, serverTimestamp, writeBatch, increment, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, onSnapshot, serverTimestamp, writeBatch, increment, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        // --- FIREBASE CONFIG (REAL PROJECT) ---
+        // --- FIREBASE CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyD8m4HiTateYgP-79EmbKkqOG-lBIeikBc",
             authDomain: "log-master-687fd.firebaseapp.com",
             projectId: "log-master-687fd",
             storageBucket: "log-master-687fd.firebasestorage.app",
             messagingSenderId: "1020351029888",
-            appId: "1:1020351029888:web:47706ebb73f446207b7c65",
-            measurementId: "G-1NB596ZWQ1"
+            appId: "1:1020351029888:web:bb279c7e5ed99d1d7b7c65",
+            measurementId: "G-VPBKS6B9KK"
         };
-
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -379,24 +308,23 @@
         const provider = new GoogleAuthProvider();
 
         // --- STATE ---
-        let userData = null;
-        let isSetupMode = false;
-        let inventory = [], contacts = [], sales = [], expenses = [], transactions = [], users = [];
+        let userData = null, isSetupMode = false;
+        let inventory = [], contacts = [], salesData = [], expenses = [], authorizedEmails = [];
         let tempBatch = [], liveNeto = 0, liveAvgD = 0, liveGR = 0;
 
         // --- UTILS ---
         const refreshIcons = () => { if (window.lucide) window.lucide.createIcons(); };
         const formatCurrency = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n || 0);
 
-        // --- AUTH FLOW ---
+        // --- AUTH ---
         const checkSetup = async () => {
             if (!auth.currentUser) return;
             try {
                 const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'users'));
                 if (snap.empty) {
                     isSetupMode = true;
-                    document.getElementById('auth-title').innerText = "Persiapan Admin Pertama";
-                    document.getElementById('auth-desc').innerText = "Belum ada Admin terdaftar. User Google pertama yang masuk akan otomatis menjadi Admin Utama.";
+                    document.getElementById('auth-title').innerText = "Inisialisasi Admin";
+                    document.getElementById('auth-desc').innerText = "Gunakan Google Login untuk mendaftarkan Admin Utama sistem.";
                 }
             } catch (err) { console.error(err); }
         };
@@ -407,16 +335,24 @@
             try {
                 const result = await signInWithPopup(auth, provider);
                 const user = result.user;
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', user.uid);
-                const docSnap = await getDoc(docRef);
+                
+                const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', user.uid);
+                const userSnap = await getDoc(userDocRef);
                 
                 if (isSetupMode) {
-                    await setDoc(docRef, { email: user.email, name: user.displayName, photo: user.photoURL, role: 'Admin', createdAt: serverTimestamp() });
+                    await setDoc(userDocRef, { email: user.email, name: user.displayName, photo: user.photoURL, role: 'Admin', createdAt: serverTimestamp() });
                     isSetupMode = false;
-                } else if (!docSnap.exists()) {
-                    await signOut(auth);
-                    errEl.innerText = "Akses Ditolak. Email ini belum didaftarkan Admin ke sistem.";
-                    errEl.classList.remove('hidden');
+                } else if (!userSnap.exists()) {
+                    // Cek di whitelisted emails
+                    const authEmailsSnap = await getDocs(query(collection(db, 'artifacts', appId, 'public', 'data', 'authorized_emails'), where("email", "==", user.email)));
+                    if (!authEmailsSnap.empty) {
+                        const authData = authEmailsSnap.docs[0].data();
+                        await setDoc(userDocRef, { email: user.email, name: user.displayName, photo: user.photoURL, role: authData.role, createdAt: serverTimestamp() });
+                    } else {
+                        await signOut(auth);
+                        errEl.innerText = "Akses Ditolak. Email ini belum didaftarkan Admin ke sistem.";
+                        errEl.classList.remove('hidden');
+                    }
                 }
             } catch (err) { errEl.innerText = err.message; errEl.classList.remove('hidden'); }
         };
@@ -425,9 +361,9 @@
 
         onAuthStateChanged(auth, async (u) => {
             if (u && !u.isAnonymous) {
-                const docSnap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', u.uid));
-                if (docSnap.exists()) {
-                    userData = docSnap.data();
+                const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', u.uid));
+                if (snap.exists()) {
+                    userData = snap.data();
                     document.getElementById('auth-screen').classList.add('hidden');
                     document.getElementById('app').classList.remove('hidden');
                     document.getElementById('user-info-name').innerText = userData.name;
@@ -437,14 +373,14 @@
                     document.querySelectorAll('.admin-only').forEach(el => userData.role === 'Admin' ? el.classList.remove('hidden') : el.classList.add('hidden'));
                     startSync(); switchView('dashboard');
                 } else { checkSetup(); }
-            } else if (u && u.isAnonymous) {
-                checkSetup();
-            } else {
+            } else if (u && u.isAnonymous) { checkSetup(); }
+            else {
                 document.getElementById('auth-screen').classList.remove('hidden');
                 document.getElementById('app').classList.add('hidden');
                 try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token);
-                    else await signInAnonymously(auth);
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token).catch(() => signInAnonymously(auth));
+                    } else { await signInAnonymously(auth); }
                 } catch (e) { await signInAnonymously(auth); }
             }
         });
@@ -456,7 +392,7 @@
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
             document.getElementById(`view-${view}`).classList.remove('hidden');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-nav'));
-            const b = document.getElementById(`nav-${view}`); if(b) b.classList.add('active-nav');
+            const btn = document.getElementById(`nav-${view}`); if(btn) btn.classList.add('active-nav');
             refreshIcons();
         };
 
@@ -468,7 +404,7 @@
         };
         window.closeModal = (id) => document.getElementById(`${id}-modal`).classList.add('hidden');
 
-        // --- CORE LOGIC (WOOD VOLUME) ---
+        // --- CORE LOGIC (VOLUME) ---
         window.liveUpdateCalc = () => {
             const d1 = parseFloat(document.getElementById('log-d1').value)||0, d2 = parseFloat(document.getElementById('log-d2').value)||0;
             const d3 = parseFloat(document.getElementById('log-d3').value)||0, d4 = parseFloat(document.getElementById('log-d4').value)||0;
@@ -477,7 +413,7 @@
             document.getElementById('res-live-avg-d').innerText = `${liveAvgD} cm`;
             const pEff = (p - trim)/100, pOrig = p/100;
             const volBruto = (0.7854 * Math.pow(liveAvgD, 2) * pEff) / 10000;
-            liveGR = (0.7854 * Math.pow(gr, 2) * pEff) / 10000;
+            liveGR = (0.7854 * Math.pow(gr, 2) * pOrig) / 10000;
             liveNeto = Math.max(0, volBruto - liveGR);
             document.getElementById('res-live-vol-wood').innerText = `${liveNeto.toFixed(2)} m³`;
             document.getElementById('res-live-vol-gr').innerText = `${liveGR.toFixed(2)} m³`;
@@ -528,67 +464,74 @@
                 if(i.stockId) batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', i.stockId));
             });
             batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', cid), { balance: increment(totalVal) });
-            batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'in', amount: totalVal, note: `Penjualan Nota: ${nota}`, createdAt: serverTimestamp() });
             await batch.commit(); closeModal('sales'); alert("Penjualan Disimpan!");
         };
 
-        window.submitExpense = async () => {
-            const cat = document.getElementById('exp-cat').value, amt = parseFloat(document.getElementById('exp-amt').value)||0, note = document.getElementById('exp-note').value;
-            if(!amt) return;
-            const batch = writeBatch(db);
-            batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'expenses')), { category: cat, amount: amt, note, createdAt: serverTimestamp() });
-            batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount: amt, note: `Beban: ${cat} - ${note}`, createdAt: serverTimestamp() });
-            await batch.commit(); closeModal('expense');
+        // --- SETTINGS LOGIC ---
+        window.authorizeEmail = async () => {
+            const email = document.getElementById('auth-new-email').value, role = document.getElementById('auth-new-role').value;
+            if(!email) return;
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'authorized_emails'), { email, role, createdAt: serverTimestamp() });
+            alert("Email berhasil diotorisasi!");
         };
 
-        window.submitContact = async () => {
-            const type = document.getElementById('contact-type').value, name = document.getElementById('contact-name').value;
-            if(!name) return;
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), { type, name, balance: 0, createdAt: serverTimestamp() });
-            closeModal('contact');
+        window.saveCompanyProfile = async () => {
+            const name = document.getElementById('setting-company-name').value;
+            const address = document.getElementById('setting-company-address').value;
+            const phone = document.getElementById('setting-company-phone').value;
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), { name, address, phone, updatedAt: serverTimestamp() });
+            alert("Profil berhasil disimpan!");
         };
 
         // --- DATA SYNC ---
         const startSync = () => {
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'inventory'), s => { inventory = s.docs.map(d=>({id:d.id, ...d.data()})); renderInventory(); updateStats(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), s => { sales = s.docs.map(d=>({id:d.id, ...d.data()})); renderSales(); updateStats(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), s => { salesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderSales(); updateStats(); });
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), s => { expenses = s.docs.map(d=>({id:d.id, ...d.data()})); renderExpenses(); updateStats(); });
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), s => { contacts = s.docs.map(d=>({id:d.id, ...d.data()})); renderContacts(); updateSelects(); updateStats(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'transactions'), s => { transactions = s.docs.map(d=>({id:d.id, ...d.data()})); updateStats(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), s => { users = s.docs.map(d=>({id:d.id, ...d.data()})); renderUsersTable(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'authorized_emails'), s => {
+                authorizedEmails = s.docs.map(d=>({id:d.id, ...d.data()}));
+                const tb = document.getElementById('auth-emails-table');
+                if(tb) tb.innerHTML = authorizedEmails.map(a => `<tr><td class="p-4 font-bold">${a.email}</td><td class="p-4">${a.role}</td><td class="p-4"><button onclick="deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'authorized_emails', '${a.id}'))" class="text-red-500">Hapus</button></td></tr>`).join('');
+            });
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), d => {
+                if(d.exists()) {
+                    const data = d.data();
+                    document.getElementById('sidebar-company-name').innerText = data.name || 'Wood-IT Log';
+                    document.getElementById('setting-company-name').value = data.name || '';
+                    document.getElementById('setting-company-address').value = data.address || '';
+                    document.getElementById('setting-company-phone').value = data.phone || '';
+                }
+            });
         };
 
+        // --- RENDER FUNCTIONS ---
         const renderInventory = () => {
             const grouped = inventory.reduce((a,c)=>{ if(!a[c.nota]) a[c.nota] = { nota:c.nota, sid:c.supplierId, vol:0, prc:0 }; a[c.nota].vol += c.unitVolume; a[c.nota].prc += c.totalPrice; return a; }, {});
             const tbody = document.getElementById('inventory-table-body');
-            if(tbody) tbody.innerHTML = Object.values(grouped).map(n => `<tr><td class="p-4 font-bold text-blue-600">${n.nota}</td><td class="p-4">${contacts.find(c=>c.id===n.sid)?.name||'-'}</td><td class="p-4 text-center font-black">${n.vol.toFixed(2)}</td><td class="p-4 text-right font-bold">${formatCurrency(n.prc)}</td><td class="p-4 text-right"><button onclick="deleteNota('${n.nota}')" class="text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
+            if(tbody) tbody.innerHTML = Object.values(grouped).map(n => `<tr><td class="p-4 font-bold text-blue-600">${n.nota}</td><td class="p-4">${contacts.find(c=>c.id===n.sid)?.name||'-'}</td><td class="p-4 text-center font-black">${n.vol.toFixed(2)}</td><td class="p-4 text-right font-bold">${formatCurrency(n.prc)}</td><td class="p-4 text-right"><button onclick="deleteNota('${n.nota}')" class="text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
             refreshIcons();
         };
 
         const renderSales = () => {
-            const grouped = sales.reduce((a,c)=>{ if(!a[c.nota]) a[c.nota] = { nota:c.nota, cid:c.customerId, vol:0, prc:0 }; a[c.nota].vol += c.volume; a[c.nota].prc += c.price; return a; }, {});
+            const grouped = salesData.reduce((a,c)=>{ if(!a[c.nota]) a[c.nota] = { nota:c.nota, cid:c.customerId, vol:0, prc:0 }; a[c.nota].vol += c.volume; a[c.nota].prc += c.price; return a; }, {});
             const tbody = document.getElementById('sales-table-body');
-            if(tbody) tbody.innerHTML = Object.values(grouped).map(n => `<tr><td class="p-4 font-bold text-blue-600">${n.nota}</td><td class="p-4">${contacts.find(c=>c.id===n.cid)?.name||'-'}</td><td class="p-4 text-center font-black">${n.vol.toFixed(2)}</td><td class="p-4 text-right font-bold">${formatCurrency(n.prc)}</td><td class="p-4 text-right">Opsi</td></tr>`).join('');
+            if(tbody) tbody.innerHTML = Object.values(grouped).map(n => `<tr><td class="p-4 font-bold text-blue-600">${n.nota}</td><td class="p-4">${contacts.find(c=>c.id===n.cid)?.name||'-'}</td><td class="p-4 text-center font-black">${n.vol.toFixed(2)}</td><td class="p-4 text-right font-bold">${formatCurrency(n.prc)}</td><td class="p-4 text-right">SJ/Inv</td></tr>`).join('');
         };
 
         const renderExpenses = () => {
             const tbody = document.getElementById('expenses-table-body');
-            if(tbody) tbody.innerHTML = expenses.map(e => `<tr><td class="p-4">${e.createdAt?.toDate()?.toLocaleDateString()||'-'}</td><td class="p-4 font-bold text-rose-600">${e.category}</td><td class="p-4 italic">${e.note}</td><td class="p-4 text-right">${formatCurrency(e.amount)}</td><td class="p-4 text-right">Hapus</td></tr>`).join('');
+            if(tbody) tbody.innerHTML = expenses.map(e => `<tr><td class="p-4">${e.createdAt?.toDate()?.toLocaleDateString()||'-'}</td><td class="p-4 font-bold text-rose-600">${e.category}</td><td class="p-4 italic">${e.note}</td><td class="p-4 text-right">${formatCurrency(e.amount)}</td><td class="p-4 text-right">X</td></tr>`).join('');
         };
 
         const renderContacts = () => {
             const gen = (c) => `<div class="bg-white p-6 rounded-2xl border shadow-sm">
-                <div class="flex justify-between mb-4"><div class="p-3 bg-slate-100 rounded-xl"><i data-lucide="users" class="w-5 h-5"></i></div><div class="text-right font-black ${c.balance>0?'text-red-500':'text-slate-400'}">${formatCurrency(c.balance)}</div></div>
-                <h4 class="font-bold">${c.name}</h4><p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">${c.type}</p>
+                <div class="flex justify-between mb-2"><div class="p-2 bg-slate-100 rounded-lg"><i data-lucide="user" class="w-4 h-4"></i></div><div class="font-black ${c.balance>0?'text-red-500':'text-slate-400'}">${formatCurrency(c.balance)}</div></div>
+                <h4 class="font-bold">${c.name}</h4><p class="text-[9px] uppercase font-bold text-slate-400">Saldo ${c.type}</p>
             </div>`;
             document.getElementById('suppliers-list').innerHTML = contacts.filter(c=>c.type==='supplier').map(gen).join('');
             document.getElementById('customers-list').innerHTML = contacts.filter(c=>c.type==='customer').map(gen).join('');
             refreshIcons();
-        };
-
-        const renderUsersTable = () => {
-            const tb = document.getElementById('users-table-body');
-            if(tb) tb.innerHTML = users.map(u => `<tr><td class="p-4 font-bold">${u.name}</td><td class="p-4 text-xs">${u.email}</td><td class="p-4"><span class="px-2 py-1 rounded text-[10px] font-bold ${u.role==='Admin'?'bg-indigo-600 text-white':'bg-slate-200 text-slate-600'}">${u.role}</span></td><td class="p-4 text-right">${u.id !== auth.currentUser?.uid ? `<button onclick="updateRole('${u.id}','${u.role==='Admin'?'Kasir':'Admin'}')" class="text-indigo-600 text-[10px] font-bold uppercase">Ubah</button>` : '-'}</td></tr>`).join('');
         };
 
         const updateStats = () => {
@@ -596,10 +539,8 @@
             const valStok = inventory.reduce((a,c)=>a+(c.totalPrice||0),0);
             const hutang = contacts.filter(c=>c.type==='supplier').reduce((a,c)=>a+(c.balance||0),0);
             const piutang = contacts.filter(c=>c.type==='customer').reduce((a,c)=>a+(c.balance||0),0);
-            const rev = sales.reduce((a,c)=>a+(c.price||0),0);
+            const rev = salesData.reduce((a,c)=>a+(c.price||0),0);
             const exp = expenses.reduce((a,c)=>a+(c.amount||0),0);
-            const cin = transactions.filter(t=>t.type==='in').reduce((a,t)=>a+(t.amount||0),0);
-            const cout = transactions.filter(t=>t.type==='out').reduce((a,t)=>a+(t.amount||0),0);
 
             document.getElementById('stat-total-volume').innerText = `${vTot.toFixed(2)} m³`;
             document.getElementById('stat-total-price').innerText = formatCurrency(valStok);
@@ -607,13 +548,10 @@
             document.getElementById('stat-total-receivable').innerText = formatCurrency(piutang);
 
             if(userData?.role === 'Admin') {
-                document.getElementById('report-total-revenue').innerText = formatCurrency(rev);
-                document.getElementById('report-total-cogs').innerText = formatCurrency(valStok);
-                document.getElementById('report-total-expenses').innerText = formatCurrency(exp);
-                document.getElementById('report-net-profit').innerText = formatCurrency(rev - valStok - exp);
-                document.getElementById('report-cash-in').innerText = formatCurrency(cin);
-                document.getElementById('report-cash-out').innerText = formatCurrency(cout);
-                document.getElementById('report-net-cash').innerText = formatCurrency(cin - cout);
+                document.getElementById('rep-sales').innerText = formatCurrency(rev);
+                document.getElementById('rep-cogs').innerText = formatCurrency(valStok);
+                document.getElementById('rep-expenses').innerText = formatCurrency(exp);
+                document.getElementById('rep-profit').innerText = formatCurrency(rev - valStok - exp);
             }
             document.getElementById('loading').classList.add('hidden');
         };
@@ -629,13 +567,13 @@
         window.fillSalesFromStock = () => {
             const id = document.getElementById('sales-stock-select').value;
             const item = inventory.find(i=>i.id===id);
-            if(item) {
-                document.getElementById('sales-wood-type').value = item.type;
-                document.getElementById('sales-wood-vol').value = item.unitVolume;
-            }
+            if(item) { document.getElementById('sales-wood-type').value = item.type; document.getElementById('sales-wood-vol').value = item.unitVolume; }
         };
 
-        window.updateRole = async (uid, r) => { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', uid), { role: r }); };
+        window.deleteNota = async (nota) => {
+            if(!confirm(`Hapus seluruh item nota ${nota}?`)) return;
+            inventory.filter(i=>i.nota === nota).forEach(async i => await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', i.id)));
+        };
 
         refreshIcons();
     </script>
