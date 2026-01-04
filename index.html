@@ -13,8 +13,10 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
@@ -24,51 +26,17 @@
             .no-print { display: none !important; }
             .print-only { display: block !important; }
         }
-        .active-nav { background-color: rgba(245, 158, 11, 1); color: white; }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen">
 
-    <!-- Screen: Auth -->
-    <div id="auth-screen" class="fixed inset-0 z-[100] bg-slate-900 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden">
-            <div class="p-8 text-center space-y-2 border-b bg-slate-50">
-                <div class="bg-amber-600 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4 text-white">
-                    <i data-lucide="package" class="w-7 h-7"></i>
-                </div>
-                <h2 id="auth-title" class="text-2xl font-black text-slate-800 tracking-tight">Selamat Datang di Wood-IT</h2>
-                <p id="auth-desc" class="text-sm text-slate-500">Masuk untuk mengelola operasional kayu log.</p>
-            </div>
-            
-            <div class="p-10 space-y-4">
-                <button onclick="handleGoogleSignIn()" class="w-full py-4 px-6 bg-white border border-slate-200 rounded-2xl shadow-sm flex items-center justify-center space-x-3 hover:bg-slate-50 transition-all duration-200 group">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    <span class="text-slate-700 font-bold">Lanjutkan dengan Google</span>
-                </button>
-
-                <div class="flex items-center space-x-2"><div class="flex-1 h-px bg-slate-100"></div><span class="text-[10px] font-bold text-slate-400 uppercase">Atau</span><div class="flex-1 h-px bg-slate-100"></div></div>
-
-                <button onclick="handleBypassLogin()" class="w-full py-3 px-6 bg-slate-50 border border-dashed border-slate-300 rounded-2xl flex items-center justify-center space-x-2 hover:bg-slate-100 transition-all text-slate-500 hover:text-slate-700">
-                    <i data-lucide="shield-check" class="w-4 h-4"></i>
-                    <span class="text-xs font-bold uppercase tracking-widest">Masuk sebagai Admin (Bypass)</span>
-                </button>
-
-                <div id="auth-error" class="text-xs text-red-500 text-center hidden font-medium bg-red-50 p-3 rounded-xl"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Main Application -->
-    <div id="app" class="hidden flex flex-col md:flex-row min-h-screen">
-        <!-- Sidebar Navigation -->
+    <div id="app" class="flex flex-col md:flex-row min-h-screen">
+        <!-- Navigasi Sidebar -->
         <aside class="w-full md:w-64 bg-slate-900 text-white p-6 flex flex-col space-y-8 no-print shrink-0">
             <div class="flex items-center space-x-3 px-2">
-                <div class="bg-amber-600 p-2 rounded-lg"><i data-lucide="package" class="w-6 h-6"></i></div>
+                <div class="bg-amber-600 p-2 rounded-lg">
+                    <i data-lucide="package" class="w-6 h-6"></i>
+                </div>
                 <div>
                     <h1 class="text-xl font-bold tracking-tight" id="sidebar-company-name">Wood-IT Log</h1>
                     <p class="text-[10px] text-amber-500 font-bold uppercase tracking-widest">Management System</p>
@@ -77,164 +45,284 @@
 
             <nav class="flex-1 space-y-1 overflow-y-auto" id="main-nav">
                 <button onclick="switchView('dashboard')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-dashboard">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i><span>Dashboard</span>
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>Dashboard</span>
                 </button>
                 <button onclick="switchView('inventory')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-inventory">
-                    <i data-lucide="database" class="w-5 h-5"></i><span>Stok Log</span>
+                    <i data-lucide="database" class="w-5 h-5"></i>
+                    <span>Stok Log (Invoice)</span>
                 </button>
                 <button onclick="switchView('sales')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-sales">
-                    <i data-lucide="shopping-cart" class="w-5 h-5"></i><span>Kayu Keluar</span>
+                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                    <span>Kayu Keluar</span>
                 </button>
                 <button onclick="switchView('expenses')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-expenses">
-                    <i data-lucide="receipt" class="w-5 h-5"></i><span>Biaya & Beban</span>
+                    <i data-lucide="receipt" class="w-5 h-5"></i>
+                    <span>Biaya & Beban</span>
                 </button>
                 
-                <div class="admin-only hidden pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Laporan & Keuangan</div>
+                <div class="admin-only hidden pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Keuangan</div>
                 <button onclick="switchView('reports')" class="nav-btn admin-only hidden w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-reports">
-                    <i data-lucide="pie-chart" class="w-5 h-5"></i><span>Keuangan</span>
+                    <i data-lucide="pie-chart" class="w-5 h-5"></i>
+                    <span>Laporan Keuangan</span>
                 </button>
                 
                 <div class="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Kontak & Sistem</div>
                 <button onclick="switchView('suppliers')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-suppliers">
-                    <i data-lucide="truck" class="w-5 h-5"></i><span>Supplier</span>
+                    <i data-lucide="truck" class="w-5 h-5"></i>
+                    <span>Data Supplier</span>
                 </button>
                 <button onclick="switchView('customers')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-customers">
-                    <i data-lucide="users" class="w-5 h-5"></i><span>Pelanggan</span>
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <span>Data Pelanggan</span>
                 </button>
                 
                 <button onclick="switchView('settings')" class="nav-btn admin-only hidden w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-settings">
-                    <i data-lucide="settings" class="w-5 h-5"></i><span>Pengaturan</span>
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span>Pengaturan</span>
                 </button>
             </nav>
 
-            <div class="pt-6 border-t border-white/10 flex items-center space-x-3 px-2">
-                <img id="user-photo" class="w-10 h-10 rounded-full border-2 border-amber-500" src="https://ui-avatars.com/api/?name=U" alt="Profile">
-                <div class="flex-1 min-w-0">
-                    <div id="user-info-name" class="text-xs font-bold text-white truncate">User</div>
-                    <div id="user-role-badge" class="text-[9px] font-bold uppercase text-amber-500">ROLE</div>
-                </div>
-                <button onclick="handleLogout()" class="p-2 text-slate-400 hover:text-white transition">
+            <div class="pt-6 border-t border-white/10 text-center">
+                <div id="user-info" class="text-[10px] text-slate-400 mb-1 truncate">Menghubungkan...</div>
+                <div id="user-role-badge" class="text-[9px] font-bold uppercase tracking-tighter px-2 py-0.5 rounded bg-slate-800 text-slate-500 mb-4 inline-block">-</div>
+                <button onclick="handleLogout()" class="w-full flex items-center justify-center space-x-2 px-4 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span>Keluar</span>
                 </button>
             </div>
         </aside>
 
-        <!-- Main Content -->
+        <!-- Konten Utama -->
         <main class="flex-1 p-4 md:p-10 overflow-y-auto">
-            <div id="loading" class="fixed inset-0 bg-white/80 z-50 flex items-center justify-center no-print">
+            <div id="loading" class="fixed inset-0 bg-white/80 z-50 flex items-center justify-center transition-opacity no-print">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600"></div>
             </div>
 
             <!-- Dashboard -->
             <section id="view-dashboard" class="space-y-8 no-print">
-                <header><h2 class="text-2xl font-bold text-slate-800">Dashboard Operasional</h2></header>
+                <header>
+                    <h2 class="text-2xl font-bold text-slate-800" id="welcome-title">Ringkasan Operasional Log</h2>
+                    <p class="text-slate-500">Monitoring volume, aset, dan kewajiban keuangan.</p>
+                </header>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <div class="p-3 bg-amber-100 text-amber-600 rounded-xl w-fit mb-4"><i data-lucide="boxes" class="w-6 h-6"></i></div>
-                        <h3 class="text-slate-500 text-sm font-medium">Volume Stok</h3>
-                        <p class="text-2xl font-black text-slate-900 mt-1" id="stat-total-volume">0.00 m³</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="p-3 bg-amber-100 text-amber-600 rounded-xl"><i data-lucide="boxes" class="w-6 h-6"></i></div>
+                        </div>
+                        <h3 class="text-slate-500 text-sm font-medium">Total Volume Log</h3>
+                        <p class="text-2xl font-bold text-slate-900 mt-1" id="stat-total-volume">0.00 m³</p>
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <div class="p-3 bg-green-100 text-green-600 rounded-xl w-fit mb-4"><i data-lucide="wallet" class="w-6 h-6"></i></div>
-                        <h3 class="text-slate-500 text-sm font-medium">Nilai Stok (HPP)</h3>
-                        <p class="text-2xl font-black text-slate-900 mt-1" id="stat-total-price">Rp 0</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="p-3 bg-green-100 text-green-600 rounded-xl"><i data-lucide="wallet" class="w-6 h-6"></i></div>
+                        </div>
+                        <h3 class="text-slate-500 text-sm font-medium">Nilai Stok</h3>
+                        <p class="text-2xl font-bold text-slate-900 mt-1" id="stat-total-price">Rp 0</p>
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <div class="p-3 bg-red-100 text-red-600 rounded-xl w-fit mb-4"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></div>
-                        <h3 class="text-slate-500 text-sm font-medium">Hutang</h3>
-                        <p class="text-2xl font-black text-red-600 mt-1" id="stat-total-debt">Rp 0</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="p-3 bg-red-100 text-red-600 rounded-xl"><i data-lucide="arrow-up-right" class="w-6 h-6"></i></div>
+                        </div>
+                        <h3 class="text-slate-500 text-sm font-medium">Total Hutang</h3>
+                        <p class="text-2xl font-bold text-red-600 mt-1" id="stat-total-debt">Rp 0</p>
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <div class="p-3 bg-blue-100 text-blue-600 rounded-xl w-fit mb-4"><i data-lucide="arrow-down-left" class="w-6 h-6"></i></div>
-                        <h3 class="text-slate-500 text-sm font-medium">Piutang</h3>
-                        <p class="text-2xl font-black text-blue-600 mt-1" id="stat-total-receivable">Rp 0</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="p-3 bg-blue-100 text-blue-600 rounded-xl"><i data-lucide="arrow-down-left" class="w-6 h-6"></i></div>
+                        </div>
+                        <h3 class="text-slate-500 text-sm font-medium">Total Piutang</h3>
+                        <p class="text-2xl font-bold text-blue-600 mt-1" id="stat-total-receivable">Rp 0</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                    <h3 class="font-bold text-slate-800 mb-4">Aktivitas Terkini</h3>
+                    <div id="recent-logs" class="space-y-4 text-sm text-slate-600">
+                        <p class="italic text-slate-400">Belum ada aktivitas tercatat.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Laporan Keuangan -->
+            <section id="view-reports" class="hidden space-y-8 no-print">
+                <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Laporan Keuangan</h2>
+                        <p class="text-slate-500">Analisis laba rugi dan arus kas masuk/keluar.</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="exportToExcel()" class="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition text-sm font-semibold shadow-sm">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                            <span>Excel</span>
+                        </button>
+                        <button onclick="exportToPDF()" class="flex items-center space-x-2 bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg transition text-sm font-semibold shadow-sm">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                            <span>PDF</span>
+                        </button>
+                    </div>
+                </header>
+
+                <div id="report-content-to-export" class="space-y-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 space-y-6">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-bold text-slate-800">Laporan Laba Rugi</h3>
+                                <div class="p-2 bg-blue-50 text-blue-600 rounded-lg"><i data-lucide="trending-up" class="w-5 h-5"></i></div>
+                            </div>
+                            <div class="space-y-4 divide-y divide-slate-50">
+                                <div class="flex justify-between py-2"><span class="text-slate-500">Total Penjualan (Nota)</span><span class="font-bold text-slate-900" id="report-total-revenue">Rp 0</span></div>
+                                <div class="flex justify-between py-2"><span class="text-slate-500">Total Pembelian (Nota)</span><span class="font-bold text-red-500" id="report-total-cogs">Rp 0</span></div>
+                                <div class="flex justify-between py-2"><span class="text-slate-500">Total Biaya & Beban (-)</span><span class="font-bold text-red-400" id="report-total-expenses">Rp 0</span></div>
+                                <div class="flex justify-between py-2"><span class="text-slate-500">Potensi Laba Kotor</span><span class="font-bold text-slate-900" id="report-gross-profit-accrual">Rp 0</span></div>
+                                <div class="pt-4 space-y-2">
+                                    <div class="flex justify-between py-1"><span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Penyesuaian Akun</span></div>
+                                    <div class="flex justify-between py-2"><span class="text-slate-500 italic">Piutang Berjalan (-)</span><span class="font-bold text-orange-600" id="report-adj-receivable">Rp 0</span></div>
+                                    <div class="flex justify-between py-2"><span class="text-slate-500 italic">Hutang Berjalan (+)</span><span class="font-bold text-blue-600" id="report-adj-payable">Rp 0</span></div>
+                                </div>
+                                <div class="flex justify-between py-4 border-t-2 border-slate-100"><span class="font-bold text-slate-800 uppercase tracking-wider text-sm">Laba Terrealisasi (Kas)</span><span class="font-black text-xl" id="report-realized-profit">Rp 0</span></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 space-y-6">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-bold text-slate-800">Ringkasan Kas (Cashflow)</h3>
+                                <div class="p-2 bg-green-50 text-green-600 rounded-lg"><i data-lucide="dollar-sign" class="w-5 h-5"></i></div>
+                            </div>
+                            <div class="space-y-4 divide-y divide-slate-50">
+                                <div class="flex justify-between py-2"><span class="text-slate-500">Uang Masuk (Cash In)</span><span class="font-bold text-green-600" id="report-cash-in">Rp 0</span></div>
+                                <div class="flex justify-between py-2"><span class="text-slate-500">Uang Keluar (Cash Out)</span><span class="font-bold text-orange-600" id="report-cash-out">Rp 0</span></div>
+                                <div class="flex justify-between py-4 border-t-2 border-slate-100"><span class="font-bold text-slate-800 uppercase tracking-wider text-sm">Saldo Kas Saat Ini</span><span class="font-black text-xl text-blue-700" id="report-net-cash">Rp 0</span></div>
+                            </div>
+                            <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase">Kesehatan Piutang</div>
+                                <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden"><div id="receivable-health-bar" class="bg-green-500 h-full transition-all duration-500" style="width: 0%"></div></div>
+                                <div class="text-[10px] text-slate-500 text-right" id="receivable-health-text">0% Tertagih</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                        <div class="p-6 border-b border-slate-50"><h3 class="font-bold text-slate-800">Detail Transaksi Kas</h3></div>
+                        <div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold"><tr><th class="px-6 py-4">Waktu</th><th class="px-6 py-4">Keterangan</th><th class="px-6 py-4">Tipe</th><th class="px-6 py-4 text-right">Nominal</th></tr></thead><tbody id="cashflow-table-body" class="divide-y divide-slate-100"></tbody></table></div>
                     </div>
                 </div>
             </section>
 
             <!-- Stok Log -->
             <section id="view-inventory" class="hidden space-y-6 no-print">
-                <header class="flex items-center justify-between">
-                    <div><h2 class="text-2xl font-bold text-slate-800">Stok Log</h2><p class="text-slate-500">Daftar kayu log yang tersedia di gudang.</p></div>
-                    <button onclick="openModal('wood')" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2 rounded-xl shadow-lg font-bold">Input Nota Baru</button>
+                <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Stok Log</h2>
+                        <p class="text-slate-500">Daftar inventaris kayu log yang tersedia.</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="exportInventoryToExcel()" class="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition text-sm font-semibold shadow-sm">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                            <span>Excel</span>
+                        </button>
+                        <button onclick="exportInventoryToPDF()" class="flex items-center space-x-2 bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg transition text-sm font-semibold shadow-sm">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                            <span>PDF</span>
+                        </button>
+                        <button onclick="openModal('wood')" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg shadow-sm transition text-sm font-semibold">
+                            Input Nota Baru
+                        </button>
+                    </div>
                 </header>
-                <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+                <div id="inventory-content-to-export" class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                     <table class="w-full text-left">
                         <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold">
-                            <tr><th class="px-6 py-4">No. Nota</th><th class="px-6 py-4">Supplier</th><th class="px-6 py-4 text-center">Volume (m³)</th><th class="px-6 py-4 text-right">Nilai (IDR)</th><th class="px-6 py-4 text-right">Aksi</th></tr>
+                            <tr>
+                                <th class="px-6 py-4">No. Nota</th>
+                                <th class="px-6 py-4">Supplier</th>
+                                <th class="px-6 py-4 text-center">Status</th>
+                                <th class="px-6 py-4 text-center">Volume (m³)</th>
+                                <th class="px-6 py-4 text-right">Nilai (IDR)</th>
+                                <th class="px-6 py-4 text-right no-print">Aksi</th>
+                            </tr>
                         </thead>
-                        <tbody id="inventory-table-body" class="divide-y text-sm"></tbody>
+                        <tbody id="inventory-table-body" class="divide-y divide-slate-100 text-sm text-slate-700"></tbody>
                     </table>
                 </div>
             </section>
 
             <!-- Kayu Keluar -->
             <section id="view-sales" class="hidden space-y-6 no-print">
-                <header class="flex items-center justify-between">
-                    <div><h2 class="text-2xl font-bold text-slate-800">Kayu Keluar</h2><p class="text-slate-500">Pengiriman log ke pelanggan.</p></div>
-                    <button onclick="openModal('sales')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl shadow-lg font-bold">Input SJ/Nota</button>
-                </header>
-                <div class="bg-white rounded-2xl shadow-sm border overflow-hidden"><table class="w-full text-left"><thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold"><tr><th class="px-6 py-4">Invoice/SJ</th><th class="px-6 py-4">Pelanggan</th><th class="px-6 py-4 text-center">Volume</th><th class="px-6 py-4 text-right">Nilai Jual</th><th class="px-6 py-4 text-right">Aksi</th></tr></thead><tbody id="sales-table-body" class="divide-y text-sm"></tbody></table></div>
-            </section>
-
-            <!-- Biaya -->
-            <section id="view-expenses" class="hidden space-y-6 no-print">
-                <header class="flex items-center justify-between"><h2 class="text-2xl font-bold text-slate-800">Biaya & Beban</h2><button onclick="openModal('expense')" class="bg-rose-500 hover:bg-rose-600 text-white px-6 py-2 rounded-xl shadow-lg font-bold">Input Pengeluaran</button></header>
-                <div class="bg-white rounded-2xl shadow-sm border overflow-hidden"><table class="w-full text-left"><thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold"><tr><th class="px-6 py-4">Tgl</th><th class="px-6 py-4">Kategori</th><th class="px-6 py-4">Catatan</th><th class="px-6 py-4 text-right">Nominal</th><th class="px-6 py-4 text-right">Aksi</th></tr></thead><tbody id="expenses-table-body" class="divide-y text-sm"></tbody></table></div>
-            </section>
-
-            <!-- Reports -->
-            <section id="view-reports" class="hidden space-y-8 no-print admin-only">
-                <h2 class="text-2xl font-bold text-slate-800">Laporan Keuangan</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div class="bg-white p-8 rounded-2xl border shadow-sm space-y-6">
-                        <h3 class="font-bold text-lg">Ringkasan Laba Rugi</h3>
-                        <div class="space-y-4 text-sm divide-y">
-                            <div class="flex justify-between py-2"><span>Penjualan</span><span class="font-bold text-blue-600" id="rep-sales">Rp 0</span></div>
-                            <div class="flex justify-between py-2"><span>HPP (Beli)</span><span class="font-bold text-red-500" id="rep-cogs">Rp 0</span></div>
-                            <div class="flex justify-between py-2"><span>Beban</span><span class="font-bold text-red-500" id="rep-expenses">Rp 0</span></div>
-                            <div class="flex justify-between py-4 text-xl font-black border-t-2"><span>ESTIMASI PROFIT</span><span id="rep-profit">Rp 0</span></div>
-                        </div>
+                <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Kayu Keluar</h2>
+                        <p class="text-slate-500">Catatan pengiriman dan penjualan log kayu.</p>
                     </div>
+                    <div class="flex space-x-2">
+                        <button onclick="openModal('sales')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl shadow-lg transition text-sm font-bold">
+                            Input Kayu Keluar
+                        </button>
+                    </div>
+                </header>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden"><table class="w-full text-left"><thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold"><tr><th class="px-6 py-4">No. Nota / SJ</th><th class="px-6 py-4">Pelanggan</th><th class="px-6 py-4 text-center">Status</th><th class="px-6 py-4 text-center">Volume (m³)</th><th class="px-6 py-4 text-right">Total</th><th class="px-6 py-4 text-right">Aksi</th></tr></thead><tbody id="sales-table-body" class="divide-y divide-slate-100 text-sm text-slate-700"></tbody></table></div>
+            </section>
+
+            <!-- Biaya & Beban -->
+            <section id="view-expenses" class="hidden space-y-6 no-print">
+                <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">Biaya & Beban</h2>
+                        <p class="text-slate-500">Catatan pengeluaran operasional perusahaan.</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="exportExpensesToExcel()" class="flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg transition text-sm font-semibold shadow-sm">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                            <span>Excel</span>
+                        </button>
+                        <button onclick="openModal('expense')" class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg shadow-sm transition text-sm font-semibold">
+                            Input Biaya/Beban
+                        </button>
+                    </div>
+                </header>
+                <div id="expenses-content-to-export" class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold">
+                            <tr>
+                                <th class="px-6 py-4">Tanggal</th>
+                                <th class="px-6 py-4">Kategori</th>
+                                <th class="px-6 py-4">Keterangan</th>
+                                <th class="px-6 py-4 text-right">Nominal (IDR)</th>
+                                <th class="px-6 py-4 text-right no-print">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expenses-table-body" class="divide-y divide-slate-100 text-sm text-slate-700"></tbody>
+                    </table>
                 </div>
             </section>
 
-            <!-- Contacts -->
+            <!-- Kontak -->
             <section id="view-suppliers" class="hidden space-y-6 no-print">
-                <header class="flex items-center justify-between"><h2 class="text-2xl font-bold text-slate-800">Data Supplier</h2><button onclick="openModal('contact', 'supplier')" class="bg-slate-900 text-white px-6 py-2 rounded-xl">Tambah</button></header>
+                <header class="flex items-center justify-between"><h2 class="text-2xl font-bold text-slate-800">Data Supplier</h2><button onclick="openModal('contact', 'supplier')" class="bg-slate-800 text-white px-6 py-3 rounded-xl shadow-lg transition">Tambah Supplier</button></header>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="suppliers-list"></div>
             </section>
+
             <section id="view-customers" class="hidden space-y-6 no-print">
-                <header class="flex items-center justify-between"><h2 class="text-2xl font-bold text-slate-800">Data Pelanggan</h2><button onclick="openModal('contact', 'customer')" class="bg-slate-900 text-white px-6 py-2 rounded-xl">Tambah</button></header>
+                <header class="flex items-center justify-between"><h2 class="text-2xl font-bold text-slate-800">Data Pelanggan</h2><button onclick="openModal('contact', 'customer')" class="bg-slate-800 text-white px-6 py-3 rounded-xl shadow-lg transition">Tambah Pelanggan</button></header>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="customers-list"></div>
             </section>
 
-            <!-- Settings -->
-            <section id="view-settings" class="hidden space-y-8 no-print admin-only">
-                <h2 class="text-2xl font-bold text-slate-800">Pengaturan Sistem</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div class="bg-white p-8 rounded-2xl border shadow-sm space-y-6">
-                        <h3 class="font-bold text-slate-800">Otorisasi Email Pengguna</h3>
-                        <div class="flex space-x-2">
-                            <input type="email" id="auth-new-email" placeholder="Email Gmail Baru..." class="flex-1 p-3 border rounded-xl text-sm">
-                            <select id="auth-new-role" class="p-3 border rounded-xl text-sm">
-                                <option value="Kasir">Kasir</option>
-                                <option value="Admin">Admin</option>
-                            </select>
-                            <button onclick="authorizeEmail()" class="bg-slate-900 text-white px-4 py-2 rounded-xl text-sm font-bold">Daftarkan</button>
-                        </div>
-                        <div class="overflow-hidden rounded-xl border">
-                            <table class="w-full text-sm text-left"><thead class="bg-slate-50 font-bold uppercase text-[10px]"><tr><th class="p-4">Email</th><th class="p-4">Role</th><th class="p-4">Aksi</th></tr></thead><tbody id="auth-emails-table" class="divide-y"></tbody></table>
+            <!-- Pengaturan -->
+            <section id="view-settings" class="hidden space-y-8 no-print">
+                <header><h2 class="text-2xl font-bold text-slate-800">Pengaturan Sistem</h2></header>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-1 bg-white p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6">
+                        <div class="flex items-center space-x-3 mb-2"><div class="p-2 bg-amber-50 text-amber-600 rounded-lg"><i data-lucide="building-2" class="w-5 h-5"></i></div><h3 class="font-bold text-slate-800">Profil Perusahaan</h3></div>
+                        <div class="space-y-4">
+                            <div class="space-y-1"><label class="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Nama Perusahaan</label><input type="text" id="setting-company-name" class="w-full p-3 rounded-xl border border-slate-200 outline-none"></div>
+                            <div class="space-y-1"><label class="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Alamat Lengkap</label><textarea id="setting-company-address" rows="3" class="w-full p-3 rounded-xl border border-slate-200 outline-none"></textarea></div>
+                            <div class="space-y-1"><label class="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Telepon</label><input type="text" id="setting-company-phone" class="w-full p-3 rounded-xl border border-slate-200 outline-none"></div>
+                            <button onclick="saveCompanyProfile()" class="w-full py-3 bg-amber-600 text-white font-bold rounded-xl">Simpan Profil</button>
                         </div>
                     </div>
-                    <div class="bg-white p-8 rounded-2xl border shadow-sm space-y-6">
-                        <h3 class="font-bold text-slate-800">Profil Perusahaan</h3>
-                        <div class="space-y-4">
-                            <input type="text" id="setting-company-name" placeholder="Nama Bisnis" class="w-full p-3 border rounded-xl text-sm">
-                            <textarea id="setting-company-address" placeholder="Alamat Lengkap" class="w-full p-3 border rounded-xl text-sm"></textarea>
-                            <input type="text" id="setting-company-phone" placeholder="No. Telepon" class="w-full p-3 border rounded-xl text-sm">
-                            <button onclick="saveCompanyProfile()" class="w-full bg-amber-600 text-white py-3 rounded-xl font-bold">Simpan Profil</button>
-                        </div>
+                    <div class="lg:col-span-2 bg-white p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6">
+                        <div class="flex items-center space-x-3 mb-2"><div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg"><i data-lucide="shield-check" class="w-5 h-5"></i></div><h3 class="font-bold text-slate-800">Manajemen Pengguna</h3></div>
+                        <div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold"><tr><th>UID / Pengguna</th><th>Peran</th><th>Login</th><th class="text-right">Aksi</th></tr></thead><tbody id="users-table-body" class="divide-y divide-slate-100"></tbody></table></div>
                     </div>
                 </div>
             </section>
@@ -242,406 +330,723 @@
     </div>
 
     <!-- Modals -->
-    <!-- Wood Modal -->
-    <div id="wood-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print">
-        <div class="bg-white w-full max-w-4xl my-8 rounded-3xl shadow-2xl flex flex-col max-h-[90vh]">
-            <div class="p-6 border-b flex justify-between items-center bg-white sticky top-0 z-10"><h3 class="text-lg font-black text-slate-800 uppercase tracking-tight">Input Log Baru</h3><button onclick="closeModal('wood')" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button></div>
-            <div class="flex-1 overflow-y-auto p-8 space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><input type="text" id="wood-nota" placeholder="No. Nota" class="p-4 rounded-2xl border bg-slate-50 outline-none"><select id="wood-supplier-select" class="p-4 rounded-2xl border bg-slate-50 outline-none"></select></div>
-                <div class="grid grid-cols-4 gap-2">
-                    <input type="number" step="0.1" id="log-d1" oninput="liveUpdateCalc()" class="p-3 rounded-xl border bg-slate-50" placeholder="d1"><input type="number" step="0.1" id="log-d2" oninput="liveUpdateCalc()" class="p-3 rounded-xl border bg-slate-50" placeholder="d2"><input type="number" step="0.1" id="log-d3" oninput="liveUpdateCalc()" class="p-3 rounded-xl border bg-slate-50" placeholder="d3"><input type="number" step="0.1" id="log-d4" oninput="liveUpdateCalc()" class="p-3 rounded-xl border bg-slate-50" placeholder="d4">
+    <div id="wood-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto no-print">
+        <div class="bg-white w-full max-w-4xl my-8 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10"><h3 class="text-lg font-bold text-slate-800 uppercase tracking-tight">Input Log Baru</h3><button onclick="closeModal('wood')" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button></div>
+            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- Metadata Nota -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-6 rounded-2xl">
+                    <input type="text" id="wood-nota" placeholder="No. Nota" class="p-3 rounded-xl border border-slate-200">
+                    <select id="wood-supplier-select" class="p-3 rounded-xl border border-slate-200"></select>
                 </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <input type="number" id="log-p" oninput="liveUpdateCalc()" class="p-4 rounded-2xl border bg-slate-50" placeholder="P (cm)"><input type="number" id="log-trim" oninput="liveUpdateCalc()" class="p-4 rounded-2xl border bg-slate-50" placeholder="Trim"><input type="number" id="log-gr" oninput="liveUpdateCalc()" class="p-4 rounded-2xl border bg-slate-50" placeholder="GR">
+                <!-- Status Pembayaran -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-amber-50 p-6 rounded-2xl border border-amber-100">
+                    <select id="wood-payment-status" onchange="toggleDPInput('wood')" class="p-3 rounded-xl border border-amber-200 outline-none">
+                        <option value="Hutang">Hutang</option>
+                        <option value="Lunas">Lunas</option>
+                        <option value="DP">DP</option>
+                    </select>
+                    <input type="number" id="wood-dp-amount" placeholder="Nominal DP" class="hidden p-3 rounded-xl border border-amber-200">
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <input type="text" id="wood-type" class="p-4 rounded-2xl border bg-slate-50" placeholder="Jenis Kayu"><input type="number" id="wood-price" placeholder="Harga Beli (HPP)" class="p-4 rounded-2xl border bg-slate-50">
-                </div>
-                <div class="grid grid-cols-3 gap-4 bg-slate-900 text-white p-6 rounded-3xl">
-                    <div class="text-center"><span class="text-[10px] uppercase font-bold text-slate-400">Avg D</span><div id="res-live-avg-d" class="text-xl font-black">0 cm</div></div>
-                    <div class="text-center border-x border-white/10"><span class="text-[10px] uppercase font-bold text-slate-400">Vol GR</span><div id="res-live-vol-gr" class="text-xl font-black">0.00 m³</div></div>
-                    <div class="text-center"><span class="text-[10px] uppercase font-bold text-slate-400">Vol Neto</span><div id="res-live-vol-wood" class="text-xl font-black text-amber-500">0.00 m³</div></div>
-                </div>
-                <button onclick="addItemToBatch('wood')" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest">+ Tambah Ke Batch</button>
-                <div class="border rounded-2xl overflow-hidden"><table class="w-full text-xs text-left"><thead class="bg-slate-50"><tr><th class="p-3">Kayu</th><th class="p-3 text-center">Neto</th><th class="p-3 text-center">GR</th><th class="p-3 text-right">Aksi</th></tr></thead><tbody id="wood-batch-table" class="divide-y"></tbody></table></div>
-            </div>
-            <div class="p-6 border-t flex justify-end space-x-3 bg-slate-50"><button onclick="closeModal('wood')" class="px-6 py-3 border rounded-xl font-bold">Batal</button><button onclick="submitBatchToFirebase()" id="btn-save-batch-wood" disabled class="px-10 py-3 bg-amber-600 text-white font-black rounded-xl uppercase shadow-lg">Simpan Seluruh Nota</button></div>
-        </div>
-    </div>
-
-    <!-- Sales Modal -->
-    <div id="sales-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print">
-        <div class="bg-white w-full max-w-4xl my-8 rounded-3xl shadow-2xl flex flex-col max-h-[90vh]">
-            <div class="p-6 border-b flex justify-between items-center bg-white sticky top-0 z-10"><h3 class="text-lg font-black text-slate-800 uppercase tracking-tight">Input Kayu Keluar</h3><button onclick="closeModal('sales')" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button></div>
-            <div class="flex-1 overflow-y-auto p-8 space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><input type="text" id="sales-nota" placeholder="No. SJ/Invoice" class="p-4 rounded-2xl border bg-slate-50 outline-none"><select id="sales-customer-select" class="p-4 rounded-2xl border bg-slate-50 outline-none"></select></div>
+                <!-- Input Per Log Item -->
                 <div class="border-2 border-dashed border-slate-200 rounded-2xl p-6 space-y-4">
-                    <label class="text-[10px] font-bold uppercase text-slate-400">Pilih dari Stok Aktif</label>
-                    <select id="sales-stock-select" onchange="fillSalesFromStock()" class="w-full p-4 rounded-xl border bg-slate-50 outline-none"></select>
-                    <div class="grid grid-cols-2 gap-4"><input type="text" id="sales-wood-type" class="p-4 rounded-2xl border bg-slate-50" placeholder="Jenis"><input type="number" step="0.01" id="sales-wood-vol" class="p-4 rounded-2xl border bg-slate-50" placeholder="Volume"></div>
-                    <input type="number" id="sales-wood-price" placeholder="Harga Jual" class="w-full p-4 rounded-2xl border bg-slate-50">
-                    <button onclick="addItemToBatch('sales')" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest">+ Tambah Ke Batch</button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <input type="text" id="log-no" class="p-3 rounded-xl border" placeholder="No LOG (Fisik)">
+                        <input type="text" id="log-grade" class="p-3 rounded-xl border" placeholder="Grade (A, B, C...)">
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">
+                        <input type="number" step="0.1" id="log-d1" oninput="liveUpdateCalc()" class="p-2.5 rounded-lg border" placeholder="d1">
+                        <input type="number" step="0.1" id="log-d2" oninput="liveUpdateCalc()" class="p-2.5 rounded-lg border" placeholder="d2">
+                        <input type="number" step="0.1" id="log-d3" oninput="liveUpdateCalc()" class="p-2.5 rounded-lg border" placeholder="d3">
+                        <input type="number" step="0.1" id="log-d4" oninput="liveUpdateCalc()" class="p-2.5 rounded-lg border" placeholder="d4">
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <input type="number" id="log-p" oninput="liveUpdateCalc()" class="p-3 rounded-xl border" placeholder="P (cm)">
+                        <input type="number" id="log-trim" oninput="liveUpdateCalc()" class="p-3 rounded-xl border" placeholder="Trim">
+                        <input type="number" id="log-gr" oninput="liveUpdateCalc()" class="p-3 rounded-xl border" placeholder="GR">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="wood-type" class="p-3 rounded-xl border" placeholder="Jenis Kayu (Jati, dll)">
+                        <input type="number" id="wood-price" placeholder="Harga (Rp)" class="p-3 rounded-xl border">
+                    </div>
+                    <!-- Live Indicators -->
+                    <div class="grid grid-cols-3 gap-4 bg-amber-600 text-white p-4 rounded-xl">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] uppercase font-bold text-amber-200">Rata D</span>
+                            <div class="text-base font-black" id="res-live-avg-d">0 cm</div>
+                        </div>
+                        <div class="flex flex-col text-center">
+                            <span class="text-[10px] uppercase font-bold text-amber-200">Vol GR</span>
+                            <div class="text-base font-black" id="res-live-vol-gr">0.00 m³</div>
+                        </div>
+                        <div class="flex flex-col text-right">
+                            <span class="text-[10px] uppercase font-bold text-amber-200">Volume Neto</span>
+                            <div class="text-base font-black" id="res-live-vol-wood">0.00 m³</div>
+                        </div>
+                    </div>
+                    <button onclick="addItemToBatch('wood')" class="w-full bg-white text-amber-700 py-3 rounded-xl font-bold shadow-lg">Tambah Ke Batch</button>
                 </div>
-                <div class="border rounded-2xl overflow-hidden"><table class="w-full text-xs text-left"><tbody id="sales-batch-table" class="divide-y"></tbody></table></div>
+                <!-- Batch Table -->
+                <div class="border rounded-2xl overflow-hidden">
+                    <table class="w-full text-[10px] text-left">
+                        <thead class="bg-slate-50 border-b">
+                            <tr>
+                                <th class="p-2">No LOG</th>
+                                <th class="p-2">Jenis/Grade</th>
+                                <th class="p-2 text-center">Neto</th>
+                                <th class="p-2 text-center">GR</th>
+                                <th class="p-2 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wood-batch-table"></tbody>
+                    </table>
+                </div>
             </div>
-            <div class="p-6 border-t flex justify-end bg-slate-50"><button onclick="submitBatchSales()" id="btn-save-batch-sales" disabled class="px-10 py-3 bg-blue-600 text-white font-black rounded-xl uppercase shadow-lg">Simpan Penjualan</button></div>
+            <div class="p-6 border-t flex justify-end space-x-3 bg-slate-50">
+                <button onclick="closeModal('wood')" class="px-6 py-3 rounded-xl border">Batal</button>
+                <button onclick="submitBatchToFirebase()" id="btn-save-batch-wood" disabled class="px-6 py-3 rounded-xl bg-amber-600 text-white font-bold">Simpan Seluruh Nota</button>
+            </div>
         </div>
     </div>
 
-    <!-- Other Modals -->
-    <div id="expense-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 no-print"><div class="bg-white w-full max-w-md p-8 rounded-3xl space-y-4"><h3>Input Pengeluaran</h3><input type="text" id="exp-cat" placeholder="Kategori" class="w-full p-3 border rounded-xl"><input type="number" id="exp-amt" placeholder="Nominal" class="w-full p-3 border rounded-xl"><textarea id="exp-note" placeholder="Keterangan" class="w-full p-3 border rounded-xl"></textarea><button onclick="submitExpense()" class="w-full py-3 bg-rose-500 text-white rounded-xl font-bold">Simpan</button></div></div>
-    <div id="contact-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 no-print"><div class="bg-white w-full max-w-md p-8 rounded-3xl space-y-4"><h3>Tambah Kontak</h3><input type="hidden" id="contact-type"><input type="text" id="contact-name" placeholder="Nama..." class="w-full p-3 border rounded-xl"><button onclick="submitContact()" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold">Simpan</button></div></div>
+    <!-- Modal Kayu Keluar & Lainnya -->
+    <div id="sales-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto no-print">
+        <div class="bg-white w-full max-w-4xl my-8 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10"><h3 class="text-lg font-bold text-slate-800 uppercase tracking-tight">Input Kayu Keluar</h3><button onclick="closeModal('sales')" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button></div>
+            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-6 rounded-2xl"><input type="text" id="sales-nota" placeholder="SJ/2025/001" class="p-3 rounded-xl border border-slate-200"><select id="sales-customer-select" class="p-3 rounded-xl border border-slate-200"></select></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-blue-50 p-6 rounded-2xl border border-blue-100"><select id="sales-payment-status" onchange="toggleDPInput('sales')" class="p-3 rounded-xl border border-blue-200 outline-none"><option value="Hutang">Piutang</option><option value="Lunas">Tunai</option><option value="DP">DP</option></select><input type="number" id="sales-dp-amount" placeholder="Nominal DP" class="hidden p-3 rounded-xl border border-blue-200"></div>
+                <div class="border-2 border-dashed border-slate-200 rounded-2xl p-6 space-y-4">
+                    <div class="flex gap-4 mb-2">
+                        <label class="flex items-center space-x-2"><input type="radio" name="sales-mode" value="stock" checked onchange="toggleSalesMode('stock')"> <span>Dari Stok</span></label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="sales-mode" value="manual" onchange="toggleSalesMode('manual')"> <span>Manual</span></label>
+                    </div>
+                    <select id="sales-stock-item-select" onchange="autoFillSalesFromStock()" class="w-full p-3 rounded-xl border"></select>
+                    <div class="grid grid-cols-2 gap-4"><input type="text" id="sales-wood-type" class="p-3 rounded-xl border" placeholder="Jenis"><input type="number" step="0.0001" id="sales-wood-vol" class="p-3 rounded-xl border" placeholder="Volume"></div>
+                    <input type="number" id="sales-wood-price" placeholder="Harga Jual" class="w-full p-3 rounded-xl border">
+                    <button onclick="addItemToBatch('sales')" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold">+ Tambah Item</button>
+                </div>
+                <div class="border rounded-2xl overflow-hidden"><table class="w-full text-xs text-left"><tbody id="sales-batch-table"></tbody></table></div>
+            </div>
+            <div class="p-6 border-t flex justify-end space-x-3 bg-slate-50"><button onclick="closeModal('sales')" class="px-6 py-3 rounded-xl border">Batal</button><button onclick="submitBatchSalesToFirebase()" id="btn-save-batch-sales" disabled class="px-6 py-3 rounded-xl bg-blue-600 text-white font-bold">Simpan</button></div>
+        </div>
+    </div>
+
+    <!-- Modals Utility -->
+    <div id="expense-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm no-print"><div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden"><div class="p-6 border-b flex justify-between items-center"><h3 class="font-bold text-slate-800 tracking-tight uppercase">Input Biaya / Beban</h3><button onclick="closeModal('expense')" class="text-slate-400 hover:text-slate-600 transition"><i data-lucide="x"></i></button></div><form id="expense-form" onsubmit="handleExpenseSubmit(event)" class="p-6 space-y-4"><div class="space-y-1"><label class="text-[10px] font-bold uppercase text-slate-400">Kategori</label><select id="expense-category" class="w-full p-3 rounded-xl border outline-none focus:ring-2 focus:ring-rose-500 transition" required><option value="Operasional">Operasional</option><option value="Gaji Karyawan">Gaji Karyawan</option><option value="Pemeliharaan">Pemeliharaan</option><option value="Listrik & Air">Listrik & Air</option><option value="Lain-lain">Lain-lain</option></select></div><div class="space-y-1"><label class="text-[10px] font-bold uppercase text-slate-400">Nominal (IDR)</label><input type="number" id="expense-amount" placeholder="0" class="w-full p-3 rounded-xl border" required></div><div class="space-y-1"><label class="text-[10px] font-bold uppercase text-slate-400">Keterangan</label><textarea id="expense-note" placeholder="Pembelian BBM solar..." class="w-full p-3 rounded-xl border"></textarea></div><button type="submit" class="w-full py-4 bg-rose-500 text-white rounded-xl font-bold">Simpan Pengeluaran</button></form></div></div>
+    <div id="contact-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm no-print"><div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden"><div class="p-6 border-b flex justify-between items-center"><h3 id="contact-modal-title" class="font-bold text-slate-800 tracking-tight uppercase">Tambah Kontak</h3><button onclick="closeModal('contact')" class="text-slate-400 hover:text-slate-600 transition"><i data-lucide="x"></i></button></div><form id="contact-form" onsubmit="handleContactSubmit(event)" class="p-6 space-y-4"><input type="hidden" id="contact-type"><div class="space-y-1"><label class="text-[10px] font-bold uppercase text-slate-400">Nama Lengkap</label><input type="text" id="contact-name" placeholder="Budi Santoso" class="w-full p-3 rounded-xl border" required></div><div class="space-y-1"><label class="text-[10px] font-bold uppercase text-slate-400">Telepon</label><input type="text" id="contact-phone" placeholder="0812xxxx" class="w-full p-3 rounded-xl border"></div><div class="space-y-1"><label class="text-[10px] font-bold uppercase text-slate-400">Alamat</label><textarea id="contact-address" placeholder="Jl. Kayu No. 10" class="w-full p-3 rounded-xl border"></textarea></div><button type="submit" class="w-full py-4 bg-slate-900 text-white rounded-xl font-bold">Simpan</button></form></div></div>
+    
+    <!-- Detail Modal -->
+    <div id="detail-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto no-print">
+        <div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl flex flex-col">
+            <div class="p-6 border-b flex justify-between items-center bg-white sticky top-0 z-10">
+                <h3 id="detail-title" class="font-bold text-slate-800 uppercase tracking-tight">Detail Transaksi</h3>
+                <div class="flex items-center space-x-3">
+                    <button id="btn-print-detail-nota" class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition" title="Cetak Nota"><i data-lucide="printer" class="w-5 h-5"></i></button>
+                    <button onclick="closeModal('detail')" class="text-slate-400 hover:text-slate-600 transition"><i data-lucide="x" class="w-6 h-6"></i></button>
+                </div>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-6">
+                <div id="detail-metadata" class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100 text-sm">
+                    <div><p class="text-[10px] font-bold uppercase text-slate-400">No. Invoice</p><p id="detail-meta-invoice" class="font-bold text-slate-800">-</p></div>
+                    <div><p id="detail-meta-contact-label" class="text-[10px] font-bold uppercase text-slate-400">Pihak Terkait</p><p id="detail-meta-contact-name" class="font-bold text-slate-800">-</p></div>
+                    <div><p class="text-[10px] font-bold uppercase text-slate-400">Status</p><p id="detail-meta-status" class="font-bold">-</p></div>
+                    <div><p class="text-[10px] font-bold uppercase text-slate-400">Total</p><p id="detail-meta-total" class="font-black text-blue-600">-</p></div>
+                </div>
+                <div class="space-y-2">
+                    <p class="text-[10px] font-bold uppercase text-slate-400 px-1">Rincian Item</p>
+                    <div class="border rounded-xl overflow-hidden">
+                        <table class="w-full text-[10px]">
+                            <thead class="bg-slate-50 font-bold uppercase text-[9px] text-slate-500">
+                                <tr>
+                                    <th class="p-3 text-left">No LOG</th>
+                                    <th class="p-3 text-left">Jenis/Grade</th>
+                                    <th class="p-3 text-center">Ukuran (cm)</th>
+                                    <th class="p-3 text-center">Neto</th>
+                                    <th class="p-3 text-center text-red-500">GR</th>
+                                    <th class="p-3 text-right">Harga</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detail-table-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <iframe id="print-frame" style="display:none; visibility:hidden; position:absolute;"></iframe>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, onSnapshot, serverTimestamp, writeBatch, increment, deleteDoc, query, where, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, addDoc, onSnapshot, deleteDoc, serverTimestamp, writeBatch, increment, updateDoc, query, limit } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        // --- FIREBASE CONFIG ---
+        // --- KONFIGURASI ---
         const firebaseConfig = {
             apiKey: "AIzaSyD8m4HiTateYgP-79EmbKkqOG-lBIeikBc",
             authDomain: "log-master-687fd.firebaseapp.com",
             projectId: "log-master-687fd",
             storageBucket: "log-master-687fd.firebasestorage.app",
             messagingSenderId: "1020351029888",
-            appId: "1:1020351029888:web:bb279c7e5ed99d1d7b7c65",
-            measurementId: "G-VPBKS6B9KK"
+            appId: "1:1020351029888:web:47706ebb73f446207b7c65",
+            measurementId: "G-1NB596ZWQ1"
         };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = "log-master-system";
-        const provider = new GoogleAuthProvider();
+        const appId = "log-master-system"; 
 
-        // --- STATE ---
-        let userData = null, isSetupMode = false;
-        let inventory = [], contacts = [], salesData = [], expenses = [], authorizedEmails = [];
-        let tempBatch = [], liveNeto = 0, liveAvgD = 0, liveGR = 0;
+        // --- STATE APLIKASI ---
+        let user = null;
+        let currentUserRole = "Kasir";
+        let companyProfile = { name: "Wood-IT Log", address: "Jl. Raya Utama No. 1", phone: "021-1234567" };
+        let inventoryData = [], contactsData = [], salesData = [], transactionsData = [], usersData = [], expensesData = [];
+        let temporaryBatchWood = [], temporaryBatchSales = [], currentLiveVolWood = 0, currentLiveAvgD = 0, currentLiveVolGR = 0;
 
-        // --- UTILS ---
+        // --- UTILITIES ---
         const refreshIcons = () => { if (window.lucide) window.lucide.createIcons(); };
         const formatCurrency = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n || 0);
 
-        // --- APP SETUP LOGIC ---
-        const setupAppUI = () => {
-            if (!userData) return;
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('app').classList.remove('hidden');
-            document.getElementById('user-info-name').innerText = userData.name;
-            document.getElementById('user-role-badge').innerText = userData.role;
-            if(userData.photo) document.getElementById('user-photo').src = userData.photo;
-            
-            document.querySelectorAll('.admin-only').forEach(el => {
-                userData.role === 'Admin' ? el.classList.remove('hidden') : el.classList.add('hidden');
-            });
-            startSync(); 
-            switchView('dashboard');
-        };
-
-        // --- AUTH ---
-        const checkSetup = async () => {
-            if (!auth.currentUser) return;
-            try {
-                const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'users'));
-                if (snap.empty) {
-                    isSetupMode = true;
-                    document.getElementById('auth-title').innerText = "Inisialisasi Admin";
-                    document.getElementById('auth-desc').innerText = "Gunakan Google Login untuk mendaftarkan Admin Utama sistem.";
-                }
-            } catch (err) { console.error(err); }
-        };
-
-        window.handleGoogleSignIn = async () => {
-            const errEl = document.getElementById('auth-error');
-            errEl.classList.add('hidden');
-            try {
-                const result = await signInWithPopup(auth, provider);
-                const user = result.user;
-                
-                const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', user.uid);
-                const userSnap = await getDoc(userDocRef);
-                
-                if (isSetupMode) {
-                    userData = { email: user.email, name: user.displayName, photo: user.photoURL, role: 'Admin', createdAt: serverTimestamp() };
-                    await setDoc(userDocRef, userData);
-                    isSetupMode = false;
-                    setupAppUI();
-                } else if (userSnap.exists()) {
-                    userData = userSnap.data();
-                    setupAppUI();
-                } else {
-                    const authEmailsSnap = await getDocs(query(collection(db, 'artifacts', appId, 'public', 'data', 'authorized_emails'), where("email", "==", user.email)));
-                    if (!authEmailsSnap.empty) {
-                        const authData = authEmailsSnap.docs[0].data();
-                        userData = { email: user.email, name: user.displayName, photo: user.photoURL, role: authData.role, createdAt: serverTimestamp() };
-                        await setDoc(userDocRef, userData);
-                        setupAppUI();
-                    } else {
-                        await signOut(auth);
-                        errEl.innerText = "Akses Ditolak. Email ini belum didaftarkan Admin ke sistem.";
-                        errEl.classList.remove('hidden');
-                    }
-                }
-            } catch (err) { errEl.innerText = err.message; errEl.classList.remove('hidden'); }
-        };
-
-        window.handleBypassLogin = async () => {
-            try {
-                document.getElementById('loading').classList.remove('hidden');
-                let user = auth.currentUser;
-                // Jika belum ada user (meskipun anonymous), lakukan sign in
-                if (!user) {
-                    const result = await signInAnonymously(auth);
-                    user = result.user;
-                }
-                
-                const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', user.uid);
-                userData = {
-                    email: "bypass@woodit.com",
-                    name: "Admin Bypass",
-                    photo: "https://ui-avatars.com/api/?name=Bypass&background=f59e0b&color=fff",
-                    role: 'Admin',
-                    createdAt: serverTimestamp()
-                };
-                await setDoc(userDocRef, userData);
-                setupAppUI();
-            } catch (err) { 
-                console.error("Bypass Error:", err); 
-                document.getElementById('auth-error').innerText = "Bypass Gagal: " + err.message;
-                document.getElementById('auth-error').classList.remove('hidden');
-            } finally {
-                document.getElementById('loading').classList.add('hidden');
-            }
-        };
-
-        window.handleLogout = () => signOut(auth).then(() => location.reload());
-
-        onAuthStateChanged(auth, async (u) => {
-            if (u) {
-                const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', u.uid));
-                if (snap.exists()) {
-                    userData = snap.data();
-                    setupAppUI();
-                } else { 
-                    checkSetup(); 
-                }
-            } else {
-                document.getElementById('auth-screen').classList.remove('hidden');
-                document.getElementById('app').classList.add('hidden');
-                // Auto anonymous login for checking setup
-                try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token).catch(() => signInAnonymously(auth));
-                    } else { await signInAnonymously(auth); }
-                } catch (e) { await signInAnonymously(auth); }
-            }
-        });
-
-        // --- NAVIGATION ---
-        window.switchView = (view) => {
-            if (!userData) return;
-            if ((view === 'reports' || view === 'settings') && userData.role !== 'Admin') view = 'dashboard';
-            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(`view-${view}`).classList.remove('hidden');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-nav'));
-            const btn = document.getElementById(`nav-${view}`); if(btn) btn.classList.add('active-nav');
-            refreshIcons();
-        };
-
-        window.openModal = (id, sub = '') => {
-            document.getElementById(`${id}-modal`).classList.remove('hidden');
-            if (id === 'contact') { document.getElementById('contact-type').value = sub; document.getElementById('contact-modal-title').innerText = `Tambah ${sub}`; }
-            if (id === 'wood' || id === 'sales') { tempBatch = []; renderBatch(id); updateSelects(); }
-            refreshIcons();
-        };
-        window.closeModal = (id) => document.getElementById(`${id}-modal`).classList.add('hidden');
-
-        // --- CORE LOGIC (VOLUME) ---
-        window.liveUpdateCalc = () => {
-            const d1 = parseFloat(document.getElementById('log-d1').value)||0, d2 = parseFloat(document.getElementById('log-d2').value)||0;
-            const d3 = parseFloat(document.getElementById('log-d3').value)||0, d4 = parseFloat(document.getElementById('log-d4').value)||0;
-            const p = parseFloat(document.getElementById('log-p').value)||0, trim = parseFloat(document.getElementById('log-trim').value)||0, gr = parseFloat(document.getElementById('log-gr').value)||0;
-            liveAvgD = Math.round((d1+d2+d3+d4)/4);
-            document.getElementById('res-live-avg-d').innerText = `${liveAvgD} cm`;
-            const pEff = (p - trim)/100, pOrig = p/100;
-            const volBruto = (0.7854 * Math.pow(liveAvgD, 2) * pEff) / 10000;
-            liveGR = (0.7854 * Math.pow(gr, 2) * pOrig) / 10000;
-            liveNeto = Math.max(0, volBruto - liveGR);
-            document.getElementById('res-live-vol-wood').innerText = `${liveNeto.toFixed(2)} m³`;
-            document.getElementById('res-live-vol-gr').innerText = `${liveGR.toFixed(2)} m³`;
-        };
-
-        window.addItemToBatch = (mod) => {
-            if (mod === 'wood') {
-                const type = document.getElementById('wood-type').value, price = parseFloat(document.getElementById('wood-price').value)||0;
-                if (!type || price <= 0 || liveNeto <= 0) return;
-                tempBatch.push({ type, unitVolume: parseFloat(liveNeto.toFixed(2)), volGR: parseFloat(liveGR.toFixed(2)), totalPrice: price });
-            } else {
-                const type = document.getElementById('sales-wood-type').value, vol = parseFloat(document.getElementById('sales-wood-vol').value)||0, price = parseFloat(document.getElementById('sales-wood-price').value)||0;
-                if (!type || vol <= 0 || price <= 0) return;
-                tempBatch.push({ type, volume: vol, price, stockId: document.getElementById('sales-stock-select').value });
-            }
-            renderBatch(mod);
-        };
-
-        const renderBatch = (mod) => {
-            const tb = document.getElementById(`${mod}-batch-table`);
-            if (tb) {
-                tb.innerHTML = tempBatch.map((i, idx) => `<tr class="border-b"><td class="p-3">${i.type}</td><td class="p-3 text-center font-bold">${(i.unitVolume || i.volume).toFixed(2)}</td><td class="p-3 text-right"><button onclick="tempBatch.splice(${idx},1); renderBatch('${mod}');" class="text-red-500">Hapus</button></td></tr>`).join('');
-                document.getElementById(`btn-save-batch-${mod}`).disabled = tempBatch.length === 0;
-            }
-        };
-
-        window.submitBatchToFirebase = async () => {
-            const nota = document.getElementById('wood-nota').value, sid = document.getElementById('wood-supplier-select').value;
-            if(!nota || !sid) return;
-            const batch = writeBatch(db);
-            let totalVal = 0;
-            tempBatch.forEach(i => {
-                totalVal += i.totalPrice;
-                batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'inventory')), { ...i, nota, supplierId: sid, createdAt: serverTimestamp() });
-            });
-            batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', sid), { balance: increment(totalVal) });
-            await batch.commit(); closeModal('wood'); alert("Stok Disimpan!");
-        };
-
-        window.submitBatchSales = async () => {
-            const nota = document.getElementById('sales-nota').value, cid = document.getElementById('sales-customer-select').value;
-            if(!nota || !cid) return;
-            const batch = writeBatch(db);
-            let totalVal = 0;
-            tempBatch.forEach(i => {
-                totalVal += i.price;
-                batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'sales')), { ...i, nota, customerId: cid, createdAt: serverTimestamp() });
-                if(i.stockId) batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', i.stockId));
-            });
-            batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', cid), { balance: increment(totalVal) });
-            await batch.commit(); closeModal('sales'); alert("Penjualan Disimpan!");
-        };
-
-        window.submitExpense = async () => {
-            const cat = document.getElementById('exp-cat').value, amt = parseFloat(document.getElementById('exp-amt').value)||0, note = document.getElementById('exp-note').value;
-            if(!amt) return;
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), { category: cat, amount: amt, note, createdAt: serverTimestamp() });
-            closeModal('expense');
-        };
-
-        window.submitContact = async () => {
-            const type = document.getElementById('contact-type').value, name = document.getElementById('contact-name').value;
-            if(!name) return;
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), { type, name, balance: 0, createdAt: serverTimestamp() });
-            closeModal('contact');
-        };
-
-        // --- SETTINGS LOGIC ---
-        window.authorizeEmail = async () => {
-            const email = document.getElementById('auth-new-email').value, role = document.getElementById('auth-new-role').value;
-            if(!email) return;
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'authorized_emails'), { email, role, createdAt: serverTimestamp() });
-            alert("Email berhasil diotorisasi!");
-        };
-
-        window.saveCompanyProfile = async () => {
-            const name = document.getElementById('setting-company-name').value;
-            const address = document.getElementById('setting-company-address').value;
-            const phone = document.getElementById('setting-company-phone').value;
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), { name, address, phone, updatedAt: serverTimestamp() });
-            alert("Profil berhasil disimpan!");
-        };
-
-        // --- DATA SYNC ---
-        const startSync = () => {
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'inventory'), s => { inventory = s.docs.map(d=>({id:d.id, ...d.data()})); renderInventory(); updateStats(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), s => { salesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderSales(); updateStats(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), s => { expenses = s.docs.map(d=>({id:d.id, ...d.data()})); renderExpenses(); updateStats(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), s => { contacts = s.docs.map(d=>({id:d.id, ...d.data()})); renderContacts(); updateSelects(); updateStats(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'authorized_emails'), s => {
-                authorizedEmails = s.docs.map(d=>({id:d.id, ...d.data()}));
-                const tb = document.getElementById('auth-emails-table');
-                if(tb) tb.innerHTML = authorizedEmails.map(a => `<tr><td class="p-4 font-bold">${a.email}</td><td class="p-4">${a.role}</td><td class="p-4"><button onclick="deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'authorized_emails', '${a.id}'))" class="text-red-500">Hapus</button></td></tr>`).join('');
-            });
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), d => {
-                if(d.exists()) {
-                    const data = d.data();
-                    document.getElementById('sidebar-company-name').innerText = data.name || 'Wood-IT Log';
-                    document.getElementById('setting-company-name').value = data.name || '';
-                    document.getElementById('setting-company-address').value = data.address || '';
-                    document.getElementById('setting-company-phone').value = data.phone || '';
-                }
-            });
-        };
-
-        // --- RENDER FUNCTIONS ---
+        // --- RENDER & STATS FUNCTIONS ---
         const renderInventory = () => {
-            const grouped = inventory.reduce((a,c)=>{ if(!a[c.nota]) a[c.nota] = { nota:c.nota, sid:c.supplierId, vol:0, prc:0 }; a[c.nota].vol += c.unitVolume; a[c.nota].prc += c.totalPrice; return a; }, {});
+            const grouped = inventoryData.reduce((acc, i) => { 
+                if(!acc[i.nota]) acc[i.nota] = { nota: i.nota, sid: i.supplierId, vol: 0, prc: 0, st: i.paymentStatus }; 
+                acc[i.nota].vol += (i.unitVolume || 0); 
+                acc[i.nota].prc += (i.totalPrice || 0); 
+                return acc; 
+            }, {});
             const tbody = document.getElementById('inventory-table-body');
-            if(tbody) tbody.innerHTML = Object.values(grouped).map(n => `<tr><td class="p-4 font-bold text-blue-600">${n.nota}</td><td class="p-4">${contacts.find(c=>c.id===n.sid)?.name||'-'}</td><td class="p-4 text-center font-black">${n.vol.toFixed(2)}</td><td class="p-4 text-right font-bold">${formatCurrency(n.prc)}</td><td class="p-4 text-right"><button onclick="deleteNota('${n.nota}')" class="text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
+            if (tbody) {
+                tbody.innerHTML = Object.values(grouped).map(n => `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="px-6 py-4 font-bold text-blue-600">${n.nota}</td>
+                        <td class="px-6 py-4">${contactsData.find(c=>c.id===n.sid)?.name||'N/A'}</td>
+                        <td class="px-6 py-4 text-center font-bold text-xs uppercase">${n.st}</td>
+                        <td class="px-6 py-4 text-center font-bold">${n.vol.toFixed(2)}</td>
+                        <td class="px-6 py-4 text-right">${formatCurrency(n.prc)}</td>
+                        <td class="px-6 py-4 text-right no-print flex justify-end space-x-2">
+                            <button onclick="showDetail('inventory','${n.nota}')" class="p-1.5 text-slate-400 bg-slate-100 rounded-lg"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                            <button onclick="handleDeleteInventory('${n.nota}')" class="p-1.5 text-red-500 bg-red-50 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
+                    </tr>`).join('');
+            }
             refreshIcons();
         };
 
         const renderSales = () => {
-            const grouped = salesData.reduce((a,c)=>{ if(!a[c.nota]) a[c.nota] = { nota:c.nota, cid:c.customerId, vol:0, prc:0 }; a[c.nota].vol += c.volume; a[c.nota].prc += c.price; return a; }, {});
+            const grouped = salesData.reduce((acc, i) => { 
+                if(!acc[i.nota]) acc[i.nota] = { nota: i.nota, cid: i.customerId, vol: 0, prc: 0, st: i.paymentStatus }; 
+                acc[i.nota].vol += (i.volume || 0); 
+                acc[i.nota].prc += (i.price || 0); 
+                return acc; 
+            }, {});
             const tbody = document.getElementById('sales-table-body');
-            if(tbody) tbody.innerHTML = Object.values(grouped).map(n => `<tr><td class="p-4 font-bold text-blue-600">${n.nota}</td><td class="p-4">${contacts.find(c=>c.id===n.cid)?.name||'-'}</td><td class="p-4 text-center font-black">${n.vol.toFixed(2)}</td><td class="p-4 text-right font-bold">${formatCurrency(n.prc)}</td><td class="p-4 text-right">SJ/Inv</td></tr>`).join('');
+            if (tbody) {
+                tbody.innerHTML = Object.values(grouped).map(n => `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="px-6 py-4 font-bold text-blue-600">${n.nota}</td>
+                        <td class="px-6 py-4">${contactsData.find(c=>c.id===n.cid)?.name||'N/A'}</td>
+                        <td class="px-6 py-4 text-center font-bold text-xs uppercase">${n.st}</td>
+                        <td class="px-6 py-4 text-center font-bold">${n.vol.toFixed(2)}</td>
+                        <td class="px-6 py-4 text-right">${formatCurrency(n.prc)}</td>
+                        <td class="px-6 py-4 text-right no-print flex justify-end space-x-2">
+                            <button onclick="showDetail('sales','${n.nota}')" class="p-1.5 text-slate-400 bg-slate-100 rounded-lg"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                            <button onclick="handleDeleteSales('${n.nota}')" class="p-1.5 text-red-500 bg-red-50 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
+                    </tr>`).join('');
+            }
+            refreshIcons();
         };
 
         const renderExpenses = () => {
             const tbody = document.getElementById('expenses-table-body');
-            if(tbody) tbody.innerHTML = expenses.map(e => `<tr><td class="p-4">${e.createdAt?.toDate()?.toLocaleDateString()||'-'}</td><td class="p-4 font-bold text-rose-600">${e.category}</td><td class="p-4 italic">${e.note}</td><td class="p-4 text-right">${formatCurrency(e.amount)}</td><td class="p-4 text-right">X</td></tr>`).join('');
-        };
-
-        const renderContacts = () => {
-            const gen = (c) => `<div class="bg-white p-6 rounded-2xl border shadow-sm">
-                <div class="flex justify-between mb-2"><div class="p-2 bg-slate-100 rounded-lg"><i data-lucide="user" class="w-4 h-4"></i></div><div class="font-black ${c.balance>0?'text-red-500':'text-slate-400'}">${formatCurrency(c.balance)}</div></div>
-                <h4 class="font-bold">${c.name}</h4><p class="text-[9px] uppercase font-bold text-slate-400">Saldo ${c.type}</p>
-            </div>`;
-            document.getElementById('suppliers-list').innerHTML = contacts.filter(c=>c.type==='supplier').map(gen).join('');
-            document.getElementById('customers-list').innerHTML = contacts.filter(c=>c.type==='customer').map(gen).join('');
+            if (tbody) {
+                tbody.innerHTML = expensesData.sort((a,b)=>b.createdAt?.seconds - a.createdAt?.seconds).map(e => `
+                    <tr>
+                        <td class="px-6 py-4 text-xs text-slate-400">${e.createdAt?.toDate()?.toLocaleDateString() || '-'}</td>
+                        <td class="px-6 py-4 font-bold text-rose-600">${e.category}</td>
+                        <td class="px-6 py-4 italic text-slate-500">${e.note || '-'}</td>
+                        <td class="px-6 py-4 text-right font-black">${formatCurrency(e.amount)}</td>
+                        <td class="px-6 py-4 text-right no-print"><button onclick="deleteExpense('${e.id}')" class="text-slate-300 hover:text-red-500 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+                    </tr>`).join('');
+            }
             refreshIcons();
         };
 
-        const updateStats = () => {
-            const vTot = inventory.reduce((a,c)=>a+(c.unitVolume||0),0);
-            const valStok = inventory.reduce((a,c)=>a+(c.totalPrice||0),0);
-            const hutang = contacts.filter(c=>c.type==='supplier').reduce((a,c)=>a+(c.balance||0),0);
-            const piutang = contacts.filter(c=>c.type==='customer').reduce((a,c)=>a+(c.balance||0),0);
-            const rev = salesData.reduce((a,c)=>a+(c.price||0),0);
-            const exp = expenses.reduce((a,c)=>a+(c.amount||0),0);
+        const renderContacts = () => {
+            const gen = (c) => `
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4">
+                    <div class="flex justify-between items-start">
+                        <div class="p-3 bg-slate-100 rounded-xl"><i data-lucide="${c.type === 'supplier' ? 'truck' : 'users'}" class="w-5 h-5 text-slate-600"></i></div>
+                        <div class="text-right">
+                            <div class="text-[10px] font-bold uppercase text-slate-400">${c.type === 'supplier' ? 'Hutang' : 'Piutang'}</div>
+                            <div class="font-bold text-lg ${c.balance > 0 ? 'text-red-600' : 'text-slate-400'}">${formatCurrency(c.balance)}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900">${c.name}</h4>
+                        <p class="text-xs text-slate-500 truncate">${c.address || 'Tanpa Alamat'}</p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-50 flex gap-2">
+                        <button onclick="promptPayment('${c.id}','${c.type}')" class="flex-1 py-2 bg-slate-50 text-xs font-bold rounded-lg hover:bg-slate-100 transition">Bayar / Cicil</button>
+                        <button onclick="handleDeleteContact('${c.id}')" class="p-2 text-red-400 hover:text-red-600 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                </div>`;
+            const sl = document.getElementById('suppliers-list');
+            if (sl) sl.innerHTML = contactsData.filter(c => c.type === 'supplier').map(gen).join('');
+            const cl = document.getElementById('customers-list');
+            if (cl) cl.innerHTML = contactsData.filter(c => c.type === 'customer').map(gen).join('');
+            refreshIcons();
+        };
 
-            document.getElementById('stat-total-volume').innerText = `${vTot.toFixed(2)} m³`;
-            document.getElementById('stat-total-price').innerText = formatCurrency(valStok);
-            document.getElementById('stat-total-debt').innerText = formatCurrency(hutang);
-            document.getElementById('stat-total-receivable').innerText = formatCurrency(piutang);
+        const renderTransactions = () => {
+            const tb = document.getElementById('cashflow-table-body');
+            if(tb) tb.innerHTML = transactionsData.sort((a,b)=>b.time?.seconds-a.time?.seconds).map(t => `<tr class="hover:bg-slate-50"><td class="px-6 py-4 text-xs text-slate-400">${t.time?.toDate()?.toLocaleString() || ''}</td><td class="px-6 py-4 font-medium text-slate-700">${t.note}</td><td class="px-6 py-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${t.type==='in'?'bg-green-100 text-green-700':'bg-orange-100 text-orange-700'}">${t.type}</span></td><td class="px-6 py-4 text-right font-bold ${t.type==='in'?'text-green-600':'text-orange-600'}">${formatCurrency(t.amount)}</td></tr>`).join('');
+        };
 
-            if(userData?.role === 'Admin') {
-                document.getElementById('rep-sales').innerText = formatCurrency(rev);
-                document.getElementById('rep-cogs').innerText = formatCurrency(valStok);
-                document.getElementById('rep-expenses').innerText = formatCurrency(exp);
-                document.getElementById('rep-profit').innerText = formatCurrency(rev - valStok - exp);
+        const renderUsersTable = () => {
+            const tbody = document.getElementById('users-table-body');
+            if (tbody) {
+                tbody.innerHTML = usersData.map(u => `
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-6 py-4 font-mono text-[10px] text-slate-500">${u.id}</td>
+                        <td class="px-6 py-4"><span class="px-2 py-1 rounded text-[10px] font-bold ${u.role === 'Admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'}">${u.role || 'Kasir'}</span></td>
+                        <td class="px-6 py-4 text-xs text-slate-400">${u.lastLogin?.toDate()?.toLocaleString() || '-'}</td>
+                        <td class="px-6 py-4 text-right">${(u.id !== auth.currentUser?.uid) ? `<button onclick="updateUserRole('${u.id}', '${u.role === 'Admin' ? 'Kasir' : 'Admin'}')" class="text-[10px] font-bold text-indigo-600 uppercase">Ubah Role</button>` : '-'}</td>
+                    </tr>`).join('');
             }
-            document.getElementById('loading').classList.add('hidden');
+        };
+
+        const updateAllStats = () => {
+            const vol = inventoryData.reduce((a,c)=>a+(c.unitVolume||0),0);
+            const stockVal = inventoryData.reduce((a,c)=>a+(c.totalPrice||0),0);
+            const totalExp = expensesData.reduce((a,c)=>a+(c.amount||0),0);
+            const revNota = salesData.reduce((a,c)=>a+(c.price||0),0);
+            const hppNota = inventoryData.reduce((a,c)=>a+(c.totalPrice||0),0);
+            const piutangTotal = contactsData.filter(c=>c.type==='customer').reduce((a,c)=>a+(c.balance||0),0);
+            const hutangTotal = contactsData.filter(c=>c.type==='supplier').reduce((a,c)=>a+(c.balance||0),0);
+            const cin = transactionsData.filter(t=>t.type==='in').reduce((a,t)=>a+(t.amount||0),0);
+            const cout = transactionsData.filter(t=>t.type==='out').reduce((a,t)=>a+(t.amount||0),0);
+            
+            const elVol = document.getElementById('stat-total-volume'); if(elVol) elVol.innerText = `${vol.toFixed(2)} m³`;
+            const elPrc = document.getElementById('stat-total-price'); if(elPrc) elPrc.innerText = formatCurrency(stockVal);
+            const elDebt = document.getElementById('stat-total-debt'); if(elDebt) elDebt.innerText = formatCurrency(hutangTotal);
+            const elRec = document.getElementById('stat-total-receivable'); if(elRec) elRec.innerText = formatCurrency(piutangTotal);
+            
+            const repRev = document.getElementById('report-total-revenue'); if(repRev) repRev.innerText = formatCurrency(revNota);
+            const repCogs = document.getElementById('report-total-cogs'); if(repCogs) repCogs.innerText = formatCurrency(hppNota);
+            const repExp = document.getElementById('report-total-expenses'); if(repExp) repExp.innerText = `-${formatCurrency(totalExp)}`;
+            
+            const gross = revNota - hppNota;
+            const elGross = document.getElementById('report-gross-profit-accrual'); if(elGross) elGross.innerText = formatCurrency(gross);
+            const elCashIn = document.getElementById('report-cash-in'); if(elCashIn) elCashIn.innerText = formatCurrency(cin);
+            const elCashOut = document.getElementById('report-cash-out'); if(elCashOut) elCashOut.innerText = formatCurrency(cout);
+            const elNetCash = document.getElementById('report-net-cash'); if(elNetCash) elNetCash.innerText = formatCurrency(cin - cout);
+
+            const loading = document.getElementById('loading');
+            if (loading) loading.classList.add('hidden');
         };
 
         const updateSelects = () => {
-            const sups = contacts.filter(c=>c.type==='supplier');
-            const custs = contacts.filter(c=>c.type==='customer');
-            document.getElementById('wood-supplier-select').innerHTML = sups.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
-            document.getElementById('sales-customer-select').innerHTML = custs.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-            document.getElementById('sales-stock-select').innerHTML = '<option value="">-- Manual --</option>' + inventory.map(i=>`<option value="${i.id}">${i.type} (${i.unitVolume.toFixed(2)}) - ${i.nota}</option>`).join('');
+            const suppliers = contactsData.filter(c => c.type === 'supplier');
+            const customers = contactsData.filter(c => c.type === 'customer');
+            const ws = document.getElementById('wood-supplier-select');
+            if(ws) ws.innerHTML = suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            const cs = document.getElementById('sales-customer-select');
+            if(cs) cs.innerHTML = customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            const ss = document.getElementById('sales-stock-item-select');
+            if(ss) ss.innerHTML = '<option value="">-- Pilih Stok --</option>' + inventoryData.map(i => `<option value="${i.id}">${i.type} (${(i.unitVolume||0).toFixed(2)}) - ${i.nota}</option>`).join('');
         };
 
-        window.fillSalesFromStock = () => {
-            const id = document.getElementById('sales-stock-select').value;
-            const item = inventory.find(i=>i.id===id);
-            if(item) { document.getElementById('sales-wood-type').value = item.type; document.getElementById('sales-wood-vol').value = item.unitVolume; }
+        const startSync = () => {
+            if (!auth.currentUser) return;
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'inventory'), s => { inventoryData = s.docs.map(d=>({id:d.id, ...d.data()})); renderInventory(); updateAllStats(); }, (e)=>console.error(e));
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), s => { contactsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderContacts(); updateSelects(); updateAllStats(); }, (e)=>console.error(e));
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), s => { salesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderSales(); updateAllStats(); }, (e)=>console.error(e));
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'transactions'), s => { transactionsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderTransactions(); updateAllStats(); }, (e)=>console.error(e));
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), s => { expensesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderExpenses(); updateAllStats(); }, (e)=>console.error(e));
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), s => { usersData = s.docs.map(d=>({id:d.id, ...d.data()})); renderUsersTable(); }, (e)=>console.error(e));
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), s => { 
+                if(s.exists()){ 
+                    companyProfile = s.data(); 
+                    const elSide = document.getElementById('sidebar-company-name'); if(elSide) elSide.innerText = companyProfile.name; 
+                    const elWel = document.getElementById('welcome-title'); if(elWel) elWel.innerText = `Dashboard ${companyProfile.name}`; 
+                    const elSN = document.getElementById('setting-company-name'); if(elSN) elSN.value = companyProfile.name || "";
+                    const elSA = document.getElementById('setting-company-address'); if(elSA) elSA.value = companyProfile.address || "";
+                    const elSP = document.getElementById('setting-company-phone'); if(elSP) elSP.value = companyProfile.phone || "";
+                } 
+            }, (e)=>console.error(e));
         };
 
-        window.deleteNota = async (nota) => {
-            if(!confirm(`Hapus seluruh item nota ${nota}?`)) return;
-            inventory.filter(i=>i.nota === nota).forEach(async i => await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', i.id)));
+        // --- MANAJEMEN ROLE & AKSES ---
+        const updateUIAccess = () => {
+            document.querySelectorAll('.admin-only').forEach(el => currentUserRole === "Admin" ? el.classList.remove('hidden') : el.classList.add('hidden'));
+            const badge = document.getElementById('user-role-badge');
+            if (badge) {
+                badge.innerText = currentUserRole;
+                badge.className = `text-[9px] font-bold uppercase tracking-tighter px-2 py-0.5 rounded mb-4 inline-block ${currentUserRole === 'Admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-800 text-slate-400'}`;
+            }
         };
 
-        refreshIcons();
+        const registerCurrentUser = async (u, role = "Kasir") => {
+            if (!u || !auth.currentUser) return;
+            try { 
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', u.uid), { 
+                    lastLogin: serverTimestamp(), 
+                    role: role 
+                }, { merge: true }); 
+            } catch (err) { console.error(err); }
+        };
+
+        const syncUserRole = (u) => {
+            if (!u) return;
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', u.uid);
+            onSnapshot(docRef, (snap) => {
+                if (snap.exists()) { 
+                    currentUserRole = snap.data().role || "Kasir"; 
+                } else { 
+                    currentUserRole = usersData.length === 0 ? "Admin" : "Kasir"; 
+                    registerCurrentUser(u, currentUserRole); 
+                }
+                updateUIAccess();
+            });
+        };
+
+        // --- EXPORT FUNCTIONS ---
+        window.exportToExcel = () => {
+            const data = [
+                { Kategori: "Total Penjualan", Nilai: document.getElementById('report-total-revenue').innerText },
+                { Kategori: "Total Pembelian", Nilai: document.getElementById('report-total-cogs').innerText },
+                { Kategori: "Total Biaya & Beban", Nilai: document.getElementById('report-total-expenses').innerText },
+                { Kategori: "Potensi Laba Kotor", Nilai: document.getElementById('report-gross-profit-accrual').innerText },
+                { Kategori: "Saldo Kas Saat Ini", Nilai: document.getElementById('report-net-cash').innerText }
+            ];
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Laporan Keuangan");
+            XLSX.writeFile(wb, "Laporan_Keuangan_WoodIT.xlsx");
+        };
+
+        window.exportToPDF = () => {
+            const element = document.getElementById('report-content-to-export');
+            const opt = { margin: 10, filename: 'Laporan_Keuangan_WoodIT.pdf', jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+            html2pdf().set(opt).from(element).save();
+        };
+
+        window.exportInventoryToExcel = () => {
+            const data = inventoryData.map(i => ({
+                Nota: i.nota,
+                Supplier: contactsData.find(c=>c.id===i.supplierId)?.name || '-',
+                Status: i.paymentStatus,
+                Volume: i.unitVolume.toFixed(2),
+                Total: i.totalPrice
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Inventory");
+            XLSX.writeFile(wb, "Stok_Log_WoodIT.xlsx");
+        };
+
+        window.exportInventoryToPDF = () => {
+            const element = document.getElementById('inventory-content-to-export');
+            const opt = { margin: 10, filename: 'Stok_Log_WoodIT.pdf', jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' } };
+            html2pdf().set(opt).from(element).save();
+        };
+
+        window.exportExpensesToExcel = () => {
+            const data = expensesData.map(e => ({
+                Tanggal: e.createdAt?.toDate()?.toLocaleDateString() || '-',
+                Kategori: e.category,
+                Keterangan: e.note || '-',
+                Nominal: e.amount
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Expenses");
+            XLSX.writeFile(wb, "Biaya_Beban_WoodIT.xlsx");
+        };
+
+        // --- FORM HANDLERS ---
+        window.handleExpenseSubmit = async (e) => {
+            e.preventDefault();
+            const category = document.getElementById('expense-category').value;
+            const amount = parseFloat(document.getElementById('expense-amount').value);
+            const note = document.getElementById('expense-note').value;
+            const batch = writeBatch(db);
+            batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'expenses')), { category, amount, note, createdAt: serverTimestamp() });
+            batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount, note: `Biaya: ${category} - ${note}`, time: serverTimestamp() });
+            await batch.commit();
+            closeModal('expense');
+            document.getElementById('expense-form').reset();
+        };
+
+        window.handleContactSubmit = async (e) => {
+            e.preventDefault();
+            const type = document.getElementById('contact-type').value;
+            const name = document.getElementById('contact-name').value;
+            const phone = document.getElementById('contact-phone').value;
+            const address = document.getElementById('contact-address').value;
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), { type, name, phone, address, balance: 0, createdAt: serverTimestamp() });
+            closeModal('contact');
+            document.getElementById('contact-form').reset();
+        };
+
+        // --- AUTH & INIT ---
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token && __initial_auth_token.trim() !== "") {
+                    try { await signInWithCustomToken(auth, __initial_auth_token); } catch (err) { await signInAnonymously(auth); }
+                } else { await signInAnonymously(auth); }
+            } catch (error) { await signInAnonymously(auth); }
+        };
+
+        // --- UI & EVENT HANDLERS ---
+        window.switchView = (view) => {
+            if ((view === 'reports' || view === 'settings') && currentUserRole !== 'Admin') { switchView('dashboard'); return; }
+            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            const target = document.getElementById(`view-${view}`); if(target) target.classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('bg-amber-600', 'text-white'));
+            const btn = document.getElementById(`nav-${view}`); if (btn) btn.classList.add('bg-amber-600', 'text-white');
+            refreshIcons();
+        };
+
+        window.openModal = (type, subType = '') => {
+            if (type === 'wood') { 
+                temporaryBatchWood = []; 
+                const m = document.getElementById('wood-modal'); 
+                if(m) m.classList.remove('hidden'); 
+                updateSelects(); 
+                // Reset Indicators
+                document.getElementById('res-live-avg-d').innerText = "0 cm";
+                document.getElementById('res-live-vol-gr').innerText = "0.00 m³";
+                document.getElementById('res-live-vol-wood').innerText = "0.00 m³";
+            }
+            else if (type === 'sales') { temporaryBatchSales = []; const m = document.getElementById('sales-modal'); if(m) m.classList.remove('hidden'); updateSelects(); }
+            else if (type === 'expense') { const m = document.getElementById('expense-modal'); if(m) m.classList.remove('hidden'); }
+            else if (type === 'contact') { 
+                const elType = document.getElementById('contact-type'); if(elType) elType.value = subType; 
+                const elTitle = document.getElementById('contact-modal-title'); if(elTitle) elTitle.innerText = `Tambah ${subType}`; 
+                const m = document.getElementById('contact-modal'); if(m) m.classList.remove('hidden'); 
+            }
+            refreshIcons();
+        };
+        window.closeModal = (type) => { const m = document.getElementById(`${type}-modal`); if(m) m.classList.add('hidden'); };
+        
+        window.toggleDPInput = (p) => { 
+            const s = document.getElementById(`${p}-payment-status`).value, f = document.getElementById(`${p}-dp-amount`);
+            if(s==='DP') f.classList.remove('hidden'); else f.classList.add('hidden');
+        };
+
+        window.liveUpdateCalc = () => {
+            const d1 = parseFloat(document.getElementById('log-d1').value)||0, 
+                  d2 = parseFloat(document.getElementById('log-d2').value)||0, 
+                  d3 = parseFloat(document.getElementById('log-d3').value)||0, 
+                  d4 = parseFloat(document.getElementById('log-d4').value)||0;
+            const p = parseFloat(document.getElementById('log-p').value)||0, 
+                  trim = parseFloat(document.getElementById('log-trim').value)||0, 
+                  gr = parseFloat(document.getElementById('log-gr').value)||0;
+
+            // Rata-rata diameter aktual
+            currentLiveAvgD = Math.round((d1 + d2 + d3 + d4) / 4);
+            const elAvg = document.getElementById('res-live-avg-d'); if(elAvg) elAvg.innerText = `${currentLiveAvgD} cm`;
+
+            if (d1||d2||d3||d4||p) {
+                const pEff = (p - trim)/100;
+                
+                // Volume Neto: Menggunakan diameter bersih (Rata-rata - GR)
+                const dNeto = Math.max(0, currentLiveAvgD - gr); 
+                currentLiveVolWood = (0.7854 * Math.pow(dNeto, 2) * pEff)/10000;
+                
+                // Volume GR: Rumus volume menggunakan nilai diameter GR secara langsung
+                currentLiveVolGR = (0.7854 * Math.pow(gr, 2) * pEff)/10000;
+
+                const elVolNet = document.getElementById('res-live-vol-wood'); if(elVolNet) elVolNet.innerText = `${currentLiveVolWood.toFixed(2)} m³`;
+                const elVolGR = document.getElementById('res-live-vol-gr'); if(elVolGR) elVolGR.innerText = `${currentLiveVolGR.toFixed(2)} m³`;
+            }
+        };
+
+        window.addItemToBatch = (type) => {
+            if (type === 'wood') {
+                const prc = parseFloat(document.getElementById('wood-price').value)||0, woodType = document.getElementById('wood-type').value, noLog = document.getElementById('log-no').value, grade = document.getElementById('log-grade').value;
+                if (!currentLiveVolWood||prc<=0||!woodType) return;
+                temporaryBatchWood.push({ 
+                    tempId: Date.now(), 
+                    type: woodType, 
+                    noLog, 
+                    grade, 
+                    unitVolume: parseFloat(currentLiveVolWood.toFixed(2)), 
+                    volGR: parseFloat(currentLiveVolGR.toFixed(2)), 
+                    totalPrice: prc, 
+                    measurements: { d1: parseFloat(document.getElementById('log-d1').value)||0, d2: parseFloat(document.getElementById('log-d2').value)||0, d3: parseFloat(document.getElementById('log-d3').value)||0, d4: parseFloat(document.getElementById('log-d4').value)||0, avgD: currentLiveAvgD, p: parseFloat(document.getElementById('log-p').value)||0, trim: parseFloat(document.getElementById('log-trim').value)||0, gr: parseFloat(document.getElementById('log-gr').value)||0 } 
+                });
+                ['log-no','log-grade','log-d1','log-d2','log-d3','log-d4','log-p','log-trim','log-gr','wood-price'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
+                // Reset live indicators
+                document.getElementById('res-live-avg-d').innerText = "0 cm";
+                document.getElementById('res-live-vol-gr').innerText = "0.00 m³";
+                document.getElementById('res-live-vol-wood').innerText = "0.00 m³";
+            } else {
+                const vol = parseFloat(document.getElementById('sales-wood-vol').value)||0, prc = parseFloat(document.getElementById('sales-wood-price').value)||0;
+                if (!vol||!prc) return;
+                const mode = document.querySelector('input[name="sales-mode"]:checked')?.value || 'manual';
+                temporaryBatchSales.push({ tempId: Date.now(), woodType: document.getElementById('sales-wood-type').value, volume: parseFloat(vol.toFixed(2)), price: prc, mode, stockId: document.getElementById('sales-stock-item-select').value });
+            }
+            const list = type === 'wood' ? temporaryBatchWood : temporaryBatchSales;
+            const tb = document.getElementById(`${type}-batch-table`);
+            if (tb) {
+                tb.innerHTML = list.map((i, idx) => `
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="p-2 font-mono">${i.noLog||'-'}</td>
+                        <td class="p-2">${i.type||i.woodType} ${i.grade||''}</td>
+                        <td class="p-2 text-center font-bold">${(i.unitVolume||i.volume).toFixed(2)}</td>
+                        <td class="p-2 text-center text-red-500 font-medium">${i.volGR !== undefined ? i.volGR.toFixed(2) : '-'}</td>
+                        <td class="p-2 text-right"><button onclick="removeFromBatch('${type}', ${idx})" class="text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+                    </tr>`).join('');
+            }
+            const btn = document.getElementById(`btn-save-batch-${type}`); if(btn) btn.disabled = list.length === 0;
+            refreshIcons();
+        };
+
+        window.removeFromBatch = (type, idx) => {
+            if(type === 'wood') temporaryBatchWood.splice(idx, 1); else temporaryBatchSales.splice(idx, 1);
+            const list = type === 'wood' ? temporaryBatchWood : temporaryBatchSales;
+            const tb = document.getElementById(`${type}-batch-table`);
+            if (tb) {
+                tb.innerHTML = list.map((i, idx) => `
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="p-2 font-mono">${i.noLog||'-'}</td>
+                        <td class="p-2">${i.type||i.woodType} ${i.grade||''}</td>
+                        <td class="p-2 text-center font-bold">${(i.unitVolume||i.volume).toFixed(2)}</td>
+                        <td class="p-2 text-center text-red-500 font-medium">${i.volGR !== undefined ? i.volGR.toFixed(2) : '-'}</td>
+                        <td class="p-2 text-right"><button onclick="removeFromBatch('${type}', ${idx})" class="text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+                    </tr>`).join('');
+            }
+            const btn = document.getElementById(`btn-save-batch-${type}`); if(btn) btn.disabled = list.length === 0;
+            refreshIcons();
+        };
+
+        window.submitBatchToFirebase = async () => {
+            if (!auth.currentUser) return;
+            const nota = document.getElementById('wood-nota').value, sid = document.getElementById('wood-supplier-select').value, status = document.getElementById('wood-payment-status').value, dp = parseFloat(document.getElementById('wood-dp-amount').value)||0;
+            if (!nota || !sid) { alert("Nomor Nota dan Supplier wajib diisi."); return; }
+            const batch = writeBatch(db);
+            let total = 0;
+            temporaryBatchWood.forEach(i => { 
+                total += i.totalPrice; 
+                batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'inventory')), { 
+                    type: i.type, 
+                    noLog: i.noLog, 
+                    grade: i.grade, 
+                    unitVolume: i.unitVolume, 
+                    volGR: i.volGR || 0, // Menyimpan Vol GR ke DB
+                    totalPrice: i.totalPrice, 
+                    measurements: i.measurements, 
+                    nota, 
+                    supplierId: sid, 
+                    paymentStatus: status, 
+                    createdAt: serverTimestamp() 
+                }); 
+            });
+            let debt = status === 'Hutang' ? total : (status === 'DP' ? total-dp : 0); if (debt>0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', sid), { balance: increment(debt) });
+            let cash = status === 'Lunas' ? total : (status === 'DP' ? dp : 0); if (cash>0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount: cash, note: `Pembelian Log Nota: ${nota}`, time: serverTimestamp() });
+            await batch.commit(); closeModal('wood'); alert("Data stok tersimpan!");
+        };
+
+        window.submitBatchSalesToFirebase = async () => {
+            if (!auth.currentUser) return;
+            const nota = document.getElementById('sales-nota').value, cid = document.getElementById('sales-customer-select').value, status = document.getElementById('sales-payment-status').value, dp = parseFloat(document.getElementById('sales-dp-amount').value)||0;
+            if (!nota || !cid) { alert("Nomor Nota dan Pelanggan wajib diisi."); return; }
+            const batch = writeBatch(db);
+            let total = 0;
+            temporaryBatchSales.forEach(i => { total += i.price; batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'sales')), { ...i, nota, customerId: cid, paymentStatus: status, createdAt: serverTimestamp() }); if (i.mode==='stock') batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', i.stockId)); });
+            let recv = status === 'Hutang' ? total : (status === 'DP' ? total-dp : 0); if (recv>0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', cid), { balance: increment(recv) });
+            let cash = status === 'Lunas' ? total : (status === 'DP' ? dp : 0); if (cash>0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'in', amount: cash, note: `Penjualan Log SJ: ${nota}`, time: serverTimestamp() });
+            await batch.commit(); closeModal('sales'); alert("Data penjualan tersimpan!");
+        };
+
+        window.toggleSalesMode = (mode) => {
+            const ss = document.getElementById('sales-stock-item-select');
+            if (ss) { if (mode === 'manual') ss.classList.add('hidden'); else ss.classList.remove('hidden'); }
+        };
+
+        window.autoFillSalesFromStock = () => {
+            const id = document.getElementById('sales-stock-item-select').value;
+            const item = inventoryData.find(i => i.id === id);
+            if (item) {
+                const elType = document.getElementById('sales-wood-type'); if(elType) elType.value = item.type;
+                const elVol = document.getElementById('sales-wood-vol'); if(elVol) elVol.value = item.unitVolume;
+            }
+        };
+
+        window.updateUserRole = async (uid, newRole) => {
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', uid), { role: newRole }); alert(`Peran diperbarui menjadi ${newRole}`); } catch (err) { console.error(err); }
+        };
+
+        window.showDetail = (type, nota) => {
+            const data = type === 'inventory' ? inventoryData : salesData;
+            const items = data.filter(i => i.nota === nota);
+            const firstItem = items[0] || {};
+            const elInv = document.getElementById('detail-meta-invoice'); if(elInv) elInv.innerText = nota;
+            const elCL = document.getElementById('detail-meta-contact-label'); if(elCL) elCL.innerText = type === 'sales' ? 'Pelanggan' : 'Supplier';
+            const elCN = document.getElementById('detail-meta-contact-name'); if(elCN) elCN.innerText = contactsData.find(c => c.id === (firstItem.supplierId || firstItem.customerId))?.name || '-';
+            const elSt = document.getElementById('detail-meta-status'); if(elSt) elSt.innerText = firstItem.paymentStatus || '-';
+            const elTotal = document.getElementById('detail-meta-total'); if(elTotal) elTotal.innerText = formatCurrency(items.reduce((a, b) => a + (b.totalPrice || b.price || 0), 0));
+            const tbody = document.getElementById('detail-table-body');
+            if (tbody) {
+                tbody.innerHTML = items.map(i => {
+                    const m = i.measurements || {};
+                    const dimStr = m.d1 !== undefined ? `${m.d1}/${m.d2}/${m.d3}/${m.d4} P:${m.p} (Avg D: ${m.avgD})` : '-';
+                    return `<tr>
+                        <td class="p-3 text-left font-mono">${i.noLog || '-'}</td>
+                        <td class="p-3 text-left font-medium text-slate-700">${i.type || i.woodType} / ${i.grade || '-'}</td>
+                        <td class="p-3 text-center text-slate-500 font-mono">${dimStr}</td>
+                        <td class="p-3 text-center font-bold">${(i.unitVolume || i.volume || 0).toFixed(2)}</td>
+                        <td class="p-3 text-center text-red-500 font-medium">${i.volGR !== undefined ? i.volGR.toFixed(2) : '-'}</td>
+                        <td class="p-3 text-right text-slate-500">${formatCurrency(i.totalPrice || i.price)}</td>
+                    </tr>`;
+                }).join('');
+            }
+            const btnP = document.getElementById('btn-print-detail-nota'); if(btnP) btnP.onclick = () => window.handlePrintInventory(nota);
+            const m = document.getElementById('detail-modal'); if(m) m.classList.remove('hidden');
+            refreshIcons();
+        };
+
+        window.handlePrintInventory = (nota) => {
+            const items = inventoryData.filter(i => i.nota === nota);
+            if (items.length === 0) return;
+            const supplier = contactsData.find(c => c.id === items[0]?.supplierId);
+            const printFrame = document.getElementById('print-frame');
+            const docRef = printFrame.contentDocument || printFrame.contentWindow.document;
+            const total = items.reduce((a,b)=>a+(b.totalPrice||0), 0);
+            const html = `<html><head><style>body { font-family: sans-serif; padding: 20px; font-size: 11px; }.header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }table { width: 100%; border-collapse: collapse; }th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }th { background: #f4f4f4; text-transform: uppercase; }</style></head><body><div class="header"><h1>${companyProfile.name}</h1><p>${companyProfile.address} | Telp: ${companyProfile.phone}</p></div><h3 style="text-align:center;">NOTA PEMBELIAN LOG KAYU (${nota})</h3><p>Supplier: <b>${supplier?.name || '-'}</b> | Tgl: ${items[0]?.createdAt?.toDate()?.toLocaleDateString()}</p><table><thead><tr><th>No LOG</th><th>Jenis</th><th>Grade</th><th>Dimensi (cm)</th><th>Avg D</th><th>Neto (m³)</th><th>GR (m³)</th><th>Harga</th></tr></thead><tbody>${items.map(i => `<tr><td>${i.noLog || '-'}</td><td>${i.type}</td><td>${i.grade || '-'}</td><td>${i.measurements?.d1}/${i.measurements?.d2}/${i.measurements?.d3}/${i.measurements?.d4} P:${i.measurements?.p}</td><td style="text-align:center;">${i.measurements?.avgD}</td><td style="text-align:center;">${i.unitVolume.toFixed(2)}</td><td style="text-align:center; color:red;">${i.volGR !== undefined ? i.volGR.toFixed(2) : '-'}</td><td style="text-align:right;">${formatCurrency(i.totalPrice)}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="6" style="text-align:right;"><b>GRAND TOTAL</b></td><td colspan="2" style="text-align:right;"><b>${formatCurrency(total)}</b></td></tr></tfoot></table></body></html>`;
+            docRef.open(); docRef.write(html); docRef.close();
+            setTimeout(() => { printFrame.contentWindow.print(); }, 500);
+        };
+
+        window.handleDeleteInventory = async (nota) => { if (confirm(`Hapus seluruh data Nota: ${nota}?`)) { const batch = writeBatch(db); inventoryData.filter(i => i.nota === nota).forEach(item => batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', item.id))); await batch.commit(); } };
+        window.handleDeleteSales = async (nota) => { if (confirm(`Hapus seluruh transaksi SJ: ${nota}?`)) { const batch = writeBatch(db); salesData.filter(i => i.nota === nota).forEach(item => batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'sales', item.id))); await batch.commit(); } };
+        window.handleDeleteContact = async (id) => { if (confirm('Hapus kontak ini?')) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', id)); };
+        window.deleteExpense = async (id) => { if(confirm('Hapus beban ini?')) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'expenses', id)); };
+        window.promptPayment = (id, type) => {
+            const amt = prompt("Jumlah Pembayaran (Rp):"); if(!amt||isNaN(amt)) return;
+            const batch = writeBatch(db);
+            batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', id), { balance: increment(-parseFloat(amt)) });
+            batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: type==='customer'?'in':'out', amount: parseFloat(amt), note: `Pelunasan Piutang/Hutang`, time: serverTimestamp() });
+            batch.commit();
+        };
+        window.saveCompanyProfile = async () => { 
+            const name = document.getElementById('setting-company-name').value;
+            const address = document.getElementById('setting-company-address').value;
+            const phone = document.getElementById('setting-company-phone').value;
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), { name, address, phone, updatedAt: serverTimestamp() }); alert("Profil disimpan!");
+        };
+        window.handleLogout = () => auth.signOut().then(() => location.reload());
+
+        // --- LIFECYCLE ---
+        onAuthStateChanged(auth, u => { if (u) { user = u; document.getElementById('user-info').innerText = u.uid; syncUserRole(u); startSync(); } });
+        initAuth();
+        switchView('dashboard');
     </script>
 </body>
 </html>
