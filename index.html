@@ -40,7 +40,7 @@
                 <p id="auth-desc" class="text-sm text-slate-500">Masuk untuk mengelola operasional kayu log.</p>
             </div>
             
-            <div class="p-10 space-y-6">
+            <div class="p-10 space-y-4">
                 <button onclick="handleGoogleSignIn()" class="w-full py-4 px-6 bg-white border border-slate-200 rounded-2xl shadow-sm flex items-center justify-center space-x-3 hover:bg-slate-50 transition-all duration-200 group">
                     <svg class="w-5 h-5" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -50,6 +50,14 @@
                     </svg>
                     <span class="text-slate-700 font-bold">Lanjutkan dengan Google</span>
                 </button>
+
+                <div class="flex items-center space-x-2"><div class="flex-1 h-px bg-slate-100"></div><span class="text-[10px] font-bold text-slate-400 uppercase">Atau</span><div class="flex-1 h-px bg-slate-100"></div></div>
+
+                <button onclick="handleBypassLogin()" class="w-full py-3 px-6 bg-slate-50 border border-dashed border-slate-300 rounded-2xl flex items-center justify-center space-x-2 hover:bg-slate-100 transition-all text-slate-500 hover:text-slate-700">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                    <span class="text-xs font-bold uppercase tracking-widest">Masuk sebagai Admin (Bypass)</span>
+                </button>
+
                 <div id="auth-error" class="text-xs text-red-500 text-center hidden font-medium bg-red-50 p-3 rounded-xl"></div>
             </div>
         </div>
@@ -175,7 +183,7 @@
                 <div class="bg-white rounded-2xl shadow-sm border overflow-hidden"><table class="w-full text-left"><thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold"><tr><th class="px-6 py-4">Tgl</th><th class="px-6 py-4">Kategori</th><th class="px-6 py-4">Catatan</th><th class="px-6 py-4 text-right">Nominal</th><th class="px-6 py-4 text-right">Aksi</th></tr></thead><tbody id="expenses-table-body" class="divide-y text-sm"></tbody></table></div>
             </section>
 
-            <!-- Reports (Admin Only) -->
+            <!-- Reports -->
             <section id="view-reports" class="hidden space-y-8 no-print admin-only">
                 <h2 class="text-2xl font-bold text-slate-800">Laporan Keuangan</h2>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -201,11 +209,10 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="customers-list"></div>
             </section>
 
-            <!-- Settings (Admin Only) -->
+            <!-- Settings -->
             <section id="view-settings" class="hidden space-y-8 no-print admin-only">
                 <h2 class="text-2xl font-bold text-slate-800">Pengaturan Sistem</h2>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- User Management -->
                     <div class="bg-white p-8 rounded-2xl border shadow-sm space-y-6">
                         <h3 class="font-bold text-slate-800">Otorisasi Email Pengguna</h3>
                         <div class="flex space-x-2">
@@ -220,7 +227,6 @@
                             <table class="w-full text-sm text-left"><thead class="bg-slate-50 font-bold uppercase text-[10px]"><tr><th class="p-4">Email</th><th class="p-4">Role</th><th class="p-4">Aksi</th></tr></thead><tbody id="auth-emails-table" class="divide-y"></tbody></table>
                         </div>
                     </div>
-                    <!-- Company Profile -->
                     <div class="bg-white p-8 rounded-2xl border shadow-sm space-y-6">
                         <h3 class="font-bold text-slate-800">Profil Perusahaan</h3>
                         <div class="space-y-4">
@@ -282,14 +288,14 @@
         </div>
     </div>
 
-    <!-- Other Modals Placeholder (Expense, Contact) -->
+    <!-- Other Modals -->
     <div id="expense-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 no-print"><div class="bg-white w-full max-w-md p-8 rounded-3xl space-y-4"><h3>Input Pengeluaran</h3><input type="text" id="exp-cat" placeholder="Kategori" class="w-full p-3 border rounded-xl"><input type="number" id="exp-amt" placeholder="Nominal" class="w-full p-3 border rounded-xl"><textarea id="exp-note" placeholder="Keterangan" class="w-full p-3 border rounded-xl"></textarea><button onclick="submitExpense()" class="w-full py-3 bg-rose-500 text-white rounded-xl font-bold">Simpan</button></div></div>
     <div id="contact-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 no-print"><div class="bg-white w-full max-w-md p-8 rounded-3xl space-y-4"><h3>Tambah Kontak</h3><input type="hidden" id="contact-type"><input type="text" id="contact-name" placeholder="Nama..." class="w-full p-3 border rounded-xl"><button onclick="submitContact()" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold">Simpan</button></div></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, onSnapshot, serverTimestamp, writeBatch, increment, deleteDoc, query, where } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, getDocs, onSnapshot, serverTimestamp, writeBatch, increment, deleteDoc, query, where, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         // --- FIREBASE CONFIG ---
         const firebaseConfig = {
@@ -357,6 +363,21 @@
             } catch (err) { errEl.innerText = err.message; errEl.classList.remove('hidden'); }
         };
 
+        window.handleBypassLogin = async () => {
+            try {
+                const result = await signInAnonymously(auth);
+                const user = result.user;
+                const userDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', user.uid);
+                await setDoc(userDocRef, {
+                    email: "bypass@woodit.com",
+                    name: "Admin Bypass",
+                    photo: "https://ui-avatars.com/api/?name=Bypass&background=f59e0b&color=fff",
+                    role: 'Admin',
+                    createdAt: serverTimestamp()
+                });
+            } catch (err) { console.error("Bypass Error:", err); }
+        };
+
         window.handleLogout = () => signOut(auth).then(() => location.reload());
 
         onAuthStateChanged(auth, async (u) => {
@@ -373,8 +394,19 @@
                     document.querySelectorAll('.admin-only').forEach(el => userData.role === 'Admin' ? el.classList.remove('hidden') : el.classList.add('hidden'));
                     startSync(); switchView('dashboard');
                 } else { checkSetup(); }
-            } else if (u && u.isAnonymous) { checkSetup(); }
-            else {
+            } else if (u && u.isAnonymous) {
+                const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', u.uid));
+                if (snap.exists()) {
+                    userData = snap.data();
+                    document.getElementById('auth-screen').classList.add('hidden');
+                    document.getElementById('app').classList.remove('hidden');
+                    document.getElementById('user-info-name').innerText = userData.name;
+                    document.getElementById('user-role-badge').innerText = userData.role;
+                    if(userData.photo) document.getElementById('user-photo').src = userData.photo;
+                    document.querySelectorAll('.admin-only').forEach(el => userData.role === 'Admin' ? el.classList.remove('hidden') : el.classList.add('hidden'));
+                    startSync(); switchView('dashboard');
+                } else { checkSetup(); }
+            } else {
                 document.getElementById('auth-screen').classList.remove('hidden');
                 document.getElementById('app').classList.add('hidden');
                 try {
@@ -465,6 +497,20 @@
             });
             batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', cid), { balance: increment(totalVal) });
             await batch.commit(); closeModal('sales'); alert("Penjualan Disimpan!");
+        };
+
+        window.submitExpense = async () => {
+            const cat = document.getElementById('exp-cat').value, amt = parseFloat(document.getElementById('exp-amt').value)||0, note = document.getElementById('exp-note').value;
+            if(!amt) return;
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), { category: cat, amount: amt, note, createdAt: serverTimestamp() });
+            closeModal('expense');
+        };
+
+        window.submitContact = async () => {
+            const type = document.getElementById('contact-type').value, name = document.getElementById('contact-name').value;
+            if(!name) return;
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), { type, name, balance: 0, createdAt: serverTimestamp() });
+            closeModal('contact');
         };
 
         // --- SETTINGS LOGIC ---
