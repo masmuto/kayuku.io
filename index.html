@@ -311,6 +311,7 @@
             <section id="view-settings" class="hidden space-y-8 no-print">
                 <header><h2 class="text-2xl font-bold text-slate-800">Pengaturan Sistem</h2></header>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Company Profile -->
                     <div class="lg:col-span-1 bg-white p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6">
                         <div class="flex items-center space-x-3 mb-2"><div class="p-2 bg-amber-50 text-amber-600 rounded-lg"><i data-lucide="building-2" class="w-5 h-5"></i></div><h3 class="font-bold text-slate-800">Profil Perusahaan</h3></div>
                         <div class="space-y-4">
@@ -320,9 +321,37 @@
                             <button onclick="saveCompanyProfile()" class="w-full py-3 bg-amber-600 text-white font-bold rounded-xl">Simpan Profil</button>
                         </div>
                     </div>
-                    <div class="lg:col-span-2 bg-white p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6">
+                    
+                    <!-- Database Management -->
+                    <div class="lg:col-span-1 bg-white p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6">
+                        <div class="flex items-center space-x-3 mb-2"><div class="p-2 bg-rose-50 text-rose-600 rounded-lg"><i data-lucide="database" class="w-5 h-5"></i></div><h3 class="font-bold text-slate-800">Database & Backup</h3></div>
+                        <div class="space-y-4">
+                            <p class="text-xs text-slate-500 italic">Cadangkan data Anda secara berkala untuk menghindari kehilangan data penting.</p>
+                            <button onclick="handleBackupDatabase()" class="w-full flex items-center justify-center space-x-2 py-3 bg-slate-900 text-white rounded-xl font-bold">
+                                <i data-lucide="download" class="w-4 h-4"></i>
+                                <span>Cadangkan (JSON)</span>
+                            </button>
+                            <div class="pt-4 border-t">
+                                <label class="block text-[10px] font-bold uppercase text-slate-400 mb-2">Pulihkan Data (JSON)</label>
+                                <input type="file" id="restore-db-file" accept=".json" class="hidden" onchange="handleRestoreDatabase(event)">
+                                <button onclick="document.getElementById('restore-db-file').click()" class="w-full flex items-center justify-center space-x-2 py-3 border-2 border-dashed border-slate-200 text-slate-600 rounded-xl font-bold hover:border-indigo-400 hover:text-indigo-600 transition">
+                                    <i data-lucide="upload" class="w-4 h-4"></i>
+                                    <span>Pilih File Restore</span>
+                                </button>
+                            </div>
+                            <div class="pt-4 border-t">
+                                <button onclick="handleResetDatabase()" class="w-full py-3 bg-red-100 text-red-600 rounded-xl font-bold hover:bg-red-600 hover:text-white transition">
+                                    Reset Database
+                                </button>
+                                <p class="text-[9px] text-red-400 mt-2 text-center">*Tindakan ini menghapus semua data transaksi & stok!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Management -->
+                    <div class="lg:col-span-1 bg-white p-8 rounded-2xl shadow-sm border border-slate-100 space-y-6">
                         <div class="flex items-center space-x-3 mb-2"><div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg"><i data-lucide="shield-check" class="w-5 h-5"></i></div><h3 class="font-bold text-slate-800">Manajemen Pengguna</h3></div>
-                        <div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold"><tr><th>UID / Pengguna</th><th>Peran</th><th>Login</th><th class="text-right">Aksi</th></tr></thead><tbody id="users-table-body" class="divide-y divide-slate-100"></tbody></table></div>
+                        <div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold"><tr><th>User ID</th><th>Peran</th><th class="text-right">Aksi</th></tr></thead><tbody id="users-table-body" class="divide-y divide-slate-100"></tbody></table></div>
                     </div>
                 </div>
             </section>
@@ -409,7 +438,7 @@
         </div>
     </div>
 
-    <!-- Modal Kayu Keluar & Lainnya -->
+    <!-- Modal Kayu Keluar -->
     <div id="sales-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto no-print">
         <div class="bg-white w-full max-w-4xl my-8 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10"><h3 class="text-lg font-bold text-slate-800 uppercase tracking-tight">Input Kayu Keluar</h3><button onclick="closeModal('sales')" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button></div>
@@ -418,8 +447,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-blue-50 p-6 rounded-2xl border border-blue-100"><select id="sales-payment-status" onchange="toggleDPInput('sales')" class="p-3 rounded-xl border border-blue-200 outline-none"><option value="Hutang">Piutang</option><option value="Lunas">Tunai</option><option value="DP">DP</option></select><input type="number" id="sales-dp-amount" placeholder="Nominal DP" class="hidden p-3 rounded-xl border border-blue-200"></div>
                 <div class="border-2 border-dashed border-slate-200 rounded-2xl p-6 space-y-4">
                     <div class="flex gap-4 mb-2">
-                        <label class="flex items-center space-x-2"><input type="radio" name="sales-mode" value="stock" checked onchange="toggleSalesMode('stock')"> <span>Dari Stok</span></label>
-                        <label class="flex items-center space-x-2"><input type="radio" name="sales-mode" value="manual" onchange="toggleSalesMode('manual')"> <span>Manual</span></label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="sales-mode" id="sales-mode-stock" value="stock" checked onchange="toggleSalesMode('stock')"> <span>Dari Stok</span></label>
+                        <label class="flex items-center space-x-2"><input type="radio" name="sales-mode" id="sales-mode-manual" value="manual" onchange="toggleSalesMode('manual')"> <span>Manual</span></label>
                     </div>
                     <select id="sales-stock-item-select" onchange="autoFillSalesFromStock()" class="w-full p-3 rounded-xl border"></select>
                     <div class="grid grid-cols-2 gap-4"><input type="text" id="sales-wood-type" class="p-3 rounded-xl border" placeholder="Jenis"><input type="number" step="0.0001" id="sales-wood-vol" class="p-3 rounded-xl border" placeholder="Volume"></div>
@@ -480,7 +509,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, addDoc, onSnapshot, deleteDoc, serverTimestamp, writeBatch, increment, updateDoc, query, limit } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, addDoc, onSnapshot, deleteDoc, serverTimestamp, writeBatch, increment, updateDoc, query, limit, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         // --- KONFIGURASI ---
         const firebaseConfig = {
@@ -499,7 +528,7 @@
         const appId = "log-master-system"; 
 
         // --- STATE APLIKASI ---
-        let user = null;
+        let userProfile = null;
         let currentUserRole = "Kasir";
         let companyProfile = { name: "Wood-IT Log", address: "Jl. Raya Utama No. 1", phone: "021-1234567" };
         let inventoryData = [], contactsData = [], salesData = [], transactionsData = [], usersData = [], expensesData = [];
@@ -508,6 +537,249 @@
         // --- UTILITIES ---
         const refreshIcons = () => { if (window.lucide) window.lucide.createIcons(); };
         const formatCurrency = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n || 0);
+
+        // --- UI LOGIC ---
+        window.toggleDPInput = (type) => {
+            const status = document.getElementById(`${type}-payment-status`).value;
+            const dpInput = document.getElementById(`${type}-dp-amount`);
+            if (status === 'DP') dpInput.classList.remove('hidden');
+            else dpInput.classList.add('hidden');
+        };
+
+        window.toggleSalesMode = (mode) => {
+            const stockSelect = document.getElementById('sales-stock-item-select');
+            if (mode === 'stock') {
+                stockSelect.disabled = false;
+                stockSelect.classList.remove('opacity-50');
+            } else {
+                stockSelect.disabled = true;
+                stockSelect.classList.add('opacity-50');
+                stockSelect.value = "";
+                document.getElementById('sales-wood-type').value = "";
+                document.getElementById('sales-wood-vol').value = "";
+            }
+        };
+
+        window.autoFillSalesFromStock = () => {
+            const stockId = document.getElementById('sales-stock-item-select').value;
+            if (!stockId) return;
+            const item = inventoryData.find(i => i.id === stockId);
+            if (item) {
+                document.getElementById('sales-wood-type').value = item.type;
+                document.getElementById('sales-wood-vol').value = item.unitVolume;
+            }
+        };
+
+        window.showDetail = (type, nota) => {
+            const modal = document.getElementById('detail-modal');
+            const title = document.getElementById('detail-title');
+            const tableBody = document.getElementById('detail-table-body');
+            
+            document.getElementById('detail-meta-invoice').innerText = nota;
+            
+            let items = [];
+            let contact = null;
+            let status = "";
+            let total = 0;
+
+            if (type === 'inventory') {
+                title.innerText = "Detail Nota Pembelian (Stok Masuk)";
+                items = inventoryData.filter(i => i.nota === nota);
+                contact = contactsData.find(c => c.id === items[0]?.supplierId);
+                status = items[0]?.paymentStatus || "-";
+                total = items.reduce((a, b) => a + (b.totalPrice || 0), 0);
+                document.getElementById('detail-meta-contact-label').innerText = "Supplier";
+            } else {
+                title.innerText = "Detail Surat Jalan (Kayu Keluar)";
+                items = salesData.filter(i => i.nota === nota);
+                contact = contactsData.find(c => c.id === items[0]?.customerId);
+                status = items[0]?.paymentStatus || "-";
+                total = items.reduce((a, b) => a + (b.price || 0), 0);
+                document.getElementById('detail-meta-contact-label').innerText = "Pelanggan";
+            }
+
+            document.getElementById('detail-meta-contact-name').innerText = contact?.name || "-";
+            document.getElementById('detail-meta-status').innerText = status;
+            document.getElementById('detail-meta-total').innerText = formatCurrency(total);
+
+            tableBody.innerHTML = items.map(i => `
+                <tr>
+                    <td class="p-3">${i.noLog || i.stockId || '-'}</td>
+                    <td class="p-3">${i.type || i.woodType || '-'} ${i.grade ? '('+i.grade+')' : ''}</td>
+                    <td class="p-3 text-center">${i.measurements ? i.measurements.p + 'x' + i.measurements.avgD : '-'}</td>
+                    <td class="p-3 text-center">${(i.unitVolume || i.volume || 0).toFixed(2)}</td>
+                    <td class="p-3 text-center text-red-500">${(i.volGR || 0).toFixed(2)}</td>
+                    <td class="p-3 text-right">${formatCurrency(i.totalPrice || i.price)}</td>
+                </tr>
+            `).join('');
+
+            modal.classList.remove('hidden');
+            refreshIcons();
+        };
+
+        window.promptPayment = async (contactId, type) => {
+            const amount = prompt("Masukkan nominal pembayaran:");
+            if (!amount || isNaN(amount)) return;
+            
+            const nominal = parseFloat(amount);
+            const batch = writeBatch(db);
+            const contactRef = doc(db, 'artifacts', appId, 'public', 'data', 'contacts', contactId);
+            const transRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions'));
+            
+            batch.update(contactRef, { balance: increment(-nominal) });
+            batch.set(transRef, {
+                type: type === 'supplier' ? 'out' : 'in',
+                amount: nominal,
+                note: `Pelunasan/Cicilan ${type === 'supplier' ? 'Hutang' : 'Piutang'}`,
+                time: serverTimestamp()
+            });
+            
+            await batch.commit();
+            alert("Pembayaran berhasil dicatat.");
+        };
+
+        window.updateUserRole = async (userId, newRole) => {
+            if (!confirm(`Ubah peran user ini menjadi ${newRole}?`)) return;
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', userId), { role: newRole });
+        };
+
+        // --- DATABASE MANAGEMENT (BACKUP / RESTORE / RESET) ---
+        window.handleBackupDatabase = async () => {
+            if (!confirm("Konfirmasi pencadangan seluruh data database?")) return;
+            const loading = document.getElementById('loading');
+            loading.classList.remove('hidden');
+            
+            try {
+                const collections = ['inventory', 'contacts', 'sales', 'transactions', 'expenses', 'settings'];
+                let fullBackup = {};
+
+                for (const collName of collections) {
+                    const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', collName));
+                    fullBackup[collName] = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                }
+
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullBackup, null, 2));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", `woodit_backup_${new Date().toISOString().slice(0,10)}.json`);
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+                alert("Database berhasil dicadangkan.");
+            } catch (err) {
+                console.error(err);
+                alert("Gagal melakukan backup database.");
+            } finally {
+                loading.classList.add('hidden');
+            }
+        };
+
+        window.handleRestoreDatabase = async (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!confirm("PERINGATAN: Memulihkan database akan menghapus data saat ini dan menggantinya dengan data dari file backup. Lanjutkan?")) {
+                event.target.value = "";
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            loading.classList.remove('hidden');
+
+            try {
+                const text = await file.text();
+                const backupData = JSON.parse(text);
+
+                // 1. Reset Database Dulu
+                await resetAllDataLocally();
+
+                // 2. Upload Data Baru
+                const collections = Object.keys(backupData);
+                for (const collName of collections) {
+                    const items = backupData[collName];
+                    for (const item of items) {
+                        const { id, ...data } = item;
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', collName, id || crypto.randomUUID()), data);
+                    }
+                }
+
+                alert("Database berhasil dipulihkan!");
+                location.reload();
+            } catch (err) {
+                console.error(err);
+                alert("Terjadi kesalahan saat memulihkan database. Pastikan file JSON valid.");
+            } finally {
+                loading.classList.add('hidden');
+                event.target.value = "";
+            }
+        };
+
+        const resetAllDataLocally = async () => {
+            const collections = ['inventory', 'contacts', 'sales', 'transactions', 'expenses'];
+            for (const collName of collections) {
+                const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', collName));
+                for (const docItem of snap.docs) {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', collName, docItem.id));
+                }
+            }
+        };
+
+        window.handleResetDatabase = async () => {
+            const secret = prompt("Tindakan ini permanen. Ketik 'HAPUS SEMUA' untuk konfirmasi:");
+            if (secret !== "HAPUS SEMUA") return;
+
+            const loading = document.getElementById('loading');
+            loading.classList.remove('hidden');
+
+            try {
+                await resetAllDataLocally();
+                alert("Database berhasil di-reset.");
+                location.reload();
+            } catch (err) {
+                console.error(err);
+                alert("Gagal mereset database.");
+            } finally {
+                loading.classList.add('hidden');
+            }
+        };
+
+        // --- EXPORT FUNCTIONS ---
+        window.exportToExcel = () => {
+            const tableData = transactionsData.map(t => ({
+                Waktu: t.time?.toDate()?.toLocaleString(),
+                Keterangan: t.note,
+                Tipe: t.type,
+                Nominal: t.amount
+            }));
+            const ws = XLSX.utils.json_to_sheet(tableData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Cashflow");
+            XLSX.writeFile(wb, "Laporan_Cashflow.xlsx");
+        };
+
+        window.exportToPDF = () => {
+            const element = document.getElementById('report-content-to-export');
+            html2pdf().from(element).save("Laporan_Keuangan.pdf");
+        };
+
+        window.exportInventoryToExcel = () => {
+            const ws = XLSX.utils.json_to_sheet(inventoryData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Inventory");
+            XLSX.writeFile(wb, "Data_Stok_Log.xlsx");
+        };
+
+        window.exportInventoryToPDF = () => {
+            const element = document.getElementById('inventory-content-to-export');
+            html2pdf().from(element).save("Data_Stok_Log.pdf");
+        };
+
+        window.exportExpensesToExcel = () => {
+            const ws = XLSX.utils.json_to_sheet(expensesData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Expenses");
+            XLSX.writeFile(wb, "Data_Biaya.xlsx");
+        };
 
         // --- RENDER & STATS FUNCTIONS ---
         const renderInventory = () => {
@@ -613,7 +885,6 @@
                     <tr class="hover:bg-slate-50">
                         <td class="px-6 py-4 font-mono text-[10px] text-slate-500">${u.id}</td>
                         <td class="px-6 py-4"><span class="px-2 py-1 rounded text-[10px] font-bold ${u.role === 'Admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'}">${u.role || 'Kasir'}</span></td>
-                        <td class="px-6 py-4 text-xs text-slate-400">${u.lastLogin?.toDate()?.toLocaleString() || '-'}</td>
                         <td class="px-6 py-4 text-right">${(u.id !== auth.currentUser?.uid) ? `<button onclick="updateUserRole('${u.id}', '${u.role === 'Admin' ? 'Kasir' : 'Admin'}')" class="text-[10px] font-bold text-indigo-600 uppercase">Ubah Role</button>` : '-'}</td>
                     </tr>`).join('');
             }
@@ -662,209 +933,98 @@
 
         const startSync = () => {
             if (!auth.currentUser) return;
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'inventory'), s => { inventoryData = s.docs.map(d=>({id:d.id, ...d.data()})); renderInventory(); updateAllStats(); }, (e)=>console.error(e));
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), s => { contactsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderContacts(); updateSelects(); updateAllStats(); }, (e)=>console.error(e));
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), s => { salesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderSales(); updateAllStats(); }, (e)=>console.error(e));
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'transactions'), s => { transactionsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderTransactions(); updateAllStats(); }, (e)=>console.error(e));
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), s => { expensesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderExpenses(); updateAllStats(); }, (e)=>console.error(e));
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), s => { usersData = s.docs.map(d=>({id:d.id, ...d.data()})); renderUsersTable(); }, (e)=>console.error(e));
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'inventory'), s => { inventoryData = s.docs.map(d=>({id:d.id, ...d.data()})); renderInventory(); updateAllStats(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), s => { contactsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderContacts(); updateSelects(); updateAllStats(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), s => { salesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderSales(); updateAllStats(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'transactions'), s => { transactionsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderTransactions(); updateAllStats(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), s => { expensesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderExpenses(); updateAllStats(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), s => { usersData = s.docs.map(d=>({id:d.id, ...d.data()})); renderUsersTable(); });
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), s => { 
                 if(s.exists()){ 
                     companyProfile = s.data(); 
-                    const elSide = document.getElementById('sidebar-company-name'); if(elSide) elSide.innerText = companyProfile.name; 
-                    const elWel = document.getElementById('welcome-title'); if(elWel) elWel.innerText = `Dashboard ${companyProfile.name}`; 
-                    const elSN = document.getElementById('setting-company-name'); if(elSN) elSN.value = companyProfile.name || "";
-                    const elSA = document.getElementById('setting-company-address'); if(elSA) elSA.value = companyProfile.address || "";
-                    const elSP = document.getElementById('setting-company-phone'); if(elSP) elSP.value = companyProfile.phone || "";
+                    document.getElementById('sidebar-company-name').innerText = companyProfile.name; 
+                    document.getElementById('welcome-title').innerText = `Dashboard ${companyProfile.name}`; 
+                    document.getElementById('setting-company-name').value = companyProfile.name || "";
+                    document.getElementById('setting-company-address').value = companyProfile.address || "";
+                    document.getElementById('setting-company-phone').value = companyProfile.phone || "";
                 } 
-            }, (e)=>console.error(e));
-        };
-
-        // --- MANAJEMEN ROLE & AKSES ---
-        const updateUIAccess = () => {
-            document.querySelectorAll('.admin-only').forEach(el => currentUserRole === "Admin" ? el.classList.remove('hidden') : el.classList.add('hidden'));
-            const badge = document.getElementById('user-role-badge');
-            if (badge) {
-                badge.innerText = currentUserRole;
-                badge.className = `text-[9px] font-bold uppercase tracking-tighter px-2 py-0.5 rounded mb-4 inline-block ${currentUserRole === 'Admin' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-800 text-slate-400'}`;
-            }
-        };
-
-        const registerCurrentUser = async (u, role = "Kasir") => {
-            if (!u || !auth.currentUser) return;
-            try { 
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', u.uid), { 
-                    lastLogin: serverTimestamp(), 
-                    role: role 
-                }, { merge: true }); 
-            } catch (err) { console.error(err); }
+            });
         };
 
         const syncUserRole = (u) => {
             if (!u) return;
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', u.uid);
             onSnapshot(docRef, (snap) => {
-                if (snap.exists()) { 
-                    currentUserRole = snap.data().role || "Kasir"; 
+                if (snap.exists()) {
+                    userProfile = snap.data();
+                    currentUserRole = userProfile.role || "Kasir";
                 } else { 
                     currentUserRole = usersData.length === 0 ? "Admin" : "Kasir"; 
-                    registerCurrentUser(u, currentUserRole); 
+                    setDoc(docRef, { role: currentUserRole, createdAt: serverTimestamp() }, { merge: true }); 
                 }
-                updateUIAccess();
+                document.querySelectorAll('.admin-only').forEach(el => currentUserRole === "Admin" ? el.classList.remove('hidden') : el.classList.add('hidden'));
+                document.getElementById('user-role-badge').innerText = currentUserRole;
             });
-        };
-
-        // --- EXPORT FUNCTIONS ---
-        window.exportToExcel = () => {
-            const data = [
-                { Kategori: "Total Penjualan", Nilai: document.getElementById('report-total-revenue').innerText },
-                { Kategori: "Total Pembelian", Nilai: document.getElementById('report-total-cogs').innerText },
-                { Kategori: "Total Biaya & Beban", Nilai: document.getElementById('report-total-expenses').innerText },
-                { Kategori: "Potensi Laba Kotor", Nilai: document.getElementById('report-gross-profit-accrual').innerText },
-                { Kategori: "Saldo Kas Saat Ini", Nilai: document.getElementById('report-net-cash').innerText }
-            ];
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Laporan Keuangan");
-            XLSX.writeFile(wb, "Laporan_Keuangan_WoodIT.xlsx");
-        };
-
-        window.exportToPDF = () => {
-            const element = document.getElementById('report-content-to-export');
-            const opt = { margin: 10, filename: 'Laporan_Keuangan_WoodIT.pdf', jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
-            html2pdf().set(opt).from(element).save();
-        };
-
-        window.exportInventoryToExcel = () => {
-            const data = inventoryData.map(i => ({
-                Nota: i.nota,
-                Supplier: contactsData.find(c=>c.id===i.supplierId)?.name || '-',
-                Status: i.paymentStatus,
-                Volume: i.unitVolume.toFixed(2),
-                Total: i.totalPrice
-            }));
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Inventory");
-            XLSX.writeFile(wb, "Stok_Log_WoodIT.xlsx");
-        };
-
-        window.exportInventoryToPDF = () => {
-            const element = document.getElementById('inventory-content-to-export');
-            const opt = { margin: 10, filename: 'Stok_Log_WoodIT.pdf', jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' } };
-            html2pdf().set(opt).from(element).save();
-        };
-
-        window.exportExpensesToExcel = () => {
-            const data = expensesData.map(e => ({
-                Tanggal: e.createdAt?.toDate()?.toLocaleDateString() || '-',
-                Kategori: e.category,
-                Keterangan: e.note || '-',
-                Nominal: e.amount
-            }));
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Expenses");
-            XLSX.writeFile(wb, "Biaya_Beban_WoodIT.xlsx");
         };
 
         // --- FORM HANDLERS ---
         window.handleExpenseSubmit = async (e) => {
             e.preventDefault();
-            const category = document.getElementById('expense-category').value;
-            const amount = parseFloat(document.getElementById('expense-amount').value);
-            const note = document.getElementById('expense-note').value;
+            const category = document.getElementById('expense-category').value, amount = parseFloat(document.getElementById('expense-amount').value), note = document.getElementById('expense-note').value;
             const batch = writeBatch(db);
             batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'expenses')), { category, amount, note, createdAt: serverTimestamp() });
-            batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount, note: `Biaya: ${category} - ${note}`, time: serverTimestamp() });
-            await batch.commit();
-            closeModal('expense');
-            document.getElementById('expense-form').reset();
+            batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount, note: `Biaya: ${category}`, time: serverTimestamp() });
+            await batch.commit(); closeModal('expense'); e.target.reset();
         };
 
         window.handleContactSubmit = async (e) => {
             e.preventDefault();
-            const type = document.getElementById('contact-type').value;
-            const name = document.getElementById('contact-name').value;
-            const phone = document.getElementById('contact-phone').value;
-            const address = document.getElementById('contact-address').value;
+            const type = document.getElementById('contact-type').value, name = document.getElementById('contact-name').value, phone = document.getElementById('contact-phone').value, address = document.getElementById('contact-address').value;
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), { type, name, phone, address, balance: 0, createdAt: serverTimestamp() });
-            closeModal('contact');
-            document.getElementById('contact-form').reset();
+            closeModal('contact'); e.target.reset();
         };
 
         // --- AUTH & INIT ---
         const initAuth = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token && __initial_auth_token.trim() !== "") {
-                    try { await signInWithCustomToken(auth, __initial_auth_token); } catch (err) { await signInAnonymously(auth); }
-                } else { await signInAnonymously(auth); }
-            } catch (error) { await signInAnonymously(auth); }
+            try { 
+                await signInAnonymously(auth); 
+            } catch (error) { 
+                console.error(error); 
+            }
         };
 
-        // --- UI & EVENT HANDLERS ---
         window.switchView = (view) => {
-            if ((view === 'reports' || view === 'settings') && currentUserRole !== 'Admin') { switchView('dashboard'); return; }
+            if ((view === 'reports' || view === 'settings') && currentUserRole !== 'Admin') { 
+                switchView('dashboard'); 
+                return; 
+            }
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
-            const target = document.getElementById(`view-${view}`); if(target) target.classList.remove('hidden');
+            document.getElementById(`view-${view}`).classList.remove('hidden');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('bg-amber-600', 'text-white'));
             const btn = document.getElementById(`nav-${view}`); if (btn) btn.classList.add('bg-amber-600', 'text-white');
             refreshIcons();
         };
 
-        window.openModal = (type, subType = '') => {
-            if (type === 'wood') { 
-                temporaryBatchWood = []; 
-                const m = document.getElementById('wood-modal'); 
-                if(m) m.classList.remove('hidden'); 
-                updateSelects(); 
-                // Reset Indicators
-                document.getElementById('res-live-avg-d').innerText = "0 cm";
-                document.getElementById('res-live-vol-gr').innerText = "0.00 m³";
-                document.getElementById('res-live-vol-wood').innerText = "0.00 m³";
-            }
-            else if (type === 'sales') { temporaryBatchSales = []; const m = document.getElementById('sales-modal'); if(m) m.classList.remove('hidden'); updateSelects(); }
-            else if (type === 'expense') { const m = document.getElementById('expense-modal'); if(m) m.classList.remove('hidden'); }
-            else if (type === 'contact') { 
-                const elType = document.getElementById('contact-type'); if(elType) elType.value = subType; 
-                const elTitle = document.getElementById('contact-modal-title'); if(elTitle) elTitle.innerText = `Tambah ${subType}`; 
-                const m = document.getElementById('contact-modal'); if(m) m.classList.remove('hidden'); 
-            }
+        window.openModal = (type, sub = '') => {
+            if(type==='wood') { temporaryBatchWood=[]; document.getElementById('wood-modal').classList.remove('hidden'); updateSelects(); }
+            else if(type==='sales') { temporaryBatchSales=[]; document.getElementById('sales-modal').classList.remove('hidden'); updateSelects(); }
+            else if(type==='expense') document.getElementById('expense-modal').classList.remove('hidden');
+            else if(type==='contact') { document.getElementById('contact-type').value=sub; document.getElementById('contact-modal-title').innerText=`Tambah ${sub}`; document.getElementById('contact-modal').classList.remove('hidden'); }
             refreshIcons();
         };
-        window.closeModal = (type) => { const m = document.getElementById(`${type}-modal`); if(m) m.classList.add('hidden'); };
-        
-        window.toggleDPInput = (p) => { 
-            const s = document.getElementById(`${p}-payment-status`).value, f = document.getElementById(`${p}-dp-amount`);
-            if(s==='DP') f.classList.remove('hidden'); else f.classList.add('hidden');
-        };
+
+        window.closeModal = (type) => document.getElementById(`${type}-modal`).classList.add('hidden');
 
         window.liveUpdateCalc = () => {
-            const d1 = parseFloat(document.getElementById('log-d1').value)||0, 
-                  d2 = parseFloat(document.getElementById('log-d2').value)||0, 
-                  d3 = parseFloat(document.getElementById('log-d3').value)||0, 
-                  d4 = parseFloat(document.getElementById('log-d4').value)||0;
-            const p = parseFloat(document.getElementById('log-p').value)||0, 
-                  trim = parseFloat(document.getElementById('log-trim').value)||0, 
-                  gr = parseFloat(document.getElementById('log-gr').value)||0;
-
-            // Rata-rata diameter aktual
+            const d1 = parseFloat(document.getElementById('log-d1').value)||0, d2 = parseFloat(document.getElementById('log-d2').value)||0, d3 = parseFloat(document.getElementById('log-d3').value)||0, d4 = parseFloat(document.getElementById('log-d4').value)||0, p = parseFloat(document.getElementById('log-p').value)||0, trim = parseFloat(document.getElementById('log-trim').value)||0, gr = parseFloat(document.getElementById('log-gr').value)||0;
             currentLiveAvgD = Math.round((d1 + d2 + d3 + d4) / 4);
-            const elAvg = document.getElementById('res-live-avg-d'); if(elAvg) elAvg.innerText = `${currentLiveAvgD} cm`;
-
-            if (d1||d2||d3||d4||p) {
-                const pEff = (p - trim)/100;
-                
-                // Volume Neto: Menggunakan diameter bersih (Rata-rata - GR)
-                const dNeto = Math.max(0, currentLiveAvgD - gr); 
-                currentLiveVolWood = (0.7854 * Math.pow(dNeto, 2) * pEff)/10000;
-                
-                // Volume GR: Rumus volume menggunakan nilai diameter GR secara langsung
-                currentLiveVolGR = (0.7854 * Math.pow(gr, 2) * pEff)/10000;
-
-                const elVolNet = document.getElementById('res-live-vol-wood'); if(elVolNet) elVolNet.innerText = `${currentLiveVolWood.toFixed(2)} m³`;
-                const elVolGR = document.getElementById('res-live-vol-gr'); if(elVolGR) elVolGR.innerText = `${currentLiveVolGR.toFixed(2)} m³`;
-            }
+            document.getElementById('res-live-avg-d').innerText = `${currentLiveAvgD} cm`;
+            const pEff = (p - trim)/100;
+            const dNeto = Math.max(0, currentLiveAvgD - gr); 
+            currentLiveVolWood = (0.7854 * Math.pow(dNeto, 2) * pEff)/10000;
+            currentLiveVolGR = (0.7854 * Math.pow(gr, 2) * pEff)/10000;
+            document.getElementById('res-live-vol-wood').innerText = `${currentLiveVolWood.toFixed(2)} m³`;
+            document.getElementById('res-live-vol-gr').innerText = `${currentLiveVolGR.toFixed(2)} m³`;
         };
 
         window.addItemToBatch = (type) => {
@@ -879,172 +1039,84 @@
                     unitVolume: parseFloat(currentLiveVolWood.toFixed(2)), 
                     volGR: parseFloat(currentLiveVolGR.toFixed(2)), 
                     totalPrice: prc, 
-                    measurements: { d1: parseFloat(document.getElementById('log-d1').value)||0, d2: parseFloat(document.getElementById('log-d2').value)||0, d3: parseFloat(document.getElementById('log-d3').value)||0, d4: parseFloat(document.getElementById('log-d4').value)||0, avgD: currentLiveAvgD, p: parseFloat(document.getElementById('log-p').value)||0, trim: parseFloat(document.getElementById('log-trim').value)||0, gr: parseFloat(document.getElementById('log-gr').value)||0 } 
+                    measurements: { 
+                        d1: parseFloat(document.getElementById('log-d1').value)||0, 
+                        d2: parseFloat(document.getElementById('log-d2').value)||0, 
+                        d3: parseFloat(document.getElementById('log-d3').value)||0, 
+                        d4: parseFloat(document.getElementById('log-d4').value)||0, 
+                        avgD: currentLiveAvgD, 
+                        p: parseFloat(document.getElementById('log-p').value)||0, 
+                        trim: parseFloat(document.getElementById('log-trim').value)||0, 
+                        gr: parseFloat(document.getElementById('log-gr').value)||0 
+                    } 
                 });
-                ['log-no','log-grade','log-d1','log-d2','log-d3','log-d4','log-p','log-trim','log-gr','wood-price'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ""; });
-                // Reset live indicators
-                document.getElementById('res-live-avg-d').innerText = "0 cm";
-                document.getElementById('res-live-vol-gr').innerText = "0.00 m³";
-                document.getElementById('res-live-vol-wood').innerText = "0.00 m³";
+                ['log-no','log-grade','log-d1','log-d2','log-d3','log-d4','log-p','log-trim','log-gr','wood-price'].forEach(id => document.getElementById(id).value="");
             } else {
                 const vol = parseFloat(document.getElementById('sales-wood-vol').value)||0, prc = parseFloat(document.getElementById('sales-wood-price').value)||0;
                 if (!vol||!prc) return;
-                const mode = document.querySelector('input[name="sales-mode"]:checked')?.value || 'manual';
-                temporaryBatchSales.push({ tempId: Date.now(), woodType: document.getElementById('sales-wood-type').value, volume: parseFloat(vol.toFixed(2)), price: prc, mode, stockId: document.getElementById('sales-stock-item-select').value });
+                const mode = document.querySelector('input[name="sales-mode"]:checked').value;
+                temporaryBatchSales.push({ 
+                    tempId: Date.now(), 
+                    woodType: document.getElementById('sales-wood-type').value, 
+                    volume: parseFloat(vol.toFixed(2)), 
+                    price: prc, 
+                    mode: mode, 
+                    stockId: document.getElementById('sales-stock-item-select').value 
+                });
             }
+            renderBatch(type);
+        };
+
+        const renderBatch = (type) => {
             const list = type === 'wood' ? temporaryBatchWood : temporaryBatchSales;
-            const tb = document.getElementById(`${type}-batch-table`);
-            if (tb) {
-                tb.innerHTML = list.map((i, idx) => `
-                    <tr class="border-b hover:bg-slate-50">
-                        <td class="p-2 font-mono">${i.noLog||'-'}</td>
-                        <td class="p-2">${i.type||i.woodType} ${i.grade||''}</td>
-                        <td class="p-2 text-center font-bold">${(i.unitVolume||i.volume).toFixed(2)}</td>
-                        <td class="p-2 text-center text-red-500 font-medium">${i.volGR !== undefined ? i.volGR.toFixed(2) : '-'}</td>
-                        <td class="p-2 text-right"><button onclick="removeFromBatch('${type}', ${idx})" class="text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
-                    </tr>`).join('');
-            }
-            const btn = document.getElementById(`btn-save-batch-${type}`); if(btn) btn.disabled = list.length === 0;
+            document.getElementById(`${type}-batch-table`).innerHTML = list.map((i, idx) => `
+                <tr class="border-b">
+                    <td class="p-2">${i.noLog||'-'}</td>
+                    <td class="p-2">${i.type||i.woodType}</td>
+                    <td class="p-2 text-center">${(i.unitVolume||i.volume).toFixed(2)}</td>
+                    <td class="p-2 text-center text-red-500">${i.volGR ? i.volGR.toFixed(2) : '-'}</td>
+                    <td class="p-2 text-right"><button onclick="removeFromBatch('${type}', ${idx})" class="text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+                </tr>
+            `).join('');
+            document.getElementById(`btn-save-batch-${type}`).disabled = list.length === 0;
             refreshIcons();
         };
 
-        window.removeFromBatch = (type, idx) => {
-            if(type === 'wood') temporaryBatchWood.splice(idx, 1); else temporaryBatchSales.splice(idx, 1);
-            const list = type === 'wood' ? temporaryBatchWood : temporaryBatchSales;
-            const tb = document.getElementById(`${type}-batch-table`);
-            if (tb) {
-                tb.innerHTML = list.map((i, idx) => `
-                    <tr class="border-b hover:bg-slate-50">
-                        <td class="p-2 font-mono">${i.noLog||'-'}</td>
-                        <td class="p-2">${i.type||i.woodType} ${i.grade||''}</td>
-                        <td class="p-2 text-center font-bold">${(i.unitVolume||i.volume).toFixed(2)}</td>
-                        <td class="p-2 text-center text-red-500 font-medium">${i.volGR !== undefined ? i.volGR.toFixed(2) : '-'}</td>
-                        <td class="p-2 text-right"><button onclick="removeFromBatch('${type}', ${idx})" class="text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
-                    </tr>`).join('');
-            }
-            const btn = document.getElementById(`btn-save-batch-${type}`); if(btn) btn.disabled = list.length === 0;
-            refreshIcons();
-        };
+        window.removeFromBatch = (type, idx) => { if(type==='wood') temporaryBatchWood.splice(idx,1); else temporaryBatchSales.splice(idx,1); renderBatch(type); };
 
         window.submitBatchToFirebase = async () => {
-            if (!auth.currentUser) return;
             const nota = document.getElementById('wood-nota').value, sid = document.getElementById('wood-supplier-select').value, status = document.getElementById('wood-payment-status').value, dp = parseFloat(document.getElementById('wood-dp-amount').value)||0;
-            if (!nota || !sid) { alert("Nomor Nota dan Supplier wajib diisi."); return; }
+            if(!nota||!sid) return;
             const batch = writeBatch(db);
             let total = 0;
-            temporaryBatchWood.forEach(i => { 
-                total += i.totalPrice; 
-                batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'inventory')), { 
-                    type: i.type, 
-                    noLog: i.noLog, 
-                    grade: i.grade, 
-                    unitVolume: i.unitVolume, 
-                    volGR: i.volGR || 0, // Menyimpan Vol GR ke DB
-                    totalPrice: i.totalPrice, 
-                    measurements: i.measurements, 
-                    nota, 
-                    supplierId: sid, 
-                    paymentStatus: status, 
-                    createdAt: serverTimestamp() 
-                }); 
-            });
-            let debt = status === 'Hutang' ? total : (status === 'DP' ? total-dp : 0); if (debt>0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', sid), { balance: increment(debt) });
-            let cash = status === 'Lunas' ? total : (status === 'DP' ? dp : 0); if (cash>0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount: cash, note: `Pembelian Log Nota: ${nota}`, time: serverTimestamp() });
-            await batch.commit(); closeModal('wood'); alert("Data stok tersimpan!");
+            temporaryBatchWood.forEach(i => { total += i.totalPrice; batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'inventory')), { ...i, nota, supplierId: sid, paymentStatus: status, createdAt: serverTimestamp() }); });
+            let debt = status==='Hutang' ? total : (status==='DP' ? total-dp : 0); if(debt>0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', sid), { balance: increment(debt) });
+            let cash = status==='Lunas' ? total : (status==='DP' ? dp : 0); if(cash>0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount: cash, note: `Pembelian Log: ${nota}`, time: serverTimestamp() });
+            await batch.commit(); closeModal('wood'); alert("Stok disimpan!");
         };
 
         window.submitBatchSalesToFirebase = async () => {
-            if (!auth.currentUser) return;
             const nota = document.getElementById('sales-nota').value, cid = document.getElementById('sales-customer-select').value, status = document.getElementById('sales-payment-status').value, dp = parseFloat(document.getElementById('sales-dp-amount').value)||0;
-            if (!nota || !cid) { alert("Nomor Nota dan Pelanggan wajib diisi."); return; }
+            if(!nota||!cid) return;
             const batch = writeBatch(db);
             let total = 0;
-            temporaryBatchSales.forEach(i => { total += i.price; batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'sales')), { ...i, nota, customerId: cid, paymentStatus: status, createdAt: serverTimestamp() }); if (i.mode==='stock') batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', i.stockId)); });
-            let recv = status === 'Hutang' ? total : (status === 'DP' ? total-dp : 0); if (recv>0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', cid), { balance: increment(recv) });
-            let cash = status === 'Lunas' ? total : (status === 'DP' ? dp : 0); if (cash>0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'in', amount: cash, note: `Penjualan Log SJ: ${nota}`, time: serverTimestamp() });
-            await batch.commit(); closeModal('sales'); alert("Data penjualan tersimpan!");
+            temporaryBatchSales.forEach(i => { total += i.price; batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'sales')), { ...i, nota, customerId: cid, paymentStatus: status, createdAt: serverTimestamp() }); if(i.mode==='stock') batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', i.stockId)); });
+            let recv = status==='Hutang' ? total : (status==='DP' ? total-dp : 0); if(recv>0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', cid), { balance: increment(recv) });
+            let cash = status==='Lunas' ? total : (status==='DP' ? dp : 0); if(cash>0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'in', amount: cash, note: `Penjualan Log: ${nota}`, time: serverTimestamp() });
+            await batch.commit(); closeModal('sales'); alert("Penjualan disimpan!");
         };
 
-        window.toggleSalesMode = (mode) => {
-            const ss = document.getElementById('sales-stock-item-select');
-            if (ss) { if (mode === 'manual') ss.classList.add('hidden'); else ss.classList.remove('hidden'); }
-        };
-
-        window.autoFillSalesFromStock = () => {
-            const id = document.getElementById('sales-stock-item-select').value;
-            const item = inventoryData.find(i => i.id === id);
-            if (item) {
-                const elType = document.getElementById('sales-wood-type'); if(elType) elType.value = item.type;
-                const elVol = document.getElementById('sales-wood-vol'); if(elVol) elVol.value = item.unitVolume;
-            }
-        };
-
-        window.updateUserRole = async (uid, newRole) => {
-            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', uid), { role: newRole }); alert(`Peran diperbarui menjadi ${newRole}`); } catch (err) { console.error(err); }
-        };
-
-        window.showDetail = (type, nota) => {
-            const data = type === 'inventory' ? inventoryData : salesData;
-            const items = data.filter(i => i.nota === nota);
-            const firstItem = items[0] || {};
-            const elInv = document.getElementById('detail-meta-invoice'); if(elInv) elInv.innerText = nota;
-            const elCL = document.getElementById('detail-meta-contact-label'); if(elCL) elCL.innerText = type === 'sales' ? 'Pelanggan' : 'Supplier';
-            const elCN = document.getElementById('detail-meta-contact-name'); if(elCN) elCN.innerText = contactsData.find(c => c.id === (firstItem.supplierId || firstItem.customerId))?.name || '-';
-            const elSt = document.getElementById('detail-meta-status'); if(elSt) elSt.innerText = firstItem.paymentStatus || '-';
-            const elTotal = document.getElementById('detail-meta-total'); if(elTotal) elTotal.innerText = formatCurrency(items.reduce((a, b) => a + (b.totalPrice || b.price || 0), 0));
-            const tbody = document.getElementById('detail-table-body');
-            if (tbody) {
-                tbody.innerHTML = items.map(i => {
-                    const m = i.measurements || {};
-                    const dimStr = m.d1 !== undefined ? `${m.d1}/${m.d2}/${m.d3}/${m.d4} P:${m.p} (Avg D: ${m.avgD})` : '-';
-                    return `<tr>
-                        <td class="p-3 text-left font-mono">${i.noLog || '-'}</td>
-                        <td class="p-3 text-left font-medium text-slate-700">${i.type || i.woodType} / ${i.grade || '-'}</td>
-                        <td class="p-3 text-center text-slate-500 font-mono">${dimStr}</td>
-                        <td class="p-3 text-center font-bold">${(i.unitVolume || i.volume || 0).toFixed(2)}</td>
-                        <td class="p-3 text-center text-red-500 font-medium">${i.volGR !== undefined ? i.volGR.toFixed(2) : '-'}</td>
-                        <td class="p-3 text-right text-slate-500">${formatCurrency(i.totalPrice || i.price)}</td>
-                    </tr>`;
-                }).join('');
-            }
-            const btnP = document.getElementById('btn-print-detail-nota'); if(btnP) btnP.onclick = () => window.handlePrintInventory(nota);
-            const m = document.getElementById('detail-modal'); if(m) m.classList.remove('hidden');
-            refreshIcons();
-        };
-
-        window.handlePrintInventory = (nota) => {
-            const items = inventoryData.filter(i => i.nota === nota);
-            if (items.length === 0) return;
-            const supplier = contactsData.find(c => c.id === items[0]?.supplierId);
-            const printFrame = document.getElementById('print-frame');
-            const docRef = printFrame.contentDocument || printFrame.contentWindow.document;
-            const total = items.reduce((a,b)=>a+(b.totalPrice||0), 0);
-            const html = `<html><head><style>body { font-family: sans-serif; padding: 20px; font-size: 11px; }.header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }table { width: 100%; border-collapse: collapse; }th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }th { background: #f4f4f4; text-transform: uppercase; }</style></head><body><div class="header"><h1>${companyProfile.name}</h1><p>${companyProfile.address} | Telp: ${companyProfile.phone}</p></div><h3 style="text-align:center;">NOTA PEMBELIAN LOG KAYU (${nota})</h3><p>Supplier: <b>${supplier?.name || '-'}</b> | Tgl: ${items[0]?.createdAt?.toDate()?.toLocaleDateString()}</p><table><thead><tr><th>No LOG</th><th>Jenis</th><th>Grade</th><th>Dimensi (cm)</th><th>Avg D</th><th>Neto (m³)</th><th>GR (m³)</th><th>Harga</th></tr></thead><tbody>${items.map(i => `<tr><td>${i.noLog || '-'}</td><td>${i.type}</td><td>${i.grade || '-'}</td><td>${i.measurements?.d1}/${i.measurements?.d2}/${i.measurements?.d3}/${i.measurements?.d4} P:${i.measurements?.p}</td><td style="text-align:center;">${i.measurements?.avgD}</td><td style="text-align:center;">${i.unitVolume.toFixed(2)}</td><td style="text-align:center; color:red;">${i.volGR !== undefined ? i.volGR.toFixed(2) : '-'}</td><td style="text-align:right;">${formatCurrency(i.totalPrice)}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="6" style="text-align:right;"><b>GRAND TOTAL</b></td><td colspan="2" style="text-align:right;"><b>${formatCurrency(total)}</b></td></tr></tfoot></table></body></html>`;
-            docRef.open(); docRef.write(html); docRef.close();
-            setTimeout(() => { printFrame.contentWindow.print(); }, 500);
-        };
-
-        window.handleDeleteInventory = async (nota) => { if (confirm(`Hapus seluruh data Nota: ${nota}?`)) { const batch = writeBatch(db); inventoryData.filter(i => i.nota === nota).forEach(item => batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', item.id))); await batch.commit(); } };
-        window.handleDeleteSales = async (nota) => { if (confirm(`Hapus seluruh transaksi SJ: ${nota}?`)) { const batch = writeBatch(db); salesData.filter(i => i.nota === nota).forEach(item => batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'sales', item.id))); await batch.commit(); } };
-        window.handleDeleteContact = async (id) => { if (confirm('Hapus kontak ini?')) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', id)); };
-        window.deleteExpense = async (id) => { if(confirm('Hapus beban ini?')) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'expenses', id)); };
-        window.promptPayment = (id, type) => {
-            const amt = prompt("Jumlah Pembayaran (Rp):"); if(!amt||isNaN(amt)) return;
-            const batch = writeBatch(db);
-            batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', id), { balance: increment(-parseFloat(amt)) });
-            batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: type==='customer'?'in':'out', amount: parseFloat(amt), note: `Pelunasan Piutang/Hutang`, time: serverTimestamp() });
-            batch.commit();
-        };
-        window.saveCompanyProfile = async () => { 
-            const name = document.getElementById('setting-company-name').value;
-            const address = document.getElementById('setting-company-address').value;
-            const phone = document.getElementById('setting-company-phone').value;
+        window.handleDeleteInventory = async (nota) => { if(confirm('Hapus nota ini?')){ const batch = writeBatch(db); inventoryData.filter(i=>i.nota===nota).forEach(item=>batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', item.id))); await batch.commit(); } };
+        window.handleDeleteSales = async (nota) => { if(confirm('Hapus SJ ini?')){ const batch = writeBatch(db); salesData.filter(i=>i.nota===nota).forEach(item=>batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'sales', item.id))); await batch.commit(); } };
+        window.handleDeleteContact = async (id) => { if(confirm('Hapus kontak?')) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', id)); };
+        window.deleteExpense = async (id) => { if(confirm('Hapus biaya?')) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'expenses', id)); };
+        
+        window.saveCompanyProfile = async () => {
+            const name = document.getElementById('setting-company-name').value, address = document.getElementById('setting-company-address').value, phone = document.getElementById('setting-company-phone').value;
             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), { name, address, phone, updatedAt: serverTimestamp() }); alert("Profil disimpan!");
         };
-        window.handleLogout = () => auth.signOut().then(() => location.reload());
 
-        // --- LIFECYCLE ---
-        onAuthStateChanged(auth, u => { if (u) { user = u; document.getElementById('user-info').innerText = u.uid; syncUserRole(u); startSync(); } });
+        onAuthStateChanged(auth, u => { if(u){ syncUserRole(u); startSync(); } });
         initAuth();
         switchView('dashboard');
     </script>
