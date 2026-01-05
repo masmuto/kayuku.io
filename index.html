@@ -358,7 +358,7 @@
         </main>
     </div>
 
-    <!-- Modals -->
+    <!-- Modal Kayu Masuk -->
     <div id="wood-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto no-print">
         <div class="bg-white w-full max-w-4xl my-8 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10"><h3 id="wood-modal-title" class="text-lg font-bold text-slate-800 uppercase tracking-tight">Input Log Baru</h3><button onclick="closeModal('wood')" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button></div>
@@ -533,11 +533,143 @@
         let companyProfile = { name: "Wood-IT Log", address: "Jl. Raya Utama No. 1", phone: "021-1234567" };
         let inventoryData = [], contactsData = [], salesData = [], transactionsData = [], usersData = [], expensesData = [];
         let temporaryBatchWood = [], temporaryBatchSales = [], currentLiveVolWood = 0, currentLiveAvgD = 0, currentLiveVolGR = 0;
-        let isEditingNota = null; // Menyimpan No Nota yang sedang diedit
+        let isEditingNota = null;
 
         // --- UTILITIES ---
         const refreshIcons = () => { if (window.lucide) window.lucide.createIcons(); };
         const formatCurrency = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n || 0);
+
+        // --- PRINT LOGIC ---
+        window.handlePrintNota = (type, nota) => {
+            const frame = document.getElementById('print-frame');
+            let items = [];
+            let contact = null;
+            let status = "";
+            let total = 0;
+            let docTitle = "";
+
+            if (type === 'inventory') {
+                docTitle = "NOTA PEMBELIAN LOG";
+                items = inventoryData.filter(i => i.nota === nota);
+                contact = contactsData.find(c => c.id === items[0]?.supplierId);
+                status = items[0]?.paymentStatus || "-";
+                total = items.reduce((a, b) => a + (b.totalPrice || 0), 0);
+            } else {
+                docTitle = "SURAT JALAN / PENJUALAN";
+                items = salesData.filter(i => i.nota === nota);
+                contact = contactsData.find(c => c.id === items[0]?.customerId);
+                status = items[0]?.paymentStatus || "-";
+                total = items.reduce((a, b) => a + (b.price || 0), 0);
+            }
+
+            const html = `
+                <html>
+                <head>
+                    <title>Cetak ${nota}</title>
+                    <style>
+                        body { font-family: sans-serif; color: #333; padding: 40px; }
+                        .header { display: flex; justify-content: space-between; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
+                        .company-info h1 { margin: 0; color: #d97706; }
+                        .company-info p { margin: 2px 0; font-size: 12px; }
+                        .doc-info { text-align: right; }
+                        .doc-info h2 { margin: 0; color: #333; }
+                        .meta-grid { display: grid; grid-template-cols: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+                        .meta-box h3 { font-size: 10px; text-transform: uppercase; color: #999; margin-bottom: 5px; }
+                        .meta-box p { margin: 0; font-weight: bold; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                        th { background: #f3f4f6; padding: 10px; font-size: 10px; text-transform: uppercase; border: 1px solid #ddd; }
+                        td { padding: 8px; font-size: 11px; border: 1px solid #ddd; }
+                        .text-center { text-align: center; }
+                        .text-right { text-align: right; }
+                        .footer { margin-top: 50px; display: grid; grid-template-cols: 1fr 1fr; text-align: center; }
+                        .footer-box { padding-top: 80px; border-top: 1px solid #eee; width: 150px; margin: 0 auto; }
+                        @media print { body { padding: 0; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div class="company-info">
+                            <h1>${companyProfile.name}</h1>
+                            <p>${companyProfile.address}</p>
+                            <p>Telp: ${companyProfile.phone}</p>
+                        </div>
+                        <div class="doc-info">
+                            <h2>${docTitle}</h2>
+                            <p>No: <strong>${nota}</strong></p>
+                            <p>Tanggal: ${new Date().toLocaleDateString('id-ID')}</p>
+                        </div>
+                    </div>
+
+                    <div class="meta-grid">
+                        <div class="meta-box">
+                            <h3>${type === 'inventory' ? 'Supplier' : 'Pelanggan'}</h3>
+                            <p>${contact?.name || '-'}</p>
+                            <p style="font-weight: normal; font-size: 10px;">${contact?.address || ''}</p>
+                        </div>
+                        <div class="meta-box" style="text-align: right;">
+                            <h3>Status Pembayaran</h3>
+                            <p>${status}</p>
+                        </div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No LOG</th>
+                                <th>Jenis/Grade</th>
+                                <th>Ukuran (P x D)</th>
+                                <th>Neto (m³)</th>
+                                <th style="color: red;">GR (m³)</th>
+                                <th class="text-right">Harga Satuan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${items.map(i => `
+                                <tr>
+                                    <td class="text-center">${i.noLog || i.stockId || '-'}</td>
+                                    <td>${i.type || i.woodType || '-'} ${i.grade ? '('+i.grade+')' : ''}</td>
+                                    <td class="text-center">${i.measurements ? i.measurements.p + ' x ' + i.measurements.avgD : '-'}</td>
+                                    <td class="text-center font-bold">${(i.unitVolume || i.volume || 0).toFixed(2)}</td>
+                                    <td class="text-center" style="color: #666;">${(i.volGR || 0).toFixed(2)}</td>
+                                    <td class="text-right">${formatCurrency(i.totalPrice || i.price)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-right" style="font-weight: bold; padding: 10px;">TOTAL</td>
+                                <td class="text-center" style="font-weight: bold;">${items.reduce((a,b)=>a+(b.unitVolume||b.volume||0),0).toFixed(2)}</td>
+                                <td></td>
+                                <td class="text-right" style="font-weight: bold; background: #f9fafb;">${formatCurrency(total)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="footer">
+                        <div>
+                            <p>Diterima Oleh,</p>
+                            <div class="footer-box"></div>
+                            <p>( ............................ )</p>
+                        </div>
+                        <div>
+                            <p>Hormat Kami,</p>
+                            <div class="footer-box"></div>
+                            <p>( ${companyProfile.name} )</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            frame.contentWindow.document.open();
+            frame.contentWindow.document.write(html);
+            frame.contentWindow.document.close();
+            
+            setTimeout(() => {
+                frame.contentWindow.focus();
+                frame.contentWindow.print();
+            }, 500);
+        };
 
         // --- UI LOGIC ---
         window.toggleDPInput = (type) => {
@@ -575,8 +707,10 @@
             const modal = document.getElementById('detail-modal');
             const title = document.getElementById('detail-title');
             const tableBody = document.getElementById('detail-table-body');
+            const btnPrint = document.getElementById('btn-print-detail-nota');
             
             document.getElementById('detail-meta-invoice').innerText = nota;
+            btnPrint.onclick = () => window.handlePrintNota(type, nota);
             
             let items = [];
             let contact = null;
@@ -608,7 +742,7 @@
                     <td class="p-3">${i.noLog || i.stockId || '-'}</td>
                     <td class="p-3">${i.type || i.woodType || '-'} ${i.grade ? '('+i.grade+')' : ''}</td>
                     <td class="p-3 text-center">${i.measurements ? i.measurements.p + 'x' + i.measurements.avgD : '-'}</td>
-                    <td class="p-3 text-center">${(i.unitVolume || i.volume || 0).toFixed(2)}</td>
+                    <td class="p-3 text-center font-bold">${(i.unitVolume || i.volume || 0).toFixed(2)}</td>
                     <td class="p-3 text-center text-red-500">${(i.volGR || 0).toFixed(2)}</td>
                     <td class="p-3 text-right">${formatCurrency(i.totalPrice || i.price)}</td>
                 </tr>
@@ -626,7 +760,6 @@
             isEditingNota = nota;
             temporaryBatchWood = logs.map(l => ({ ...l, tempId: Date.now() + Math.random() }));
             
-            // Set UI Fields
             document.getElementById('wood-modal-title').innerText = `Edit Nota: ${nota}`;
             document.getElementById('wood-nota').value = nota;
             document.getElementById('wood-supplier-select').value = logs[0].supplierId;
@@ -668,7 +801,7 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', userId), { role: newRole });
         };
 
-        // --- DATABASE MANAGEMENT (BACKUP / RESTORE / RESET) ---
+        // --- DATABASE MANAGEMENT ---
         window.handleBackupDatabase = async () => {
             if (!confirm("Konfirmasi pencadangan seluruh data database?")) return;
             const loading = document.getElementById('loading');
@@ -702,11 +835,7 @@
         window.handleRestoreDatabase = async (event) => {
             const file = event.target.files[0];
             if (!file) return;
-
-            if (!confirm("PERINGATAN: Memulihkan database akan menghapus data saat ini dan menggantinya dengan data dari file backup. Lanjutkan?")) {
-                event.target.value = "";
-                return;
-            }
+            if (!confirm("PERINGATAN: Memulihkan database akan menghapus data saat ini. Lanjutkan?")) return;
 
             const loading = document.getElementById('loading');
             loading.classList.remove('hidden');
@@ -714,11 +843,8 @@
             try {
                 const text = await file.text();
                 const backupData = JSON.parse(text);
-
-                // 1. Reset Database Dulu
                 await resetAllDataLocally();
 
-                // 2. Upload Data Baru
                 const collections = Object.keys(backupData);
                 for (const collName of collections) {
                     const items = backupData[collName];
@@ -727,15 +853,12 @@
                         await setDoc(doc(db, 'artifacts', appId, 'public', 'data', collName, id || crypto.randomUUID()), data);
                     }
                 }
-
                 alert("Database berhasil dipulihkan!");
                 location.reload();
             } catch (err) {
-                console.error(err);
-                alert("Terjadi kesalahan saat memulihkan database. Pastikan file JSON valid.");
+                alert("Terjadi kesalahan!");
             } finally {
                 loading.classList.add('hidden');
-                event.target.value = "";
             }
         };
 
@@ -750,18 +873,15 @@
         };
 
         window.handleResetDatabase = async () => {
-            const secret = prompt("Tindakan ini permanen. Ketik 'HAPUS SEMUA' untuk konfirmasi:");
+            const secret = prompt("Ketik 'HAPUS SEMUA' untuk konfirmasi:");
             if (secret !== "HAPUS SEMUA") return;
-
             const loading = document.getElementById('loading');
             loading.classList.remove('hidden');
-
             try {
                 await resetAllDataLocally();
                 alert("Database berhasil di-reset.");
                 location.reload();
             } catch (err) {
-                console.error(err);
                 alert("Gagal mereset database.");
             } finally {
                 loading.classList.add('hidden');
@@ -927,23 +1047,35 @@
             const cin = transactionsData.filter(t=>t.type==='in').reduce((a,t)=>a+(t.amount||0),0);
             const cout = transactionsData.filter(t=>t.type==='out').reduce((a,t)=>a+(t.amount||0),0);
             
-            const elVol = document.getElementById('stat-total-volume'); if(elVol) elVol.innerText = `${vol.toFixed(2)} m³`;
-            const elPrc = document.getElementById('stat-total-price'); if(elPrc) elPrc.innerText = formatCurrency(stockVal);
-            const elDebt = document.getElementById('stat-total-debt'); if(elDebt) elDebt.innerText = formatCurrency(hutangTotal);
-            const elRec = document.getElementById('stat-total-receivable'); if(elRec) elRec.innerText = formatCurrency(piutangTotal);
+            // Dashboard Main Stats
+            if(document.getElementById('stat-total-volume')) document.getElementById('stat-total-volume').innerText = `${vol.toFixed(2)} m³`;
+            if(document.getElementById('stat-total-price')) document.getElementById('stat-total-price').innerText = formatCurrency(stockVal);
+            if(document.getElementById('stat-total-debt')) document.getElementById('stat-total-debt').innerText = formatCurrency(hutangTotal);
+            if(document.getElementById('stat-total-receivable')) document.getElementById('stat-total-receivable').innerText = formatCurrency(piutangTotal);
             
-            const repRev = document.getElementById('report-total-revenue'); if(repRev) repRev.innerText = formatCurrency(revNota);
-            const repCogs = document.getElementById('report-total-cogs'); if(repCogs) repCogs.innerText = formatCurrency(hppNota);
-            const repExp = document.getElementById('report-total-expenses'); if(repExp) repExp.innerText = `-${formatCurrency(totalExp)}`;
+            // Financial Report Detailed Stats
+            if(document.getElementById('report-total-revenue')) document.getElementById('report-total-revenue').innerText = formatCurrency(revNota);
+            if(document.getElementById('report-total-cogs')) document.getElementById('report-total-cogs').innerText = formatCurrency(hppNota);
+            if(document.getElementById('report-total-expenses')) document.getElementById('report-total-expenses').innerText = `-${formatCurrency(totalExp)}`;
             
             const gross = revNota - hppNota;
-            const elGross = document.getElementById('report-gross-profit-accrual'); if(elGross) elGross.innerText = formatCurrency(gross);
-            const elCashIn = document.getElementById('report-cash-in'); if(elCashIn) elCashIn.innerText = formatCurrency(cin);
-            const elCashOut = document.getElementById('report-cash-out'); if(elCashOut) elCashOut.innerText = formatCurrency(cout);
-            const elNetCash = document.getElementById('report-net-cash'); if(elNetCash) elNetCash.innerText = formatCurrency(cin - cout);
+            if(document.getElementById('report-gross-profit-accrual')) document.getElementById('report-gross-profit-accrual').innerText = formatCurrency(gross);
+            if(document.getElementById('report-cash-in')) document.getElementById('report-cash-in').innerText = formatCurrency(cin);
+            if(document.getElementById('report-cash-out')) document.getElementById('report-cash-out').innerText = formatCurrency(cout);
+            if(document.getElementById('report-net-cash')) document.getElementById('report-net-cash').innerText = formatCurrency(cin - cout);
+            if(document.getElementById('report-realized-profit')) document.getElementById('report-realized-profit').innerText = formatCurrency(cin - cout);
 
-            const loading = document.getElementById('loading');
-            if (loading) loading.classList.add('hidden');
+            if(document.getElementById('report-adj-receivable')) document.getElementById('report-adj-receivable').innerText = formatCurrency(piutangTotal);
+            if(document.getElementById('report-adj-payable')) document.getElementById('report-adj-payable').innerText = formatCurrency(hutangTotal);
+
+            // Progress bar
+            const totalDue = revNota;
+            const collected = cin;
+            const health = totalDue > 0 ? Math.min(100, (collected / totalDue) * 100) : 0;
+            if(document.getElementById('receivable-health-bar')) document.getElementById('receivable-health-bar').style.width = `${health}%`;
+            if(document.getElementById('receivable-health-text')) document.getElementById('receivable-health-text').innerText = `${health.toFixed(1)}% Tertagih`;
+
+            document.getElementById('loading').classList.add('hidden');
         };
 
         const updateSelects = () => {
@@ -993,7 +1125,6 @@
             });
         };
 
-        // --- FORM HANDLERS ---
         window.handleExpenseSubmit = async (e) => {
             e.preventDefault();
             const category = document.getElementById('expense-category').value, amount = parseFloat(document.getElementById('expense-amount').value), note = document.getElementById('expense-note').value;
@@ -1010,14 +1141,93 @@
             closeModal('contact'); e.target.reset();
         };
 
-        // --- AUTH & INIT ---
-        const initAuth = async () => {
-            try { 
-                await signInAnonymously(auth); 
-            } catch (error) { 
-                console.error(error); 
-            }
+        // --- UPDATE LOGIKA PERHITUNGAN VOLUME ---
+        window.liveUpdateCalc = () => {
+            const d1 = parseFloat(document.getElementById('log-d1').value)||0, 
+                  d2 = parseFloat(document.getElementById('log-d2').value)||0, 
+                  d3 = parseFloat(document.getElementById('log-d3').value)||0, 
+                  d4 = parseFloat(document.getElementById('log-d4').value)||0, 
+                  p = parseFloat(document.getElementById('log-p').value)||0, 
+                  trim = parseFloat(document.getElementById('log-trim').value)||0, 
+                  gr = parseFloat(document.getElementById('log-gr').value)||0;
+
+            currentLiveAvgD = Math.round((d1 + d2 + d3 + d4) / 4);
+            const pAsliMeter = p / 100, pEffMeter = (p - trim) / 100;
+            const volBruto = (0.7854 * Math.pow(currentLiveAvgD, 2) * pEffMeter) / 10000;
+            currentLiveVolGR = (0.7854 * Math.pow(gr, 2) * pAsliMeter) / 10000;
+            currentLiveVolWood = Math.max(0, volBruto - currentLiveVolGR);
+
+            document.getElementById('res-live-avg-d').innerText = `${currentLiveAvgD} cm`;
+            document.getElementById('res-live-vol-wood').innerText = `${currentLiveVolWood.toFixed(2)} m³`;
+            document.getElementById('res-live-vol-gr').innerText = `${currentLiveVolGR.toFixed(2)} m³`;
         };
+
+        window.addItemToBatch = (type) => {
+            if (type === 'wood') {
+                const prc = parseFloat(document.getElementById('wood-price').value)||0, woodType = document.getElementById('wood-type').value, noLog = document.getElementById('log-no').value, grade = document.getElementById('log-grade').value;
+                if (!currentLiveVolWood||prc<=0||!woodType) return;
+                temporaryBatchWood.push({ 
+                    tempId: Date.now() + Math.random(), type: woodType, noLog, grade, 
+                    unitVolume: parseFloat(currentLiveVolWood.toFixed(2)), volGR: parseFloat(currentLiveVolGR.toFixed(2)), totalPrice: prc, 
+                    measurements: { d1: parseFloat(document.getElementById('log-d1').value), d2: parseFloat(document.getElementById('log-d2').value), d3: parseFloat(document.getElementById('log-d3').value), d4: parseFloat(document.getElementById('log-d4').value), avgD: currentLiveAvgD, p: parseFloat(document.getElementById('log-p').value), trim: parseFloat(document.getElementById('log-trim').value), gr: parseFloat(document.getElementById('log-gr').value) } 
+                });
+            } else {
+                const vol = parseFloat(document.getElementById('sales-wood-vol').value)||0, prc = parseFloat(document.getElementById('sales-wood-price').value)||0;
+                if (!vol||!prc) return;
+                const mode = document.querySelector('input[name="sales-mode"]:checked').value;
+                temporaryBatchSales.push({ 
+                    tempId: Date.now() + Math.random(), woodType: document.getElementById('sales-wood-type').value, 
+                    volume: parseFloat(vol.toFixed(2)), price: prc, mode, stockId: document.getElementById('sales-stock-item-select').value 
+                });
+            }
+            renderBatch(type);
+        };
+
+        const renderBatch = (type) => {
+            const list = type === 'wood' ? temporaryBatchWood : temporaryBatchSales;
+            document.getElementById(`${type}-batch-table`).innerHTML = list.map((i, idx) => `
+                <tr class="border-b"><td class="p-2">${i.noLog||'-'}</td><td class="p-2">${i.type||i.woodType}</td><td class="p-2 text-center">${(i.unitVolume||i.volume).toFixed(2)}</td><td class="p-2 text-right"><button onclick="removeFromBatch('${type}', ${idx})" class="text-red-500">X</button></td></tr>
+            `).join('');
+            document.getElementById(`btn-save-batch-${type}`).disabled = list.length === 0;
+            refreshIcons();
+        };
+
+        window.removeFromBatch = (type, idx) => { if(type==='wood') temporaryBatchWood.splice(idx,1); else temporaryBatchSales.splice(idx,1); renderBatch(type); };
+
+        window.submitBatchToFirebase = async () => {
+            const nota = document.getElementById('wood-nota').value, sid = document.getElementById('wood-supplier-select').value, status = document.getElementById('wood-payment-status').value, dp = parseFloat(document.getElementById('wood-dp-amount').value)||0;
+            if(!nota||!sid) return;
+            const batch = writeBatch(db); let total = 0;
+            if (isEditingNota) {
+                inventoryData.filter(i => i.nota === isEditingNota).forEach(item => batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', item.id)));
+            }
+            temporaryBatchWood.forEach(i => { total += i.totalPrice; batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'inventory')), { ...i, nota, supplierId: sid, paymentStatus: status, dpAmount: dp, createdAt: serverTimestamp() }); });
+            let debt = status==='Hutang' ? total : (status==='DP' ? total-dp : 0); if(debt>0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', sid), { balance: increment(debt) });
+            let cash = status==='Lunas' ? total : (status==='DP' ? dp : 0); if(cash>0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount: cash, note: `Pembelian Log: ${nota}`, time: serverTimestamp() });
+            await batch.commit(); closeModal('wood'); isEditingNota = null;
+        };
+
+        window.submitBatchSalesToFirebase = async () => {
+            const nota = document.getElementById('sales-nota').value, cid = document.getElementById('sales-customer-select').value, status = document.getElementById('sales-payment-status').value, dp = parseFloat(document.getElementById('sales-dp-amount').value)||0;
+            if(!nota||!cid) return;
+            const batch = writeBatch(db); let total = 0;
+            temporaryBatchSales.forEach(i => { total += i.price; batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'sales')), { ...i, nota, customerId: cid, paymentStatus: status, createdAt: serverTimestamp() }); if(i.mode==='stock') batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', i.stockId)); });
+            let recv = status==='Hutang' ? total : (status==='DP' ? total-dp : 0); if(recv>0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', cid), { balance: increment(recv) });
+            let cash = status==='Lunas' ? total : (status==='DP' ? dp : 0); if(cash>0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'in', amount: cash, note: `Penjualan: ${nota}`, time: serverTimestamp() });
+            await batch.commit(); closeModal('sales');
+        };
+
+        window.handleDeleteInventory = async (nota) => { if(confirm('Hapus nota ini?')){ const batch = writeBatch(db); inventoryData.filter(i=>i.nota===nota).forEach(item=>batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', item.id))); await batch.commit(); } };
+        window.handleDeleteSales = async (nota) => { if(confirm('Hapus SJ ini?')){ const batch = writeBatch(db); salesData.filter(i=>i.nota===nota).forEach(item=>batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'sales', item.id))); await batch.commit(); } };
+        window.handleDeleteContact = async (id) => { if(confirm('Hapus kontak?')) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', id)); };
+        window.deleteExpense = async (id) => { if(confirm('Hapus biaya?')) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'expenses', id)); };
+        
+        window.saveCompanyProfile = async () => {
+            const name = document.getElementById('setting-company-name').value, address = document.getElementById('setting-company-address').value, phone = document.getElementById('setting-company-phone').value;
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), { name, address, phone, updatedAt: serverTimestamp() }); alert("Profil disimpan!");
+        };
+
+        window.handleLogout = () => auth.signOut().then(() => location.reload());
 
         window.switchView = (view) => {
             if ((view === 'reports' || view === 'settings') && currentUserRole !== 'Admin') { 
@@ -1032,197 +1242,13 @@
         };
 
         window.openModal = (type, sub = '') => {
-            if(type==='wood') { 
-                isEditingNota = null;
-                document.getElementById('wood-modal-title').innerText = "Input Log Baru";
-                document.getElementById('wood-nota').value = "";
-                document.getElementById('wood-dp-amount').value = "";
-                temporaryBatchWood=[]; 
-                renderBatch('wood');
-                document.getElementById('wood-modal').classList.remove('hidden'); 
-                updateSelects(); 
-            }
-            else if(type==='sales') { temporaryBatchSales=[]; document.getElementById('sales-modal').classList.remove('hidden'); updateSelects(); }
-            else if(type==='expense') document.getElementById('expense-modal').classList.remove('hidden');
-            else if(type==='contact') { document.getElementById('contact-type').value=sub; document.getElementById('contact-modal-title').innerText=`Tambah ${sub}`; document.getElementById('contact-modal').classList.remove('hidden'); }
-            refreshIcons();
+            if(type==='contact') document.getElementById('contact-type').value = sub;
+            document.getElementById(`${type}-modal`).classList.remove('hidden');
         };
-
-        window.closeModal = (type) => document.getElementById(`${type}-modal`).classList.add('hidden');
-
-        // --- UPDATE LOGIKA PERHITUNGAN VOLUME ---
-        window.liveUpdateCalc = () => {
-            const d1 = parseFloat(document.getElementById('log-d1').value)||0, 
-                  d2 = parseFloat(document.getElementById('log-d2').value)||0, 
-                  d3 = parseFloat(document.getElementById('log-d3').value)||0, 
-                  d4 = parseFloat(document.getElementById('log-d4').value)||0, 
-                  p = parseFloat(document.getElementById('log-p').value)||0, 
-                  trim = parseFloat(document.getElementById('log-trim').value)||0, 
-                  gr = parseFloat(document.getElementById('log-gr').value)||0;
-
-            // Rata-rata Diameter (D)
-            currentLiveAvgD = Math.round((d1 + d2 + d3 + d4) / 4);
-            document.getElementById('res-live-avg-d').innerText = `${currentLiveAvgD} cm`;
-
-            // Konversi Panjang ke Meter
-            const pAsliMeter = p / 100;
-            const pEffMeter = (p - trim) / 100;
-
-            // 1. Volume Bruto menggunakan Diameter (D) dan Panjang Efektif (P - Trim)
-            const volBruto = (0.7854 * Math.pow(currentLiveAvgD, 2) * pEffMeter) / 10000;
-
-            // 2. Volume GR menggunakan Diameter GR (gr) dan Panjang Asli (P)
-            currentLiveVolGR = (0.7854 * Math.pow(gr, 2) * pAsliMeter) / 10000;
-
-            // 3. Volume Neto = Volume Bruto - Volume GR
-            currentLiveVolWood = Math.max(0, volBruto - currentLiveVolGR);
-
-            document.getElementById('res-live-vol-wood').innerText = `${currentLiveVolWood.toFixed(2)} m³`;
-            document.getElementById('res-live-vol-gr').innerText = `${currentLiveVolGR.toFixed(2)} m³`;
-        };
-
-        window.addItemToBatch = (type) => {
-            if (type === 'wood') {
-                const prc = parseFloat(document.getElementById('wood-price').value)||0, woodType = document.getElementById('wood-type').value, noLog = document.getElementById('log-no').value, grade = document.getElementById('log-grade').value;
-                if (!currentLiveVolWood||prc<=0||!woodType) return;
-                temporaryBatchWood.push({ 
-                    tempId: Date.now() + Math.random(), 
-                    type: woodType, 
-                    noLog, 
-                    grade, 
-                    unitVolume: parseFloat(currentLiveVolWood.toFixed(2)), 
-                    volGR: parseFloat(currentLiveVolGR.toFixed(2)), 
-                    totalPrice: prc, 
-                    measurements: { 
-                        d1: parseFloat(document.getElementById('log-d1').value)||0, 
-                        d2: parseFloat(document.getElementById('log-d2').value)||0, 
-                        d3: parseFloat(document.getElementById('log-d3').value)||0, 
-                        d4: parseFloat(document.getElementById('log-d4').value)||0, 
-                        avgD: currentLiveAvgD, 
-                        p: parseFloat(document.getElementById('log-p').value)||0, 
-                        trim: parseFloat(document.getElementById('log-trim').value)||0, 
-                        gr: parseFloat(document.getElementById('log-gr').value)||0 
-                    } 
-                });
-                ['log-no','log-grade','log-d1','log-d2','log-d3','log-d4','log-p','log-trim','log-gr','wood-price'].forEach(id => document.getElementById(id).value="");
-            } else {
-                const vol = parseFloat(document.getElementById('sales-wood-vol').value)||0, prc = parseFloat(document.getElementById('sales-wood-price').value)||0;
-                if (!vol||!prc) return;
-                const mode = document.querySelector('input[name="sales-mode"]:checked').value;
-                temporaryBatchSales.push({ 
-                    tempId: Date.now() + Math.random(), 
-                    woodType: document.getElementById('sales-wood-type').value, 
-                    volume: parseFloat(vol.toFixed(2)), 
-                    price: prc, 
-                    mode: mode, 
-                    stockId: document.getElementById('sales-stock-item-select').value 
-                });
-            }
-            renderBatch(type);
-        };
-
-        const renderBatch = (type) => {
-            const list = type === 'wood' ? temporaryBatchWood : temporaryBatchSales;
-            document.getElementById(`${type}-batch-table`).innerHTML = list.map((i, idx) => `
-                <tr class="border-b">
-                    <td class="p-2">${i.noLog||'-'}</td>
-                    <td class="p-2">${i.type||i.woodType}</td>
-                    <td class="p-2 text-center">${(i.unitVolume||i.volume).toFixed(2)}</td>
-                    <td class="p-2 text-center text-red-500">${i.volGR ? i.volGR.toFixed(2) : '-'}</td>
-                    <td class="p-2 text-right"><button onclick="removeFromBatch('${type}', ${idx})" class="text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
-                </tr>
-            `).join('');
-            document.getElementById(`btn-save-batch-${type}`).disabled = list.length === 0;
-            refreshIcons();
-        };
-
-        window.removeFromBatch = (type, idx) => { if(type==='wood') temporaryBatchWood.splice(idx,1); else temporaryBatchSales.splice(idx,1); renderBatch(type); };
-
-        window.submitBatchToFirebase = async () => {
-            const nota = document.getElementById('wood-nota').value, sid = document.getElementById('wood-supplier-select').value, status = document.getElementById('wood-payment-status').value, dp = parseFloat(document.getElementById('wood-dp-amount').value)||0;
-            if(!nota||!sid) return;
-
-            const batch = writeBatch(db);
-            
-            // Jika ini mode Edit, hapus item lama dari nota ini serta balikkan saldo & transaksi lama
-            if (isEditingNota) {
-                const oldItems = inventoryData.filter(i => i.nota === isEditingNota);
-                let oldTotal = 0;
-                let oldStatus = oldItems[0]?.paymentStatus;
-                let oldSupplierId = oldItems[0]?.supplierId;
-                let oldDp = oldItems[0]?.dpAmount || 0;
-
-                oldItems.forEach(item => {
-                    oldTotal += item.totalPrice;
-                    batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', item.id));
-                });
-
-                // Balikkan Saldo Hutang
-                let oldDebt = oldStatus === 'Hutang' ? oldTotal : (oldStatus === 'DP' ? oldTotal - oldDp : 0);
-                if (oldDebt > 0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', oldSupplierId), { balance: increment(-oldDebt) });
-
-                // Balikkan Transaksi Kas
-                let oldCash = oldStatus === 'Lunas' ? oldTotal : (oldStatus === 'DP' ? oldDp : 0);
-                if (oldCash > 0) {
-                    batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), {
-                        type: 'in',
-                        amount: oldCash,
-                        note: `Koreksi Edit Pembelian Log: ${isEditingNota}`,
-                        time: serverTimestamp()
-                    });
-                }
-            }
-
-            // Simpan Item Baru
-            let total = 0;
-            temporaryBatchWood.forEach(i => { 
-                const { id, tempId, ...cleanItem } = i;
-                total += i.totalPrice; 
-                batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'inventory')), { ...cleanItem, nota, supplierId: sid, paymentStatus: status, dpAmount: dp, createdAt: serverTimestamp() }); 
-            });
-
-            // Update Saldo Hutang Baru
-            let debt = status==='Hutang' ? total : (status==='DP' ? total-dp : 0); 
-            if(debt>0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', sid), { balance: increment(debt) });
-
-            // Simpan Transaksi Kas Baru
-            let cash = status==='Lunas' ? total : (status==='DP' ? dp : 0); 
-            if(cash>0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount: cash, note: `Pembelian Log: ${nota}${isEditingNota ? ' (Koreksi Edit)' : ''}`, time: serverTimestamp() });
-
-            await batch.commit(); 
-            closeModal('wood'); 
-            alert(isEditingNota ? "Nota berhasil diperbarui!" : "Stok disimpan!");
-            isEditingNota = null;
-        };
-
-        window.submitBatchSalesToFirebase = async () => {
-            const nota = document.getElementById('sales-nota').value, cid = document.getElementById('sales-customer-select').value, status = document.getElementById('sales-payment-status').value, dp = parseFloat(document.getElementById('sales-dp-amount').value)||0;
-            if(!nota||!cid) return;
-            const batch = writeBatch(db);
-            let total = 0;
-            temporaryBatchSales.forEach(i => { 
-                const { tempId, ...cleanItem } = i;
-                total += i.price; 
-                batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'sales')), { ...cleanItem, nota, customerId: cid, paymentStatus: status, createdAt: serverTimestamp() }); 
-                if(i.mode==='stock') batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', i.stockId)); 
-            });
-            let recv = status==='Hutang' ? total : (status==='DP' ? total-dp : 0); if(recv>0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', cid), { balance: increment(recv) });
-            let cash = status==='Lunas' ? total : (status==='DP' ? dp : 0); if(cash>0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'in', amount: cash, note: `Penjualan Log: ${nota}`, time: serverTimestamp() });
-            await batch.commit(); closeModal('sales'); alert("Penjualan disimpan!");
-        };
-
-        window.handleDeleteInventory = async (nota) => { if(confirm('Hapus nota ini?')){ const batch = writeBatch(db); inventoryData.filter(i=>i.nota===nota).forEach(item=>batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', item.id))); await batch.commit(); } };
-        window.handleDeleteSales = async (nota) => { if(confirm('Hapus SJ ini?')){ const batch = writeBatch(db); salesData.filter(i=>i.nota===nota).forEach(item=>batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'sales', item.id))); await batch.commit(); } };
-        window.handleDeleteContact = async (id) => { if(confirm('Hapus kontak?')) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', id)); };
-        window.deleteExpense = async (id) => { if(confirm('Hapus biaya?')) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'expenses', id)); };
-        
-        window.saveCompanyProfile = async () => {
-            const name = document.getElementById('setting-company-name').value, address = document.getElementById('setting-company-address').value, phone = document.getElementById('setting-company-phone').value;
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), { name, address, phone, updatedAt: serverTimestamp() }); alert("Profil disimpan!");
-        };
+        window.closeModal = (id) => document.getElementById(`${id}-modal`).classList.add('hidden');
 
         onAuthStateChanged(auth, u => { if(u){ syncUserRole(u); startSync(); } });
-        initAuth();
+        signInAnonymously(auth);
         switchView('dashboard');
     </script>
 </body>
