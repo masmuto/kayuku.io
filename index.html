@@ -361,7 +361,7 @@
     <!-- Modals -->
     <div id="wood-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto no-print">
         <div class="bg-white w-full max-w-4xl my-8 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10"><h3 class="text-lg font-bold text-slate-800 uppercase tracking-tight">Input Log Baru</h3><button onclick="closeModal('wood')" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button></div>
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10"><h3 id="wood-modal-title" class="text-lg font-bold text-slate-800 uppercase tracking-tight">Input Log Baru</h3><button onclick="closeModal('wood')" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button></div>
             <div class="flex-1 overflow-y-auto p-6 space-y-6">
                 <!-- Metadata Nota -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-6 rounded-2xl">
@@ -533,6 +533,7 @@
         let companyProfile = { name: "Wood-IT Log", address: "Jl. Raya Utama No. 1", phone: "021-1234567" };
         let inventoryData = [], contactsData = [], salesData = [], transactionsData = [], usersData = [], expensesData = [];
         let temporaryBatchWood = [], temporaryBatchSales = [], currentLiveVolWood = 0, currentLiveAvgD = 0, currentLiveVolGR = 0;
+        let isEditingNota = null; // Menyimpan No Nota yang sedang diedit
 
         // --- UTILITIES ---
         const refreshIcons = () => { if (window.lucide) window.lucide.createIcons(); };
@@ -614,6 +615,30 @@
             `).join('');
 
             modal.classList.remove('hidden');
+            refreshIcons();
+        };
+
+        // --- FITUR EDIT STOK ---
+        window.editInventory = (nota) => {
+            const logs = inventoryData.filter(i => i.nota === nota);
+            if (logs.length === 0) return;
+
+            isEditingNota = nota;
+            temporaryBatchWood = logs.map(l => ({ ...l, tempId: Date.now() + Math.random() }));
+            
+            // Set UI Fields
+            document.getElementById('wood-modal-title').innerText = `Edit Nota: ${nota}`;
+            document.getElementById('wood-nota').value = nota;
+            document.getElementById('wood-supplier-select').value = logs[0].supplierId;
+            document.getElementById('wood-payment-status').value = logs[0].paymentStatus;
+            
+            const dpVal = logs[0].dpAmount || 0;
+            document.getElementById('wood-dp-amount').value = dpVal;
+            if (logs[0].paymentStatus === 'DP') document.getElementById('wood-dp-amount').classList.remove('hidden');
+            else document.getElementById('wood-dp-amount').classList.add('hidden');
+
+            renderBatch('wood');
+            document.getElementById('wood-modal').classList.remove('hidden');
             refreshIcons();
         };
 
@@ -799,8 +824,9 @@
                         <td class="px-6 py-4 text-center font-bold">${n.vol.toFixed(2)}</td>
                         <td class="px-6 py-4 text-right">${formatCurrency(n.prc)}</td>
                         <td class="px-6 py-4 text-right no-print flex justify-end space-x-2">
-                            <button onclick="showDetail('inventory','${n.nota}')" class="p-1.5 text-slate-400 bg-slate-100 rounded-lg"><i data-lucide="eye" class="w-4 h-4"></i></button>
-                            <button onclick="handleDeleteInventory('${n.nota}')" class="p-1.5 text-red-500 bg-red-50 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <button onclick="showDetail('inventory','${n.nota}')" class="p-1.5 text-slate-400 bg-slate-100 rounded-lg hover:bg-slate-200 transition" title="Detail"><i data-lucide="eye" class="w-4 h-4"></i></button>
+                            <button onclick="editInventory('${n.nota}')" class="p-1.5 text-amber-600 bg-amber-50 rounded-lg hover:bg-amber-100 transition" title="Edit"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                            <button onclick="handleDeleteInventory('${n.nota}')" class="p-1.5 text-red-500 bg-red-50 rounded-lg hover:bg-red-100 transition" title="Hapus"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </td>
                     </tr>`).join('');
             }
@@ -1006,7 +1032,16 @@
         };
 
         window.openModal = (type, sub = '') => {
-            if(type==='wood') { temporaryBatchWood=[]; document.getElementById('wood-modal').classList.remove('hidden'); updateSelects(); }
+            if(type==='wood') { 
+                isEditingNota = null;
+                document.getElementById('wood-modal-title').innerText = "Input Log Baru";
+                document.getElementById('wood-nota').value = "";
+                document.getElementById('wood-dp-amount').value = "";
+                temporaryBatchWood=[]; 
+                renderBatch('wood');
+                document.getElementById('wood-modal').classList.remove('hidden'); 
+                updateSelects(); 
+            }
             else if(type==='sales') { temporaryBatchSales=[]; document.getElementById('sales-modal').classList.remove('hidden'); updateSelects(); }
             else if(type==='expense') document.getElementById('expense-modal').classList.remove('hidden');
             else if(type==='contact') { document.getElementById('contact-type').value=sub; document.getElementById('contact-modal-title').innerText=`Tambah ${sub}`; document.getElementById('contact-modal').classList.remove('hidden'); }
@@ -1015,14 +1050,33 @@
 
         window.closeModal = (type) => document.getElementById(`${type}-modal`).classList.add('hidden');
 
+        // --- UPDATE LOGIKA PERHITUNGAN VOLUME ---
         window.liveUpdateCalc = () => {
-            const d1 = parseFloat(document.getElementById('log-d1').value)||0, d2 = parseFloat(document.getElementById('log-d2').value)||0, d3 = parseFloat(document.getElementById('log-d3').value)||0, d4 = parseFloat(document.getElementById('log-d4').value)||0, p = parseFloat(document.getElementById('log-p').value)||0, trim = parseFloat(document.getElementById('log-trim').value)||0, gr = parseFloat(document.getElementById('log-gr').value)||0;
+            const d1 = parseFloat(document.getElementById('log-d1').value)||0, 
+                  d2 = parseFloat(document.getElementById('log-d2').value)||0, 
+                  d3 = parseFloat(document.getElementById('log-d3').value)||0, 
+                  d4 = parseFloat(document.getElementById('log-d4').value)||0, 
+                  p = parseFloat(document.getElementById('log-p').value)||0, 
+                  trim = parseFloat(document.getElementById('log-trim').value)||0, 
+                  gr = parseFloat(document.getElementById('log-gr').value)||0;
+
+            // Rata-rata Diameter (D)
             currentLiveAvgD = Math.round((d1 + d2 + d3 + d4) / 4);
             document.getElementById('res-live-avg-d').innerText = `${currentLiveAvgD} cm`;
-            const pEff = (p - trim)/100;
-            const dNeto = Math.max(0, currentLiveAvgD - gr); 
-            currentLiveVolWood = (0.7854 * Math.pow(dNeto, 2) * pEff)/10000;
-            currentLiveVolGR = (0.7854 * Math.pow(gr, 2) * pEff)/10000;
+
+            // Konversi Panjang ke Meter
+            const pAsliMeter = p / 100;
+            const pEffMeter = (p - trim) / 100;
+
+            // 1. Volume Bruto menggunakan Diameter (D) dan Panjang Efektif (P - Trim)
+            const volBruto = (0.7854 * Math.pow(currentLiveAvgD, 2) * pEffMeter) / 10000;
+
+            // 2. Volume GR menggunakan Diameter GR (gr) dan Panjang Asli (P)
+            currentLiveVolGR = (0.7854 * Math.pow(gr, 2) * pAsliMeter) / 10000;
+
+            // 3. Volume Neto = Volume Bruto - Volume GR
+            currentLiveVolWood = Math.max(0, volBruto - currentLiveVolGR);
+
             document.getElementById('res-live-vol-wood').innerText = `${currentLiveVolWood.toFixed(2)} m³`;
             document.getElementById('res-live-vol-gr').innerText = `${currentLiveVolGR.toFixed(2)} m³`;
         };
@@ -1032,7 +1086,7 @@
                 const prc = parseFloat(document.getElementById('wood-price').value)||0, woodType = document.getElementById('wood-type').value, noLog = document.getElementById('log-no').value, grade = document.getElementById('log-grade').value;
                 if (!currentLiveVolWood||prc<=0||!woodType) return;
                 temporaryBatchWood.push({ 
-                    tempId: Date.now(), 
+                    tempId: Date.now() + Math.random(), 
                     type: woodType, 
                     noLog, 
                     grade, 
@@ -1056,7 +1110,7 @@
                 if (!vol||!prc) return;
                 const mode = document.querySelector('input[name="sales-mode"]:checked').value;
                 temporaryBatchSales.push({ 
-                    tempId: Date.now(), 
+                    tempId: Date.now() + Math.random(), 
                     woodType: document.getElementById('sales-wood-type').value, 
                     volume: parseFloat(vol.toFixed(2)), 
                     price: prc, 
@@ -1087,12 +1141,58 @@
         window.submitBatchToFirebase = async () => {
             const nota = document.getElementById('wood-nota').value, sid = document.getElementById('wood-supplier-select').value, status = document.getElementById('wood-payment-status').value, dp = parseFloat(document.getElementById('wood-dp-amount').value)||0;
             if(!nota||!sid) return;
+
             const batch = writeBatch(db);
+            
+            // Jika ini mode Edit, hapus item lama dari nota ini serta balikkan saldo & transaksi lama
+            if (isEditingNota) {
+                const oldItems = inventoryData.filter(i => i.nota === isEditingNota);
+                let oldTotal = 0;
+                let oldStatus = oldItems[0]?.paymentStatus;
+                let oldSupplierId = oldItems[0]?.supplierId;
+                let oldDp = oldItems[0]?.dpAmount || 0;
+
+                oldItems.forEach(item => {
+                    oldTotal += item.totalPrice;
+                    batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', item.id));
+                });
+
+                // Balikkan Saldo Hutang
+                let oldDebt = oldStatus === 'Hutang' ? oldTotal : (oldStatus === 'DP' ? oldTotal - oldDp : 0);
+                if (oldDebt > 0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', oldSupplierId), { balance: increment(-oldDebt) });
+
+                // Balikkan Transaksi Kas
+                let oldCash = oldStatus === 'Lunas' ? oldTotal : (oldStatus === 'DP' ? oldDp : 0);
+                if (oldCash > 0) {
+                    batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), {
+                        type: 'in',
+                        amount: oldCash,
+                        note: `Koreksi Edit Pembelian Log: ${isEditingNota}`,
+                        time: serverTimestamp()
+                    });
+                }
+            }
+
+            // Simpan Item Baru
             let total = 0;
-            temporaryBatchWood.forEach(i => { total += i.totalPrice; batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'inventory')), { ...i, nota, supplierId: sid, paymentStatus: status, createdAt: serverTimestamp() }); });
-            let debt = status==='Hutang' ? total : (status==='DP' ? total-dp : 0); if(debt>0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', sid), { balance: increment(debt) });
-            let cash = status==='Lunas' ? total : (status==='DP' ? dp : 0); if(cash>0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount: cash, note: `Pembelian Log: ${nota}`, time: serverTimestamp() });
-            await batch.commit(); closeModal('wood'); alert("Stok disimpan!");
+            temporaryBatchWood.forEach(i => { 
+                const { id, tempId, ...cleanItem } = i;
+                total += i.totalPrice; 
+                batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'inventory')), { ...cleanItem, nota, supplierId: sid, paymentStatus: status, dpAmount: dp, createdAt: serverTimestamp() }); 
+            });
+
+            // Update Saldo Hutang Baru
+            let debt = status==='Hutang' ? total : (status==='DP' ? total-dp : 0); 
+            if(debt>0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', sid), { balance: increment(debt) });
+
+            // Simpan Transaksi Kas Baru
+            let cash = status==='Lunas' ? total : (status==='DP' ? dp : 0); 
+            if(cash>0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount: cash, note: `Pembelian Log: ${nota}${isEditingNota ? ' (Koreksi Edit)' : ''}`, time: serverTimestamp() });
+
+            await batch.commit(); 
+            closeModal('wood'); 
+            alert(isEditingNota ? "Nota berhasil diperbarui!" : "Stok disimpan!");
+            isEditingNota = null;
         };
 
         window.submitBatchSalesToFirebase = async () => {
@@ -1100,7 +1200,12 @@
             if(!nota||!cid) return;
             const batch = writeBatch(db);
             let total = 0;
-            temporaryBatchSales.forEach(i => { total += i.price; batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'sales')), { ...i, nota, customerId: cid, paymentStatus: status, createdAt: serverTimestamp() }); if(i.mode==='stock') batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', i.stockId)); });
+            temporaryBatchSales.forEach(i => { 
+                const { tempId, ...cleanItem } = i;
+                total += i.price; 
+                batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'sales')), { ...cleanItem, nota, customerId: cid, paymentStatus: status, createdAt: serverTimestamp() }); 
+                if(i.mode==='stock') batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', i.stockId)); 
+            });
             let recv = status==='Hutang' ? total : (status==='DP' ? total-dp : 0); if(recv>0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', cid), { balance: increment(recv) });
             let cash = status==='Lunas' ? total : (status==='DP' ? dp : 0); if(cash>0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'in', amount: cash, note: `Penjualan Log: ${nota}`, time: serverTimestamp() });
             await batch.commit(); closeModal('sales'); alert("Penjualan disimpan!");
