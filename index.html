@@ -364,9 +364,19 @@
             <div class="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10"><h3 id="wood-modal-title" class="text-lg font-bold text-slate-800 uppercase tracking-tight">Input Log Baru</h3><button onclick="closeModal('wood')" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button></div>
             <div class="flex-1 overflow-y-auto p-6 space-y-6">
                 <!-- Metadata Nota -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-6 rounded-2xl">
-                    <input type="text" id="wood-nota" placeholder="No. Nota" class="p-3 rounded-xl border border-slate-200">
-                    <select id="wood-supplier-select" class="p-3 rounded-xl border border-slate-200"></select>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-6 rounded-2xl">
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold uppercase text-slate-400">No. Nota</label>
+                        <input type="text" id="wood-nota" placeholder="INV-001" class="w-full p-3 rounded-xl border border-slate-200">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold uppercase text-slate-400">Supplier</label>
+                        <select id="wood-supplier-select" class="w-full p-3 rounded-xl border border-slate-200"></select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-bold uppercase text-slate-400">Total Harga Nota (Batch)</label>
+                        <input type="number" id="wood-total-nota-price" placeholder="Harga Total" class="w-full p-3 rounded-xl border border-slate-200 font-bold text-amber-700 bg-white">
+                    </div>
                 </div>
                 <!-- Status Pembayaran -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-amber-50 p-6 rounded-2xl border border-amber-100">
@@ -379,24 +389,48 @@
                 </div>
                 <!-- Input Per Log Item -->
                 <div class="border-2 border-dashed border-slate-200 rounded-2xl p-6 space-y-4">
+                    <!-- Baris 1: Jenis Kayu & Panjang (Naik ke Atas) -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        <input type="text" id="log-no" class="p-3 rounded-xl border" placeholder="No LOG (Fisik)">
-                        <input type="text" id="log-grade" class="p-3 rounded-xl border" placeholder="Grade (A, B, C...)">
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-bold uppercase text-slate-400 ml-1">Jenis Kayu</label>
+                            <input type="text" id="wood-type" class="w-full p-3 rounded-xl border" placeholder="Jati, Mahoni, dll">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-bold uppercase text-slate-400 ml-1">Panjang (P) cm</label>
+                            <input type="number" id="log-p" oninput="liveUpdateCalc()" class="w-full p-3 rounded-xl border" placeholder="Contoh: 200">
+                        </div>
                     </div>
-                    <div class="grid grid-cols-4 gap-2">
-                        <input type="number" step="0.1" id="log-d1" oninput="liveUpdateCalc()" class="p-2.5 rounded-lg border" placeholder="d1">
-                        <input type="number" step="0.1" id="log-d2" oninput="liveUpdateCalc()" class="p-2.5 rounded-lg border" placeholder="d2">
-                        <input type="number" step="0.1" id="log-d3" oninput="liveUpdateCalc()" class="p-2.5 rounded-lg border" placeholder="d3">
-                        <input type="number" step="0.1" id="log-d4" oninput="liveUpdateCalc()" class="p-2.5 rounded-lg border" placeholder="d4">
+                    <!-- Baris 2: No LOG & Grade -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-bold uppercase text-slate-400 ml-1">No LOG (Fisik)</label>
+                            <input type="text" id="log-no" class="w-full p-3 rounded-xl border" placeholder="No Tag">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-bold uppercase text-slate-400 ml-1">Grade</label>
+                            <input type="text" id="log-grade" class="w-full p-3 rounded-xl border" placeholder="A1, A2, B, dll">
+                        </div>
                     </div>
-                    <div class="grid grid-cols-3 gap-2">
-                        <input type="number" id="log-p" oninput="liveUpdateCalc()" class="p-3 rounded-xl border" placeholder="P (cm)">
-                        <input type="number" id="log-trim" oninput="liveUpdateCalc()" class="p-3 rounded-xl border" placeholder="Trim">
-                        <input type="number" id="log-gr" oninput="liveUpdateCalc()" class="p-3 rounded-xl border" placeholder="GR">
+                    <!-- Baris 3: d1 - d4 -->
+                    <div class="space-y-1">
+                        <label class="text-[9px] font-bold uppercase text-slate-400 ml-1">Diameter (cm)</label>
+                        <div class="grid grid-cols-4 gap-2">
+                            <input type="number" step="0.1" id="log-d1" oninput="liveUpdateCalc()" class="p-2.5 rounded-lg border text-center" placeholder="d1">
+                            <input type="number" step="0.1" id="log-d2" oninput="liveUpdateCalc()" class="p-2.5 rounded-lg border text-center" placeholder="d2">
+                            <input type="number" step="0.1" id="log-d3" oninput="liveUpdateCalc()" class="p-2.5 rounded-lg border text-center" placeholder="d3">
+                            <input type="number" step="0.1" id="log-d4" oninput="liveUpdateCalc()" class="p-2.5 rounded-lg border text-center" placeholder="d4">
+                        </div>
                     </div>
+                    <!-- Baris 4: Trim & GR -->
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="wood-type" class="p-3 rounded-xl border" placeholder="Jenis Kayu (Jati, dll)">
-                        <input type="number" id="wood-price" placeholder="Harga (Rp)" class="p-3 rounded-xl border">
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-bold uppercase text-slate-400 ml-1">Trim (cm)</label>
+                            <input type="number" id="log-trim" oninput="liveUpdateCalc()" class="w-full p-3 rounded-xl border" placeholder="Potongan">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-bold uppercase text-slate-400 ml-1">GR (Diameter Tengah)</label>
+                            <input type="number" id="log-gr" oninput="liveUpdateCalc()" class="w-full p-3 rounded-xl border" placeholder="Gubal/Rongga">
+                        </div>
                     </div>
                     <!-- Live Indicators -->
                     <div class="grid grid-cols-3 gap-4 bg-amber-600 text-white p-4 rounded-xl">
@@ -413,7 +447,7 @@
                             <div class="text-base font-black" id="res-live-vol-wood">0.00 m³</div>
                         </div>
                     </div>
-                    <button onclick="addItemToBatch('wood')" class="w-full bg-white text-amber-700 py-3 rounded-xl font-bold shadow-lg">Tambah Ke Batch</button>
+                    <button onclick="addItemToBatch('wood')" class="w-full bg-white text-amber-700 py-3 rounded-xl font-bold shadow-lg hover:bg-amber-50 transition active:scale-95">Tambah Ke Batch</button>
                 </div>
                 <!-- Batch Table -->
                 <div class="border rounded-2xl overflow-hidden">
@@ -620,7 +654,7 @@
                                 <th>Ukuran (P x D)</th>
                                 <th>Neto (m³)</th>
                                 <th style="color: red;">GR (m³)</th>
-                                <th class="text-right">Harga Satuan</th>
+                                <th class="text-right">Harga</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -764,6 +798,9 @@
             document.getElementById('wood-nota').value = nota;
             document.getElementById('wood-supplier-select').value = logs[0].supplierId;
             document.getElementById('wood-payment-status').value = logs[0].paymentStatus;
+            
+            const totalNotaPrice = logs.reduce((a,b)=>a+(b.totalPrice||0),0);
+            document.getElementById('wood-total-nota-price').value = totalNotaPrice;
             
             const dpVal = logs[0].dpAmount || 0;
             document.getElementById('wood-dp-amount').value = dpVal;
@@ -1047,13 +1084,11 @@
             const cin = transactionsData.filter(t=>t.type==='in').reduce((a,t)=>a+(t.amount||0),0);
             const cout = transactionsData.filter(t=>t.type==='out').reduce((a,t)=>a+(t.amount||0),0);
             
-            // Dashboard Main Stats
             if(document.getElementById('stat-total-volume')) document.getElementById('stat-total-volume').innerText = `${vol.toFixed(2)} m³`;
             if(document.getElementById('stat-total-price')) document.getElementById('stat-total-price').innerText = formatCurrency(stockVal);
             if(document.getElementById('stat-total-debt')) document.getElementById('stat-total-debt').innerText = formatCurrency(hutangTotal);
             if(document.getElementById('stat-total-receivable')) document.getElementById('stat-total-receivable').innerText = formatCurrency(piutangTotal);
             
-            // Financial Report Detailed Stats
             if(document.getElementById('report-total-revenue')) document.getElementById('report-total-revenue').innerText = formatCurrency(revNota);
             if(document.getElementById('report-total-cogs')) document.getElementById('report-total-cogs').innerText = formatCurrency(hppNota);
             if(document.getElementById('report-total-expenses')) document.getElementById('report-total-expenses').innerText = `-${formatCurrency(totalExp)}`;
@@ -1068,7 +1103,6 @@
             if(document.getElementById('report-adj-receivable')) document.getElementById('report-adj-receivable').innerText = formatCurrency(piutangTotal);
             if(document.getElementById('report-adj-payable')) document.getElementById('report-adj-payable').innerText = formatCurrency(hutangTotal);
 
-            // Progress bar
             const totalDue = revNota;
             const collected = cin;
             const health = totalDue > 0 ? Math.min(100, (collected / totalDue) * 100) : 0;
@@ -1141,7 +1175,6 @@
             closeModal('contact'); e.target.reset();
         };
 
-        // --- UPDATE LOGIKA PERHITUNGAN VOLUME ---
         window.liveUpdateCalc = () => {
             const d1 = parseFloat(document.getElementById('log-d1').value)||0, 
                   d2 = parseFloat(document.getElementById('log-d2').value)||0, 
@@ -1164,11 +1197,11 @@
 
         window.addItemToBatch = (type) => {
             if (type === 'wood') {
-                const prc = parseFloat(document.getElementById('wood-price').value)||0, woodType = document.getElementById('wood-type').value, noLog = document.getElementById('log-no').value, grade = document.getElementById('log-grade').value;
-                if (!currentLiveVolWood||prc<=0||!woodType) return;
+                const woodType = document.getElementById('wood-type').value, noLog = document.getElementById('log-no').value, grade = document.getElementById('log-grade').value;
+                if (!currentLiveVolWood||!woodType) return;
                 temporaryBatchWood.push({ 
                     tempId: Date.now() + Math.random(), type: woodType, noLog, grade, 
-                    unitVolume: parseFloat(currentLiveVolWood.toFixed(2)), volGR: parseFloat(currentLiveVolGR.toFixed(2)), totalPrice: prc, 
+                    unitVolume: parseFloat(currentLiveVolWood.toFixed(2)), volGR: parseFloat(currentLiveVolGR.toFixed(2)), totalPrice: 0, 
                     measurements: { d1: parseFloat(document.getElementById('log-d1').value), d2: parseFloat(document.getElementById('log-d2').value), d3: parseFloat(document.getElementById('log-d3').value), d4: parseFloat(document.getElementById('log-d4').value), avgD: currentLiveAvgD, p: parseFloat(document.getElementById('log-p').value), trim: parseFloat(document.getElementById('log-trim').value), gr: parseFloat(document.getElementById('log-gr').value) } 
                 });
             } else {
@@ -1195,15 +1228,17 @@
         window.removeFromBatch = (type, idx) => { if(type==='wood') temporaryBatchWood.splice(idx,1); else temporaryBatchSales.splice(idx,1); renderBatch(type); };
 
         window.submitBatchToFirebase = async () => {
-            const nota = document.getElementById('wood-nota').value, sid = document.getElementById('wood-supplier-select').value, status = document.getElementById('wood-payment-status').value, dp = parseFloat(document.getElementById('wood-dp-amount').value)||0;
+            const nota = document.getElementById('wood-nota').value, sid = document.getElementById('wood-supplier-select').value, status = document.getElementById('wood-payment-status').value, dp = parseFloat(document.getElementById('wood-dp-amount').value)||0, totalNotaPrice = parseFloat(document.getElementById('wood-total-nota-price').value)||0;
             if(!nota||!sid) return;
-            const batch = writeBatch(db); let total = 0;
+            const batch = writeBatch(db);
             if (isEditingNota) {
                 inventoryData.filter(i => i.nota === isEditingNota).forEach(item => batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', item.id)));
             }
-            temporaryBatchWood.forEach(i => { total += i.totalPrice; batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'inventory')), { ...i, nota, supplierId: sid, paymentStatus: status, dpAmount: dp, createdAt: serverTimestamp() }); });
-            let debt = status==='Hutang' ? total : (status==='DP' ? total-dp : 0); if(debt>0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', sid), { balance: increment(debt) });
-            let cash = status==='Lunas' ? total : (status==='DP' ? dp : 0); if(cash>0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount: cash, note: `Pembelian Log: ${nota}`, time: serverTimestamp() });
+            const itemCount = temporaryBatchWood.length;
+            const pricePerItem = totalNotaPrice / itemCount;
+            temporaryBatchWood.forEach(i => { batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'inventory')), { ...i, nota, supplierId: sid, paymentStatus: status, dpAmount: dp, totalPrice: pricePerItem, createdAt: serverTimestamp() }); });
+            let debt = status==='Hutang' ? totalNotaPrice : (status==='DP' ? totalNotaPrice-dp : 0); if(debt>0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', sid), { balance: increment(debt) });
+            let cash = status==='Lunas' ? totalNotaPrice : (status==='DP' ? dp : 0); if(cash>0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount: cash, note: `Pembelian Log: ${nota}`, time: serverTimestamp() });
             await batch.commit(); closeModal('wood'); isEditingNota = null;
         };
 
