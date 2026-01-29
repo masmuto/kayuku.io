@@ -335,7 +335,8 @@
         </section>
     </main>
 
-    <!-- Modal Kayu Masuk -->
+    <!-- Modals -->
+    <!-- Kayu Masuk Modal -->
     <div id="wood-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-2 md:p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print">
         <div class="bg-white w-full max-w-4xl rounded-3xl shadow-2xl flex flex-col max-h-[95vh] overflow-hidden my-auto">
             <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
@@ -414,7 +415,7 @@
         </div>
     </div>
 
-    <!-- Utility Modals -->
+    <!-- Kayu Keluar Modal -->
     <div id="sales-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-2 md:p-4 bg-slate-900/60 backdrop-blur-sm no-print">
         <div class="bg-white w-full max-w-lg rounded-3xl p-5 md:p-8 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto my-auto">
             <h3 class="font-bold text-slate-800 uppercase text-sm tracking-widest">Input Kayu Keluar</h3>
@@ -433,15 +434,17 @@
         </div>
     </div>
 
+    <!-- Biaya Modal -->
     <div id="expense-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 no-print">
         <div class="bg-white w-full max-w-xs rounded-3xl p-6 space-y-4 shadow-2xl"><h3 class="font-bold text-sm text-slate-800 uppercase tracking-tighter">Input Pengeluaran</h3><form onsubmit="handleExpenseSubmit(event)" class="space-y-4"><select id="expense-category" class="w-full p-3 rounded-xl border text-sm outline-none" required><option value="Operasional">Operasional</option><option value="Gaji">Gaji</option><option value="BBM">BBM/Solar</option><option value="Lain-lain">Lain-lain</option></select><input type="number" id="expense-amount" placeholder="Nominal" class="w-full p-3 rounded-xl border text-sm outline-none" required><textarea id="expense-note" placeholder="Ket" class="w-full p-3 rounded-xl border text-sm outline-none"></textarea><button type="submit" class="w-full py-3.5 bg-rose-500 text-white rounded-xl font-bold text-sm transition active:scale-95">Simpan</button><button type="button" onclick="closeModal('expense')" class="w-full py-2 text-slate-400 text-xs">Batal</button></form></div>
     </div>
 
+    <!-- Kontak Modal -->
     <div id="contact-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 no-print">
         <div class="bg-white w-full max-w-xs rounded-3xl p-6 space-y-4 shadow-2xl"><h3 id="contact-modal-title" class="font-bold text-sm text-slate-800 uppercase">Tambah Kontak</h3><form onsubmit="handleContactSubmit(event)" class="space-y-4"><input type="hidden" id="contact-type"><input type="text" id="contact-name" placeholder="Nama" class="w-full p-3 rounded-xl border text-sm outline-none" required><input type="text" id="contact-phone" placeholder="No Telp" class="w-full p-3 rounded-xl border text-sm outline-none"><textarea id="contact-address" placeholder="Alamat" class="w-full p-3 rounded-xl border text-sm outline-none"></textarea><button type="submit" class="w-full py-3.5 bg-slate-900 text-white rounded-xl font-bold text-sm">Simpan</button><button type="button" onclick="closeModal('contact')" class="w-full py-2 text-slate-400 text-xs">Batal</button></form></div>
     </div>
 
-    <!-- Modal Konfirmasi Reset -->
+    <!-- Reset Konfirmasi Modal -->
     <div id="reset-confirm-modal" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md no-print">
         <div class="bg-white w-full max-sm rounded-3xl p-8 space-y-6 shadow-2xl text-center">
             <div class="mx-auto w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4"><i data-lucide="alert-triangle" class="w-8 h-8"></i></div>
@@ -497,10 +500,18 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, addDoc, onSnapshot, deleteDoc, serverTimestamp, writeBatch, increment, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        // --- KONFIGURASI GLOBAL ---
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "AIzaSyD8m4HiTateYgP-79EmbKkqOG-lBIeikBc", authDomain: "log-master-687fd.firebaseapp.com", projectId: "log-master-687fd", storageBucket: "log-master-687fd.firebasestorage.app", messagingSenderId: "1020351029888", appId: "1:1020351029888:web:47706ebb73f446207b7c65" };
+        // --- KONFIGURASI GLOBAL (UPDATED) ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyAxBA0yDhQHyMBE_vV5_zBlME_rJE9FZB0",
+          authDomain: "adamlog-bd115.firebaseapp.com",
+          projectId: "adamlog-bd115",
+          storageBucket: "adamlog-bd115.firebasestorage.app",
+          messagingSenderId: "135481704129",
+          appId: "1:135481704129:web:06a890feed36d933955e40",
+          measurementId: "G-0XTDQWTMKP"
+        };
         const app = initializeApp(firebaseConfig), auth = getAuth(app), db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'log-master-system';
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'adamlog-management';
 
         let inventoryData = [], contactsData = [], salesData = [], transactionsData = [], expensesData = [];
         let temporaryBatchWood = [], temporaryBatchSales = [], currentLiveVolWood = 0, currentLiveAvgD = 0, currentLiveVolGR = 0, currentUserRole = "Kasir", isEditingNota = null, companyProfile = { name: "Wood-IT Log", address: "Jl. Utama", phone: "0812" };
@@ -525,8 +536,6 @@
             document.getElementById(`view-${view}`).classList.remove('hidden');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('bg-amber-600', 'text-white'));
             const btn = document.getElementById(`nav-${view}`); if (btn) btn.classList.add('bg-amber-600', 'text-white');
-            document.querySelectorAll('[id^="mob-nav-"]').forEach(b => b.classList.remove('text-amber-500'));
-            const mobBtn = document.getElementById(`mob-nav-${view}`); if (mobBtn) mobBtn.classList.add('text-amber-500');
             refreshIcons(); window.scrollTo(0,0);
         };
 
@@ -553,7 +562,6 @@
             }
             if(id==='sales') { temporaryBatchSales = []; renderBatch('sales'); }
         };
-        window.toggleMobileExtra = () => document.getElementById('mobile-extra-menu').classList.toggle('hidden');
 
         // --- Logika Perhitungan ---
         window.liveUpdateCalc = () => {
@@ -599,7 +607,7 @@
         window.renderBatch = renderBatch;
         window.removeFromBatch = (type, idx) => { if(type==='wood') temporaryBatchWood.splice(idx,1); else temporaryBatchSales.splice(idx,1); renderBatch(type); };
 
-        // --- Database CRUD (Firestore) ---
+        // --- Firestore Operations ---
         window.submitBatchToFirebase = async () => {
             if(!auth.currentUser) return;
             const nota = document.getElementById('wood-nota').value, sid = document.getElementById('wood-supplier-select').value, total = parseFloat(document.getElementById('wood-total-nota-price').value)||0, st = document.getElementById('wood-payment-status').value, dp = parseFloat(document.getElementById('wood-dp-amount').value)||0;
@@ -661,73 +669,16 @@
             await batch.commit(); closeModal('payment'); showToast("Berhasil.");
         };
 
-        window.handleResetDatabase = () => {
-            document.getElementById('reset-keyword-input').value = '';
-            document.getElementById('reset-confirm-modal').classList.remove('hidden');
-        };
-
-        window.executeDatabaseReset = async () => {
-            if(document.getElementById('reset-keyword-input').value !== 'RESET') return showToast("Kata kunci salah!", "error");
-            document.getElementById('loading').classList.remove('hidden');
-            const colls = ['inventory', 'contacts', 'sales', 'transactions', 'expenses'];
-            for (const c of colls) {
-                const s = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', c));
-                for (const d of s.docs) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, d.id));
-            }
-            location.reload();
-        };
-
-        window.handleBackupDatabase = async () => {
-            const colls = ['inventory', 'contacts', 'sales', 'transactions', 'expenses'];
-            let backup = {};
-            for (const c of colls) {
-                const s = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', c));
-                backup[c] = s.docs.map(d => ({ id: d.id, ...d.data() }));
-            }
-            const dl = document.createElement('a'); dl.setAttribute("href", "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup))); dl.setAttribute("download", `woodit_backup.json`); dl.click();
-        };
-
-        window.handleRestoreDatabase = async (e) => {
-            const file = e.target.files[0]; if(!file) return;
-            const reader = new FileReader();
-            reader.onload = async (ev) => {
-                const data = JSON.parse(ev.target.result); document.getElementById('loading').classList.remove('hidden');
-                for (const collName of Object.keys(data)) {
-                    for (const item of data[collName]) { const { id, ...rest } = item; await setDoc(doc(db, 'artifacts', appId, 'public', 'data', collName, id), rest); }
-                }
-                location.reload();
-            };
-            reader.readAsText(file);
-        };
-
-        // --- Hapus & Edit Helpers ---
-        window.handleDeleteInventory = async (nota) => { 
-            if(confirm('Hapus nota ini?')){ 
-                const b = writeBatch(db); 
-                inventoryData.filter(i=>i.nota === nota).forEach(item => b.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', item.id))); 
-                await b.commit(); showToast("Dihapus."); 
-            } 
-        };
-        window.handleDeleteSales = async (nota) => { 
-            if(confirm('Hapus SJ ini?')){ 
-                const b = writeBatch(db); 
-                salesData.filter(i=>i.nota === nota).forEach(item => b.delete(doc(db, 'artifacts', appId, 'public', 'data', 'sales', item.id))); 
-                await b.commit(); showToast("Dihapus."); 
-            } 
-        };
-        window.handleDeleteContact = async (id) => { if(confirm('Hapus kontak?')) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', id)); };
-        window.handleDeleteExpense = async (id) => { if(confirm('Hapus biaya?')) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'expenses', id)); };
-
         // --- Sync & Render ---
         const startSync = () => {
             if(!auth.currentUser) return;
-            const errorCb = (err) => console.error("Snapshot error:", err);
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'inventory'), s => { inventoryData = s.docs.map(d=>({id:d.id, ...d.data()})); renderInventory(); updateStats(); }, errorCb);
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), s => { contactsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderContacts(); updateSelects(); updateStats(); }, errorCb);
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), s => { salesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderSales(); updateStats(); }, errorCb);
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'transactions'), s => { transactionsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderTransactions(); updateStats(); }, errorCb);
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), s => { expensesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderExpenses(); updateStats(); }, errorCb);
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), s => { if(s.exists()){ companyProfile = s.data(); document.getElementById('sidebar-company-name').innerText = companyProfile.name; } }, errorCb);
+            const errCb = (err) => console.error("Sync error:", err);
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'inventory'), s => { inventoryData = s.docs.map(d=>({id:d.id, ...d.data()})); renderInventory(); updateStats(); }, errCb);
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), s => { contactsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderContacts(); updateSelects(); updateStats(); }, errCb);
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), s => { salesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderSales(); updateStats(); }, errCb);
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'transactions'), s => { transactionsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderTransactions(); updateStats(); }, errCb);
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), s => { expensesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderExpenses(); updateStats(); }, errCb);
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), s => { if(s.exists()){ companyProfile = s.data(); document.getElementById('sidebar-company-name').innerText = companyProfile.name; } }, errCb);
         };
 
         window.renderInventory = () => {
@@ -743,28 +694,14 @@
         };
 
         window.renderContacts = () => {
-            const card = (c) => `
-                <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-                    <div class="flex justify-between items-start">
-                        <div class="p-3 bg-slate-100 rounded-2xl"><i data-lucide="${c.type === 'supplier' ? 'truck' : 'users'}" class="w-5 h-5 text-slate-600"></i></div>
-                        <div class="text-right">
-                            <p class="text-[9px] font-bold uppercase text-slate-400 tracking-widest">${c.type==='supplier'?'Hutang':'Piutang'}</p>
-                            <p class="font-black text-base ${c.balance>0 ? (c.type==='supplier'?'text-red-600':'text-blue-600') : 'text-slate-300'}">${formatCurrency(c.balance)}</p>
-                        </div>
-                    </div>
-                    <div><h4 class="font-bold text-slate-900 text-sm">${c.name}</h4></div>
-                    <div class="pt-4 border-t border-slate-50 flex gap-2">
-                        ${c.balance > 0 ? `<button onclick="openPaymentModal('${c.id}')" class="flex-1 py-2.5 bg-slate-900 text-white text-[10px] font-bold rounded-xl shadow-lg transition active:scale-95 uppercase tracking-widest tracking-tight">Bayar/Cicil</button>` : ''}
-                        <button onclick="handleDeleteContact('${c.id}')" class="px-3 py-2.5 bg-red-50 text-red-500 rounded-xl transition active:scale-95"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    </div>
-                </div>`;
+            const card = (c) => `<div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4"><div class="flex justify-between items-start"><div class="p-3 bg-slate-100 rounded-2xl"><i data-lucide="${c.type === 'supplier' ? 'truck' : 'users'}" class="w-5 h-5 text-slate-600"></i></div><div class="text-right"><p class="text-[9px] font-bold uppercase text-slate-400 tracking-widest">${c.type==='supplier'?'Hutang':'Piutang'}</p><p class="font-black text-base ${c.balance>0 ? (c.type==='supplier'?'text-red-600':'text-blue-600') : 'text-slate-300'}">${formatCurrency(c.balance)}</p></div></div><div><h4 class="font-bold text-slate-900 text-sm">${c.name}</h4></div><div class="pt-4 border-t border-slate-50 flex gap-2">${c.balance > 0 ? `<button onclick="openPaymentModal('${c.id}')" class="flex-1 py-2.5 bg-slate-900 text-white text-[10px] font-bold rounded-xl uppercase tracking-tighter">Bayar/Cicil</button>` : ''}<button onclick="handleDeleteContact('${c.id}')" class="px-3 py-2.5 bg-red-50 text-red-500 rounded-xl"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>`;
             document.getElementById('suppliers-list').innerHTML = contactsData.filter(c => c.type === 'supplier').map(card).join('');
             document.getElementById('customers-list').innerHTML = contactsData.filter(c => c.type === 'customer').map(card).join('');
             refreshIcons();
         };
 
         window.renderExpenses = () => {
-            document.getElementById('expenses-table-body').innerHTML = expensesData.sort((a,b)=> (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).map(e => `<tr><td class="px-5 py-4 text-[10px] text-slate-400">${e.createdAt?.toDate()?.toLocaleDateString()||'-'}</td><td class="px-5 py-4 font-bold text-rose-600 uppercase tracking-tighter">${e.category}</td><td class="px-5 py-4 italic text-slate-500 truncate max-w-[100px]">${e.note||'-'}</td><td class="px-5 py-4 text-right font-black">${formatCurrency(e.amount)}</td><td class="px-5 py-4 text-right"><button onclick="handleDeleteExpense('${e.id}')" class="text-slate-300 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
+            document.getElementById('expenses-table-body').innerHTML = expensesData.sort((a,b)=> (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).map(e => `<tr><td class="px-5 py-4 text-[10px] text-slate-400">${e.createdAt?.toDate()?.toLocaleDateString()||'-'}</td><td class="px-5 py-4 font-bold text-rose-600 uppercase tracking-tighter">${e.category}</td><td class="px-5 py-4 italic text-slate-500 truncate max-w-[100px]">${e.note||'-'}</td><td class="px-5 py-4 text-right font-black">${formatCurrency(e.amount)}</td><td class="px-5 py-4 text-right"><button onclick="handleDeleteExpense('${e.id}')" class="text-slate-300"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
             refreshIcons();
         };
 
@@ -779,10 +716,10 @@
             const cin = transactionsData.filter(t=>t.type==='in').reduce((a,t)=>a+(t.amount||0),0), cout = transactionsData.filter(t=>t.type==='out').reduce((a,t)=>a+(t.amount||0),0);
             const rev = salesData.reduce((a,c)=>a+(c.price||0),0), buy = inventoryData.reduce((a,c)=>a+(c.totalPrice||0),0), exp = expensesData.reduce((a,c)=>a+(c.amount||0),0);
             
-            const totalVolEl = document.getElementById('stat-total-volume'); if (totalVolEl) totalVolEl.innerText = `${vol.toFixed(2)} m³`;
-            const totalStockEl = document.getElementById('stat-total-price'); if (totalStockEl) totalStockEl.innerText = formatCurrency(stockVal);
-            const totalDebtEl = document.getElementById('stat-total-debt'); if (totalDebtEl) totalDebtEl.innerText = formatCurrency(d);
-            const totalRecEl = document.getElementById('stat-total-receivable'); if (totalRecEl) totalRecEl.innerText = formatCurrency(p);
+            document.getElementById('stat-total-volume').innerText = `${vol.toFixed(2)} m³`;
+            document.getElementById('stat-total-price').innerText = formatCurrency(stockVal);
+            document.getElementById('stat-total-debt').innerText = formatCurrency(d);
+            document.getElementById('stat-total-receivable').innerText = formatCurrency(p);
             
             if(document.getElementById('report-total-revenue')) document.getElementById('report-total-revenue').innerText = formatCurrency(rev);
             if(document.getElementById('report-total-cogs')) document.getElementById('report-total-cogs').innerText = formatCurrency(buy);
@@ -792,30 +729,25 @@
             if(document.getElementById('report-cash-out')) document.getElementById('report-cash-out').innerText = formatCurrency(cout);
             if(document.getElementById('report-net-cash')) document.getElementById('report-net-cash').innerText = formatCurrency(cin - cout);
             
-            const loader = document.getElementById('loading');
-            if (loader) loader.classList.add('hidden');
+            document.getElementById('loading').classList.add('hidden');
         };
 
         // --- Helpers ---
-        window.openPaymentModal = (cid) => {
-            const contact = contactsData.find(c => c.id === cid);
-            if (!contact) return;
-            document.getElementById('payment-contact-id').value = cid;
-            document.getElementById('payment-current-balance').innerText = formatCurrency(contact.balance);
-            document.getElementById('payment-title').innerText = contact.type === 'supplier' ? 'Bayar Hutang' : 'Terima Piutang';
-            document.getElementById('payment-subtitle').innerText = contact.type === 'supplier' ? 'Pembayaran ke Supplier' : 'Pembayaran dari Pelanggan';
-            openModal('payment');
-        };
-
         window.updateSelects = () => {
             const sS = document.getElementById('wood-supplier-select'); if(sS) sS.innerHTML = contactsData.filter(c=>c.type==='supplier').map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
             const cS = document.getElementById('sales-customer-select'); if(cS) cS.innerHTML = contactsData.filter(c=>c.type==='customer').map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
             const stS = document.getElementById('sales-stock-item-select'); if(stS) stS.innerHTML = '<option value="">Pilih Stok</option>' + inventoryData.map(i=>`<option value="${i.id}">${i.type} (${(i.unitVolume||0).toFixed(2)}) - ${i.nota}</option>`).join('');
         };
 
-        window.autoFillSalesFromStock = () => { const id = document.getElementById('sales-stock-item-select').value; const it = inventoryData.find(i=>i.id===id); if(it){ document.getElementById('sales-wood-type').value = it.type; document.getElementById('sales-wood-vol').value = it.unitVolume; } };
-        window.toggleDPInput = (type) => { const el = document.getElementById(`${type}-payment-status`); if (!el) return; const s = el.value; const dpInput = document.getElementById(`${type}-dp-amount`); if (dpInput) dpInput.classList.toggle('hidden', s !== 'DP'); };
-        
+        window.openPaymentModal = (cid) => {
+            const contact = contactsData.find(c => c.id === cid);
+            if (!contact) return;
+            document.getElementById('payment-contact-id').value = cid;
+            document.getElementById('payment-current-balance').innerText = formatCurrency(contact.balance);
+            document.getElementById('payment-title').innerText = contact.type === 'supplier' ? 'Bayar Hutang' : 'Terima Piutang';
+            openModal('payment');
+        };
+
         window.showDetail = (t, n) => {
             const m = document.getElementById('detail-modal'); let itms = [], c = null, total = 0;
             if(t === 'inventory'){ itms = inventoryData.filter(i=>i.nota === n); c = contactsData.find(x=>x.id===itms[0]?.supplierId); total = itms.reduce((a,b)=>a+(b.totalPrice || 0),0); document.getElementById('detail-meta-contact-label').innerText = "Supplier"; }
@@ -835,55 +767,40 @@
             setTimeout(() => { frame.contentWindow.focus(); frame.contentWindow.print(); }, 500);
         };
 
-        window.editInventoryBatch = (nota) => {
-            const items = inventoryData.filter(i => i.nota === nota); if (!items.length) return;
-            const first = items[0]; isEditingNota = nota;
-            document.getElementById('wood-modal-title').innerText = `Edit Nota: ${nota}`;
-            document.getElementById('wood-nota').value = nota; document.getElementById('wood-nota').disabled = true;
-            document.getElementById('wood-supplier-select').value = first.supplierId;
-            document.getElementById('wood-total-nota-price').value = items.reduce((a,b)=>a+(b.totalPrice || 0),0);
-            document.getElementById('wood-payment-status').value = first.paymentStatus;
-            document.getElementById('wood-dp-amount').value = first.dpAmount || 0;
-            window.toggleDPInput('wood');
-            temporaryBatchWood = items.map(i => ({...i, tempId: Math.random()}));
-            renderBatch('wood'); openModal('wood');
-        };
-
+        window.toggleDPInput = (type) => { const el = document.getElementById(`${type}-payment-status`); if (!el) return; const s = el.value; const dpInput = document.getElementById(`${type}-dp-amount`); if (dpInput) dpInput.classList.toggle('hidden', s !== 'DP'); };
+        window.autoFillSalesFromStock = () => { const id = document.getElementById('sales-stock-item-select').value; const it = inventoryData.find(i=>i.id===id); if(it){ document.getElementById('sales-wood-type').value = it.type; document.getElementById('sales-wood-vol').value = it.unitVolume; } };
         window.saveCompanyProfile = async () => { if(!auth.currentUser) return; await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), { name: document.getElementById('setting-company-name').value, address: document.getElementById('setting-company-address').value, phone: document.getElementById('setting-company-phone').value, updatedAt: serverTimestamp() }); showToast("Profil diperbarui."); };
-
         window.handleLogout = () => { signOut(auth).then(() => location.reload()); };
 
-        // --- Inisialisasi Auth & Listener ---
+        // --- Auth & Init ---
         const initApp = async () => {
             try {
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
+                    try {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } catch (e) {
+                        await signInAnonymously(auth);
+                    }
                 } else {
                     await signInAnonymously(auth);
                 }
             } catch (err) {
-                console.error("Firebase auth error:", err);
-                showToast("Koneksi gagal. Silakan muat ulang.", "error");
+                console.error("Auth failure:", err);
+                showToast("Koneksi gagal.", "error");
             }
-        };
-
-        const syncRole = (u) => { 
-            onSnapshot(doc(db,'artifacts',appId,'public', 'data', 'users', u.uid), snap => { 
-                currentUserRole = snap.data()?.role || "Admin"; 
-                const roleBadge = document.getElementById('user-role-badge');
-                if (roleBadge) roleBadge.innerText = currentUserRole; 
-                document.querySelectorAll('.admin-only').forEach(el => currentUserRole === 'Admin' ? el.classList.remove('hidden') : el.classList.add('hidden')); 
-            }, (err) => console.error("Role sync error:", err)); 
         };
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                syncRole(user);
+                onSnapshot(doc(db,'artifacts',appId,'public', 'data', 'users', user.uid), snap => { 
+                    currentUserRole = snap.data()?.role || "Admin"; 
+                    document.getElementById('user-role-badge').innerText = currentUserRole; 
+                    document.querySelectorAll('.admin-only').forEach(el => currentUserRole === 'Admin' ? el.classList.remove('hidden') : el.classList.add('hidden')); 
+                });
                 startSync();
             }
         });
 
-        // Jalankan inisialisasi
         initApp();
         switchView('dashboard');
     </script>
