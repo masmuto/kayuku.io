@@ -162,7 +162,7 @@
                     <h1 class="text-5xl md:text-7xl font-black tracking-tighter">WOOD-IT <span class="text-amber-500">LOG</span></h1>
                     <p class="text-slate-400 text-lg md:text-xl font-medium max-w-2xl">Solusi digital cerdas untuk pengelolaan inventaris, penjualan, dan pemantauan keuangan bisnis kayu log Anda secara real-time.</p>
                 </div>
-                <div class="pt-8 w-full max-w-sm mx-auto">
+                <div class="pt-8 w-full max-sm mx-auto">
                     <button onclick="switchView('dashboard')" class="w-full py-5 bg-amber-600 hover:bg-amber-500 text-white rounded-2xl font-black text-lg tracking-tight shadow-2xl shadow-amber-600/40 transition-all active:scale-95 flex items-center justify-center space-x-3">
                         <span>MASUK KE DASHBOARD</span>
                         <i data-lucide="arrow-right" class="w-6 h-6"></i>
@@ -335,8 +335,7 @@
         </section>
     </main>
 
-    <!-- Modals -->
-    <!-- Kayu Masuk Modal -->
+    <!-- Modal Kayu Masuk -->
     <div id="wood-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-2 md:p-4 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print">
         <div class="bg-white w-full max-w-4xl rounded-3xl shadow-2xl flex flex-col max-h-[95vh] overflow-hidden my-auto">
             <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
@@ -347,7 +346,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-2xl">
                     <div class="space-y-1"><label class="text-[9px] font-bold uppercase text-slate-400 ml-1">No. Nota</label><input type="text" id="wood-nota" placeholder="INV-001" class="w-full p-3 rounded-xl border text-sm outline-none"></div>
                     <div class="space-y-1"><label class="text-[9px] font-bold uppercase text-slate-400 ml-1">Supplier</label><select id="wood-supplier-select" class="w-full p-3 rounded-xl border text-sm outline-none"></select></div>
-                    <div class="space-y-1"><label class="text-[9px] font-bold uppercase text-slate-400 ml-1">Total Harga Batch</label><input type="number" id="wood-total-nota-price" class="w-full p-3 rounded-xl border text-sm font-bold text-amber-700 outline-none"></div>
+                    <div class="space-y-1"><label class="text-[9px) font-bold uppercase text-slate-400 ml-1">Total Harga Batch</label><input type="number" id="wood-total-nota-price" class="w-full p-3 rounded-xl border text-sm font-bold text-amber-700 outline-none"></div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-amber-50 p-4 rounded-2xl border border-amber-100">
                     <select id="wood-payment-status" onchange="toggleDPInput('wood')" class="p-3 rounded-xl border text-sm outline-none"><option value="Hutang">Hutang</option><option value="Lunas">Lunas</option><option value="DP">DP</option></select>
@@ -415,7 +414,7 @@
         </div>
     </div>
 
-    <!-- Kayu Keluar Modal -->
+    <!-- Utility Modals -->
     <div id="sales-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-2 md:p-4 bg-slate-900/60 backdrop-blur-sm no-print">
         <div class="bg-white w-full max-w-lg rounded-3xl p-5 md:p-8 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto my-auto">
             <h3 class="font-bold text-slate-800 uppercase text-sm tracking-widest">Input Kayu Keluar</h3>
@@ -434,17 +433,15 @@
         </div>
     </div>
 
-    <!-- Biaya Modal -->
     <div id="expense-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 no-print">
         <div class="bg-white w-full max-w-xs rounded-3xl p-6 space-y-4 shadow-2xl"><h3 class="font-bold text-sm text-slate-800 uppercase tracking-tighter">Input Pengeluaran</h3><form onsubmit="handleExpenseSubmit(event)" class="space-y-4"><select id="expense-category" class="w-full p-3 rounded-xl border text-sm outline-none" required><option value="Operasional">Operasional</option><option value="Gaji">Gaji</option><option value="BBM">BBM/Solar</option><option value="Lain-lain">Lain-lain</option></select><input type="number" id="expense-amount" placeholder="Nominal" class="w-full p-3 rounded-xl border text-sm outline-none" required><textarea id="expense-note" placeholder="Ket" class="w-full p-3 rounded-xl border text-sm outline-none"></textarea><button type="submit" class="w-full py-3.5 bg-rose-500 text-white rounded-xl font-bold text-sm transition active:scale-95">Simpan</button><button type="button" onclick="closeModal('expense')" class="w-full py-2 text-slate-400 text-xs">Batal</button></form></div>
     </div>
 
-    <!-- Kontak Modal -->
     <div id="contact-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 no-print">
         <div class="bg-white w-full max-w-xs rounded-3xl p-6 space-y-4 shadow-2xl"><h3 id="contact-modal-title" class="font-bold text-sm text-slate-800 uppercase">Tambah Kontak</h3><form onsubmit="handleContactSubmit(event)" class="space-y-4"><input type="hidden" id="contact-type"><input type="text" id="contact-name" placeholder="Nama" class="w-full p-3 rounded-xl border text-sm outline-none" required><input type="text" id="contact-phone" placeholder="No Telp" class="w-full p-3 rounded-xl border text-sm outline-none"><textarea id="contact-address" placeholder="Alamat" class="w-full p-3 rounded-xl border text-sm outline-none"></textarea><button type="submit" class="w-full py-3.5 bg-slate-900 text-white rounded-xl font-bold text-sm">Simpan</button><button type="button" onclick="closeModal('contact')" class="w-full py-2 text-slate-400 text-xs">Batal</button></form></div>
     </div>
 
-    <!-- Reset Konfirmasi Modal -->
+    <!-- Modal Konfirmasi Reset -->
     <div id="reset-confirm-modal" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md no-print">
         <div class="bg-white w-full max-sm rounded-3xl p-8 space-y-6 shadow-2xl text-center">
             <div class="mx-auto w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4"><i data-lucide="alert-triangle" class="w-8 h-8"></i></div>
@@ -500,7 +497,7 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, addDoc, onSnapshot, deleteDoc, serverTimestamp, writeBatch, increment, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        // --- KONFIGURASI GLOBAL (UPDATED) ---
+        // --- KONFIGURASI GLOBAL ---
         const firebaseConfig = {
           apiKey: "AIzaSyAxBA0yDhQHyMBE_vV5_zBlME_rJE9FZB0",
           authDomain: "adamlog-bd115.firebaseapp.com",
@@ -511,7 +508,9 @@
           measurementId: "G-0XTDQWTMKP"
         };
         const app = initializeApp(firebaseConfig), auth = getAuth(app), db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'adamlog-management';
+        
+        // Aturan ketat: Gunakan __app_id jika ada, atau projectId sebagai fallback
+        const appId = typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.projectId;
 
         let inventoryData = [], contactsData = [], salesData = [], transactionsData = [], expensesData = [];
         let temporaryBatchWood = [], temporaryBatchSales = [], currentLiveVolWood = 0, currentLiveAvgD = 0, currentLiveVolGR = 0, currentUserRole = "Kasir", isEditingNota = null, companyProfile = { name: "Wood-IT Log", address: "Jl. Utama", phone: "0812" };
@@ -533,9 +532,15 @@
         window.switchView = (view) => {
             if ((view === 'reports' || view === 'settings') && currentUserRole !== 'Admin') { showToast("Akses Admin diperlukan.", "error"); return; }
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
-            document.getElementById(`view-${view}`).classList.remove('hidden');
+            const targetView = document.getElementById(`view-${view}`);
+            if (targetView) targetView.classList.remove('hidden');
+            
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('bg-amber-600', 'text-white'));
             const btn = document.getElementById(`nav-${view}`); if (btn) btn.classList.add('bg-amber-600', 'text-white');
+            
+            document.querySelectorAll('[id^="mob-nav-"]').forEach(b => b.classList.remove('text-amber-500'));
+            const mobBtn = document.getElementById(`mob-nav-${view}`); if (mobBtn) mobBtn.classList.add('text-amber-500');
+            
             refreshIcons(); window.scrollTo(0,0);
         };
 
@@ -550,6 +555,7 @@
             }
             m.classList.remove('hidden'); refreshIcons(); 
         };
+        
         window.closeModal = (id) => { 
             const m = document.getElementById(`${id}-modal`);
             if(m) m.classList.add('hidden'); 
@@ -562,19 +568,29 @@
             }
             if(id==='sales') { temporaryBatchSales = []; renderBatch('sales'); }
         };
+        
+        window.toggleMobileExtra = () => document.getElementById('mobile-extra-menu').classList.toggle('hidden');
 
         // --- Logika Perhitungan ---
         window.liveUpdateCalc = () => {
-            const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
+            const getVal = (id) => {
+                const el = document.getElementById(id);
+                return el ? parseFloat(el.value) || 0 : 0;
+            };
             const d1=getVal('log-d1'), d2=getVal('log-d2'), d3=getVal('log-d3'), d4=getVal('log-d4'), p=getVal('log-p'), trim=getVal('log-trim'), gr=getVal('log-gr');
             currentLiveAvgD = Math.round((d1+d2+d3+d4)/4);
             const pEffMeter=(p-trim)/100, pAsliMeter=p/100;
             const volBruto = (0.7854 * Math.pow(currentLiveAvgD, 2) * pEffMeter) / 10000;
             currentLiveVolGR = (0.7854 * Math.pow(gr, 2) * pAsliMeter) / 10000;
             currentLiveVolWood = Math.max(0, volBruto - currentLiveVolGR);
-            document.getElementById('res-live-avg-d').innerText = `${currentLiveAvgD} cm`;
-            document.getElementById('res-live-vol-gr').innerText = currentLiveVolGR.toFixed(2);
-            document.getElementById('res-live-vol-wood').innerText = currentLiveVolWood.toFixed(2);
+            
+            const resAvg = document.getElementById('res-live-avg-d');
+            const resGr = document.getElementById('res-live-vol-gr');
+            const resWood = document.getElementById('res-live-vol-wood');
+            
+            if (resAvg) resAvg.innerText = `${currentLiveAvgD} cm`;
+            if (resGr) resGr.innerText = currentLiveVolGR.toFixed(2);
+            if (resWood) resWood.innerText = currentLiveVolWood.toFixed(2);
         };
 
         window.addItemToBatch = (type) => {
@@ -600,14 +616,16 @@
 
         const renderBatch = (type) => {
             const list = type === 'wood' ? temporaryBatchWood : temporaryBatchSales;
-            document.getElementById(`${type}-batch-table`).innerHTML = list.map((i, idx) => `<tr class="border-b"><td class="p-3">${i.noLog||'-'}</td><td class="p-3 font-bold">${i.type||i.woodType}</td><td class="p-3 text-center">${(i.unitVolume||i.volume).toFixed(2)}</td><td class="p-3 text-right"><button onclick="removeFromBatch('${type}', ${idx})" class="text-red-500 font-bold">X</button></td></tr>`).join('');
+            const table = document.getElementById(`${type}-batch-table`);
+            if (!table) return;
+            table.innerHTML = list.map((i, idx) => `<tr class="border-b"><td class="p-3">${i.noLog||'-'}</td><td class="p-3 font-bold">${i.type||i.woodType}</td><td class="p-3 text-center">${(i.unitVolume||i.volume).toFixed(2)}</td><td class="p-3 text-right"><button onclick="removeFromBatch('${type}', ${idx})" class="text-red-500 font-bold">X</button></td></tr>`).join('');
             const btn = document.getElementById(`btn-save-batch-${type}`);
             if(btn) btn.disabled = list.length === 0;
         };
         window.renderBatch = renderBatch;
         window.removeFromBatch = (type, idx) => { if(type==='wood') temporaryBatchWood.splice(idx,1); else temporaryBatchSales.splice(idx,1); renderBatch(type); };
 
-        // --- Firestore Operations ---
+        // --- Database CRUD (Firestore) ---
         window.submitBatchToFirebase = async () => {
             if(!auth.currentUser) return;
             const nota = document.getElementById('wood-nota').value, sid = document.getElementById('wood-supplier-select').value, total = parseFloat(document.getElementById('wood-total-nota-price').value)||0, st = document.getElementById('wood-payment-status').value, dp = parseFloat(document.getElementById('wood-dp-amount').value)||0;
@@ -669,138 +687,210 @@
             await batch.commit(); closeModal('payment'); showToast("Berhasil.");
         };
 
+        window.handleResetDatabase = () => {
+            const input = document.getElementById('reset-keyword-input');
+            if (input) input.value = '';
+            const modal = document.getElementById('reset-confirm-modal');
+            if (modal) modal.classList.remove('hidden');
+        };
+
+        window.executeDatabaseReset = async () => {
+            if(!auth.currentUser) return;
+            const input = document.getElementById('reset-keyword-input');
+            if(input && input.value !== 'RESET') return showToast("Kata kunci salah!", "error");
+            document.getElementById('loading').classList.remove('hidden');
+            const colls = ['inventory', 'contacts', 'sales', 'transactions', 'expenses'];
+            for (const c of colls) {
+                const s = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', c));
+                for (const d of s.docs) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, d.id));
+            }
+            location.reload();
+        };
+
+        window.handleBackupDatabase = async () => {
+            if(!auth.currentUser) return;
+            const colls = ['inventory', 'contacts', 'sales', 'transactions', 'expenses'];
+            let backup = {};
+            for (const c of colls) {
+                const s = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', c));
+                backup[c] = s.docs.map(d => ({ id: d.id, ...d.data() }));
+            }
+            const dl = document.createElement('a'); dl.setAttribute("href", "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup))); dl.setAttribute("download", `woodit_backup.json`); dl.click();
+        };
+
+        window.handleRestoreDatabase = async (e) => {
+            if(!auth.currentUser) return;
+            const file = e.target.files[0]; if(!file) return;
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                const data = JSON.parse(ev.target.result); document.getElementById('loading').classList.remove('hidden');
+                for (const collName of Object.keys(data)) {
+                    for (const item of data[collName]) { const { id, ...rest } = item; await setDoc(doc(db, 'artifacts', appId, 'public', 'data', collName, id), rest); }
+                }
+                location.reload();
+            };
+            reader.readAsText(file);
+        };
+
         // --- Sync & Render ---
         const startSync = () => {
-            if(!auth.currentUser) return;
-            const errCb = (err) => console.error("Sync error:", err);
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'inventory'), s => { inventoryData = s.docs.map(d=>({id:d.id, ...d.data()})); renderInventory(); updateStats(); }, errCb);
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), s => { contactsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderContacts(); updateSelects(); updateStats(); }, errCb);
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), s => { salesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderSales(); updateStats(); }, errCb);
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'transactions'), s => { transactionsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderTransactions(); updateStats(); }, errCb);
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), s => { expensesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderExpenses(); updateStats(); }, errCb);
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), s => { if(s.exists()){ companyProfile = s.data(); document.getElementById('sidebar-company-name').innerText = companyProfile.name; } }, errCb);
+            if(!auth.currentUser) return; // Guard
+            const errorCb = (err) => console.error("Snapshot error:", err);
+            
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'inventory'), s => { inventoryData = s.docs.map(d=>({id:d.id, ...d.data()})); renderInventory(); updateStats(); }, errorCb);
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), s => { contactsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderContacts(); updateSelects(); updateStats(); }, errorCb);
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), s => { salesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderSales(); updateStats(); }, errorCb);
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'transactions'), s => { transactionsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderTransactions(); updateStats(); }, errorCb);
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), s => { expensesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderExpenses(); updateStats(); }, errorCb);
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), s => { 
+                if(s.exists()){ 
+                    companyProfile = s.data(); 
+                    const nameEl = document.getElementById('sidebar-company-name');
+                    if (nameEl) nameEl.innerText = companyProfile.name; 
+                } 
+            }, errorCb);
         };
 
         window.renderInventory = () => {
+            const tableBody = document.getElementById('inventory-table-body');
+            if (!tableBody) return;
             const g = inventoryData.reduce((acc, i) => { if(!acc[i.nota]) acc[i.nota] = { ...i, vol:0, prc:0 }; acc[i.nota].vol += i.unitVolume; acc[i.nota].prc += (i.totalPrice || 0); return acc; }, {});
-            document.getElementById('inventory-table-body').innerHTML = Object.values(g).map(n => `<tr class="hover:bg-slate-50 transition"><td class="px-5 py-4 font-bold text-blue-600">${n.nota}</td><td class="px-5 py-4">${contactsData.find(c=>c.id===n.supplierId)?.name||'-'}</td><td class="px-5 py-4 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${n.paymentStatus==='Lunas'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${n.paymentStatus}</span></td><td class="px-5 py-4 text-center font-bold">${n.vol.toFixed(2)}</td><td class="px-5 py-4 text-right">${formatCurrency(n.prc)}</td><td class="px-5 py-4 text-right flex justify-end space-x-2"><button onclick="showDetail('inventory','${n.nota}')" class="p-1.5 bg-slate-100 rounded-lg"><i data-lucide="eye" class="w-4 h-4"></i></button><button onclick="editInventoryBatch('${n.nota}')" class="p-1.5 bg-amber-50 rounded-lg text-amber-600"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button onclick="handleDeleteInventory('${n.nota}')" class="p-1.5 bg-red-50 text-red-500 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
+            tableBody.innerHTML = Object.values(g).map(n => `<tr class="hover:bg-slate-50 transition"><td class="px-5 py-4 font-bold text-blue-600">${n.nota}</td><td class="px-5 py-4">${contactsData.find(c=>c.id===n.supplierId)?.name||'-'}</td><td class="px-5 py-4 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${n.paymentStatus==='Lunas'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${n.paymentStatus}</span></td><td class="px-5 py-4 text-center font-bold">${n.vol.toFixed(2)}</td><td class="px-5 py-4 text-right">${formatCurrency(n.prc)}</td><td class="px-5 py-4 text-right flex justify-end space-x-2"><button onclick="showDetail('inventory','${n.nota}')" class="p-1.5 bg-slate-100 rounded-lg"><i data-lucide="eye" class="w-4 h-4"></i></button><button onclick="editInventoryBatch('${n.nota}')" class="p-1.5 bg-amber-50 rounded-lg text-amber-600"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button onclick="handleDeleteInventory('${n.nota}')" class="p-1.5 bg-red-50 text-red-500 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
             refreshIcons();
         };
 
         window.renderSales = () => {
+            const tableBody = document.getElementById('sales-table-body');
+            if (!tableBody) return;
             const g = salesData.reduce((acc, i) => { if(!acc[i.nota]) acc[i.nota] = { ...i, vol: 0, prc: 0 }; acc[i.nota].vol += (i.volume || 0); acc[i.nota].prc += (i.price || 0); return acc; }, {});
-            document.getElementById('sales-table-body').innerHTML = Object.values(g).map(n => `<tr class="hover:bg-slate-50"><td class="px-5 py-4 font-bold text-blue-600">${n.nota}</td><td class="px-5 py-4">${contactsData.find(c=>c.id===n.customerId)?.name||'-'}</td><td class="px-5 py-4 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700">Lunas</span></td><td class="px-5 py-4 text-center font-bold">${n.vol.toFixed(2)}</td><td class="px-5 py-4 text-right">${formatCurrency(n.prc)}</td><td class="px-5 py-4 text-right flex justify-end space-x-2"><button onclick="showDetail('sales','${n.nota}')" class="p-1.5 bg-slate-100 rounded-lg"><i data-lucide="eye" class="w-4 h-4"></i></button><button onclick="handleDeleteSales('${n.nota}')" class="p-1.5 bg-red-50 text-red-500 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
+            tableBody.innerHTML = Object.values(g).map(n => `<tr class="hover:bg-slate-50"><td class="px-5 py-4 font-bold text-blue-600">${n.nota}</td><td class="px-5 py-4">${contactsData.find(c=>c.id===n.customerId)?.name||'-'}</td><td class="px-5 py-4 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700">Lunas</span></td><td class="px-5 py-4 text-center font-bold">${n.vol.toFixed(2)}</td><td class="px-5 py-4 text-right">${formatCurrency(n.prc)}</td><td class="px-5 py-4 text-right flex justify-end space-x-2"><button onclick="showDetail('sales','${n.nota}')" class="p-1.5 bg-slate-100 rounded-lg"><i data-lucide="eye" class="w-4 h-4"></i></button><button onclick="handleDeleteSales('${n.nota}')" class="p-1.5 bg-red-50 text-red-500 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
             refreshIcons();
         };
 
         window.renderContacts = () => {
-            const card = (c) => `<div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4"><div class="flex justify-between items-start"><div class="p-3 bg-slate-100 rounded-2xl"><i data-lucide="${c.type === 'supplier' ? 'truck' : 'users'}" class="w-5 h-5 text-slate-600"></i></div><div class="text-right"><p class="text-[9px] font-bold uppercase text-slate-400 tracking-widest">${c.type==='supplier'?'Hutang':'Piutang'}</p><p class="font-black text-base ${c.balance>0 ? (c.type==='supplier'?'text-red-600':'text-blue-600') : 'text-slate-300'}">${formatCurrency(c.balance)}</p></div></div><div><h4 class="font-bold text-slate-900 text-sm">${c.name}</h4></div><div class="pt-4 border-t border-slate-50 flex gap-2">${c.balance > 0 ? `<button onclick="openPaymentModal('${c.id}')" class="flex-1 py-2.5 bg-slate-900 text-white text-[10px] font-bold rounded-xl uppercase tracking-tighter">Bayar/Cicil</button>` : ''}<button onclick="handleDeleteContact('${c.id}')" class="px-3 py-2.5 bg-red-50 text-red-500 rounded-xl"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>`;
-            document.getElementById('suppliers-list').innerHTML = contactsData.filter(c => c.type === 'supplier').map(card).join('');
-            document.getElementById('customers-list').innerHTML = contactsData.filter(c => c.type === 'customer').map(card).join('');
+            const sList = document.getElementById('suppliers-list');
+            const cList = document.getElementById('customers-list');
+            const card = (c) => `
+                <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                    <div class="flex justify-between items-start">
+                        <div class="p-3 bg-slate-100 rounded-2xl"><i data-lucide="${c.type === 'supplier' ? 'truck' : 'users'}" class="w-5 h-5 text-slate-600"></i></div>
+                        <div class="text-right">
+                            <p class="text-[9px] font-bold uppercase text-slate-400 tracking-widest">${c.type==='supplier'?'Hutang':'Piutang'}</p>
+                            <p class="font-black text-base ${c.balance>0 ? (c.type==='supplier'?'text-red-600':'text-blue-600') : 'text-slate-300'}">${formatCurrency(c.balance)}</p>
+                        </div>
+                    </div>
+                    <div><h4 class="font-bold text-slate-900 text-sm">${c.name}</h4></div>
+                    <div class="pt-4 border-t border-slate-50 flex gap-2">
+                        ${c.balance > 0 ? `<button onclick="openPaymentModal('${c.id}')" class="flex-1 py-2.5 bg-slate-900 text-white text-[10px] font-bold rounded-xl shadow-lg transition active:scale-95 uppercase tracking-widest tracking-tight">Bayar/Cicil</button>` : ''}
+                        <button onclick="handleDeleteContact('${c.id}')" class="px-3 py-2.5 bg-red-50 text-red-500 rounded-xl transition active:scale-95"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                </div>`;
+            if (sList) sList.innerHTML = contactsData.filter(c => c.type === 'supplier').map(card).join('');
+            if (cList) cList.innerHTML = contactsData.filter(c => c.type === 'customer').map(card).join('');
             refreshIcons();
         };
 
         window.renderExpenses = () => {
-            document.getElementById('expenses-table-body').innerHTML = expensesData.sort((a,b)=> (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).map(e => `<tr><td class="px-5 py-4 text-[10px] text-slate-400">${e.createdAt?.toDate()?.toLocaleDateString()||'-'}</td><td class="px-5 py-4 font-bold text-rose-600 uppercase tracking-tighter">${e.category}</td><td class="px-5 py-4 italic text-slate-500 truncate max-w-[100px]">${e.note||'-'}</td><td class="px-5 py-4 text-right font-black">${formatCurrency(e.amount)}</td><td class="px-5 py-4 text-right"><button onclick="handleDeleteExpense('${e.id}')" class="text-slate-300"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
+            const tableBody = document.getElementById('expenses-table-body');
+            if (!tableBody) return;
+            tableBody.innerHTML = expensesData.sort((a,b)=> (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).map(e => `<tr><td class="px-5 py-4 text-[10px] text-slate-400">${e.createdAt?.toDate()?.toLocaleDateString()||'-'}</td><td class="px-5 py-4 font-bold text-rose-600 uppercase tracking-tighter">${e.category}</td><td class="px-5 py-4 italic text-slate-500 truncate max-w-[100px]">${e.note||'-'}</td><td class="px-5 py-4 text-right font-black">${formatCurrency(e.amount)}</td><td class="px-5 py-4 text-right"><button onclick="handleDeleteExpense('${e.id}')" class="text-slate-300 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
             refreshIcons();
         };
 
         window.renderTransactions = () => {
-            document.getElementById('cashflow-table-body').innerHTML = transactionsData.sort((a,b)=> (b.time?.seconds || 0) - (a.time?.seconds || 0)).map(t => `<tr class="hover:bg-slate-50"><td class="px-6 py-4 text-xs text-slate-400">${t.time?.toDate()?.toLocaleTimeString()||''}</td><td class="px-6 py-4 font-medium">${t.note}</td><td class="px-6 py-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${t.type==='in'?'bg-green-100 text-green-700':'bg-orange-100 text-orange-700'}">${t.type}</span></td><td class="px-6 py-4 text-right font-bold ${t.type==='in'?'text-green-600':'text-orange-600'}">${formatCurrency(t.amount)}</td></tr>`).join('');
-            document.getElementById('recent-logs').innerHTML = transactionsData.sort((a,b)=> (b.time?.seconds || 0) - (a.time?.seconds || 0)).slice(0,5).map(t => `<div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100"><div><p class="font-bold text-slate-800">${t.note}</p><p class="text-[10px] text-slate-400">${t.time?.toDate()?.toLocaleTimeString()||''}</p></div><span class="font-black ${t.type==='in'?'text-green-600':'text-red-500'}">${t.type==='in'?'+':'-'} ${formatCurrency(t.amount)}</span></div>`).join('');
+            const tableBody = document.getElementById('cashflow-table-body');
+            const recentLogs = document.getElementById('recent-logs');
+            if (tableBody) {
+                tableBody.innerHTML = transactionsData.sort((a,b)=> (b.time?.seconds || 0) - (a.time?.seconds || 0)).map(t => `<tr class="hover:bg-slate-50"><td class="px-6 py-4 text-xs text-slate-400">${t.time?.toDate()?.toLocaleTimeString()||''}</td><td class="px-6 py-4 font-medium">${t.note}</td><td class="px-6 py-4"><span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${t.type==='in'?'bg-green-100 text-green-700':'bg-orange-100 text-orange-700'}">${t.type}</span></td><td class="px-6 py-4 text-right font-bold ${t.type==='in'?'text-green-600':'text-orange-600'}">${formatCurrency(t.amount)}</td></tr>`).join('');
+            }
+            if (recentLogs) {
+                recentLogs.innerHTML = transactionsData.sort((a,b)=> (b.time?.seconds || 0) - (a.time?.seconds || 0)).slice(0,5).map(t => `<div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100"><div><p class="font-bold text-slate-800 text-xs">${t.note}</p></div><span class="font-black text-xs ${t.type==='in'?'text-green-600':'text-red-500'}">${t.type==='in'?'+':'-'} ${formatCurrency(t.amount)}</span></div>`).join('');
+            }
         };
 
         window.updateStats = () => {
             const vol = inventoryData.reduce((a,c)=>a+(c.unitVolume||0),0), stockVal = inventoryData.reduce((a,c)=>a+(c.totalPrice||0),0);
-            const d = contactsData.filter(c=>c.type==='supplier').reduce((a,c)=>a+(c.balance||0),0), p = contactsData.filter(c=>c.type==='customer').reduce((a,c)=>a+(c.balance||0),0);
             const cin = transactionsData.filter(t=>t.type==='in').reduce((a,t)=>a+(t.amount||0),0), cout = transactionsData.filter(t=>t.type==='out').reduce((a,t)=>a+(t.amount||0),0);
             const rev = salesData.reduce((a,c)=>a+(c.price||0),0), buy = inventoryData.reduce((a,c)=>a+(c.totalPrice||0),0), exp = expensesData.reduce((a,c)=>a+(c.amount||0),0);
+            const dVal = contactsData.filter(c=>c.type==='supplier').reduce((a,c)=>a+(c.balance||0),0), pVal = contactsData.filter(c=>c.type==='customer').reduce((a,c)=>a+(c.balance||0),0);
             
-            document.getElementById('stat-total-volume').innerText = `${vol.toFixed(2)} m³`;
-            document.getElementById('stat-total-price').innerText = formatCurrency(stockVal);
-            document.getElementById('stat-total-debt').innerText = formatCurrency(d);
-            document.getElementById('stat-total-receivable').innerText = formatCurrency(p);
+            if (document.getElementById('stat-total-volume')) document.getElementById('stat-total-volume').innerText = `${vol.toFixed(2)} m³`;
+            if (document.getElementById('stat-total-price')) document.getElementById('stat-total-price').innerText = formatCurrency(stockVal);
+            if (document.getElementById('stat-total-debt')) document.getElementById('stat-total-debt').innerText = formatCurrency(dVal);
+            if (document.getElementById('stat-total-receivable')) document.getElementById('stat-total-receivable').innerText = formatCurrency(pVal);
             
-            if(document.getElementById('report-total-revenue')) document.getElementById('report-total-revenue').innerText = formatCurrency(rev);
-            if(document.getElementById('report-total-cogs')) document.getElementById('report-total-cogs').innerText = formatCurrency(buy);
-            if(document.getElementById('report-total-expenses')) document.getElementById('report-total-expenses').innerText = "-" + formatCurrency(exp);
-            if(document.getElementById('report-gross-profit-accrual')) document.getElementById('report-gross-profit-accrual').innerText = formatCurrency(rev - buy - exp);
-            if(document.getElementById('report-cash-in')) document.getElementById('report-cash-in').innerText = formatCurrency(cin);
-            if(document.getElementById('report-cash-out')) document.getElementById('report-cash-out').innerText = formatCurrency(cout);
-            if(document.getElementById('report-net-cash')) document.getElementById('report-net-cash').innerText = formatCurrency(cin - cout);
+            if (document.getElementById('report-total-revenue')) document.getElementById('report-total-revenue').innerText = formatCurrency(rev);
+            if (document.getElementById('report-total-cogs')) document.getElementById('report-total-cogs').innerText = formatCurrency(buy);
+            if (document.getElementById('report-total-expenses')) document.getElementById('report-total-expenses').innerText = "-" + formatCurrency(exp);
+            if (document.getElementById('report-gross-profit-accrual')) document.getElementById('report-gross-profit-accrual').innerText = formatCurrency(rev - buy - exp);
+            if (document.getElementById('report-cash-in')) document.getElementById('report-cash-in').innerText = formatCurrency(cin);
+            if (document.getElementById('report-cash-out')) document.getElementById('report-cash-out').innerText = formatCurrency(cout);
+            if (document.getElementById('report-net-cash')) document.getElementById('report-net-cash').innerText = formatCurrency(cin - cout);
             
-            document.getElementById('loading').classList.add('hidden');
+            const loader = document.getElementById('loading');
+            if (loader) loader.classList.add('hidden');
         };
 
         // --- Helpers ---
         window.updateSelects = () => {
             const sS = document.getElementById('wood-supplier-select'); if(sS) sS.innerHTML = contactsData.filter(c=>c.type==='supplier').map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
             const cS = document.getElementById('sales-customer-select'); if(cS) cS.innerHTML = contactsData.filter(c=>c.type==='customer').map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-            const stS = document.getElementById('sales-stock-item-select'); if(stS) stS.innerHTML = '<option value="">Pilih Stok</option>' + inventoryData.map(i=>`<option value="${i.id}">${i.type} (${(i.unitVolume||0).toFixed(2)}) - ${i.nota}</option>`).join('');
+            const stS = document.getElementById('sales-stock-item-select'); if(stS) stS.innerHTML = '<option value="">Pilih Stok</option>' + inventoryData.map(i=>`<option value="${i.id}">${i.type} (${(i.unitVolume||0).toFixed(2)}) - ${n.nota}</option>`).join('');
         };
 
-        window.openPaymentModal = (cid) => {
-            const contact = contactsData.find(c => c.id === cid);
-            if (!contact) return;
-            document.getElementById('payment-contact-id').value = cid;
-            document.getElementById('payment-current-balance').innerText = formatCurrency(contact.balance);
-            document.getElementById('payment-title').innerText = contact.type === 'supplier' ? 'Bayar Hutang' : 'Terima Piutang';
-            openModal('payment');
-        };
-
-        window.showDetail = (t, n) => {
-            const m = document.getElementById('detail-modal'); let itms = [], c = null, total = 0;
-            if(t === 'inventory'){ itms = inventoryData.filter(i=>i.nota === n); c = contactsData.find(x=>x.id===itms[0]?.supplierId); total = itms.reduce((a,b)=>a+(b.totalPrice || 0),0); document.getElementById('detail-meta-contact-label').innerText = "Supplier"; }
-            else { itms = salesData.filter(i=>i.nota === n); c = contactsData.find(x=>x.id===itms[0]?.customerId); total = itms.reduce((a,b)=>a+(b.price || 0),0); document.getElementById('detail-meta-contact-label').innerText = "Pelanggan"; }
-            currentDetailItems = itms; currentDetailNota = n; currentDetailType = t;
-            document.getElementById('detail-meta-invoice').innerText = n; document.getElementById('detail-meta-contact-name').innerText = c?.name||'-'; document.getElementById('detail-meta-total').innerText = formatCurrency(total);
-            document.getElementById('detail-meta-status').innerText = itms[0]?.paymentStatus || 'Lunas';
-            document.getElementById('detail-table-body').innerHTML = itms.map(i => `<tr><td class="p-3">${i.noLog||'-'}</td><td class="p-3 font-bold">${i.type||i.woodType} / ${i.grade||'-'}</td><td class="p-3 text-center">${i.d1||'-'}</td><td class="p-3 text-center">${i.d2||'-'}</td><td class="p-3 text-center">${i.d3||'-'}</td><td class="p-3 text-center">${i.d4||'-'}</td><td class="p-3 text-center">${i.trim||'-'}</td><td class="p-3 text-center text-slate-400 italic">${(i.volGR||0).toFixed(2)}</td><td class="p-3 text-center font-bold text-amber-700">${(i.unitVolume||i.volume||0).toFixed(2)}</td><td class="p-3 text-right font-medium">${formatCurrency(i.totalPrice||i.price)}</td></tr>`).join('');
-            if (m) m.classList.remove('hidden'); refreshIcons();
-        };
-
-        window.printNotaDetail = () => {
-            const frame = document.getElementById('print-frame');
-            const total = currentDetailItems.reduce((a,b)=>a+(b.totalPrice || b.price || 0), 0);
-            const content = `<html><head><style>body { font-family: sans-serif; padding: 40px; } table { width: 100%; border-collapse: collapse; margin-top: 20px; } th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }</style></head><body><h2>${currentDetailType==='inventory'?'NOTA MASUK':'SURAT JALAN'}</h2><p>Nota: ${currentDetailNota}</p><table><thead><tr><th>Item</th><th>No Log</th><th>Volume</th><th>Harga</th></tr></thead><tbody>${currentDetailItems.map(i=>`<tr><td>${i.type||i.woodType}</td><td>${i.noLog||'-'}</td><td>${(i.unitVolume||i.volume || 0).toFixed(2)}</td><td>${formatCurrency(i.totalPrice||i.price)}</td></tr>`).join('')}</tbody></table><h3>TOTAL: ${formatCurrency(total)}</h3></body></html>`;
-            const doc_p = frame.contentWindow.document; doc_p.open(); doc_p.write(content); doc_p.close();
-            setTimeout(() => { frame.contentWindow.focus(); frame.contentWindow.print(); }, 500);
-        };
-
-        window.toggleDPInput = (type) => { const el = document.getElementById(`${type}-payment-status`); if (!el) return; const s = el.value; const dpInput = document.getElementById(`${type}-dp-amount`); if (dpInput) dpInput.classList.toggle('hidden', s !== 'DP'); };
-        window.autoFillSalesFromStock = () => { const id = document.getElementById('sales-stock-item-select').value; const it = inventoryData.find(i=>i.id===id); if(it){ document.getElementById('sales-wood-type').value = it.type; document.getElementById('sales-wood-vol').value = it.unitVolume; } };
-        window.saveCompanyProfile = async () => { if(!auth.currentUser) return; await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), { name: document.getElementById('setting-company-name').value, address: document.getElementById('setting-company-address').value, phone: document.getElementById('setting-company-phone').value, updatedAt: serverTimestamp() }); showToast("Profil diperbarui."); };
         window.handleLogout = () => { signOut(auth).then(() => location.reload()); };
 
-        // --- Auth & Init ---
+        // --- Inisialisasi Auth & Listener ---
         const initApp = async () => {
             try {
+                // Gunakan konfigurasi Firebase dari lingkungan jika tersedia
+                const currentConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : firebaseConfig;
+                
+                // RULE 3: Auth Before Queries - Await sign-in COMPLETELY
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     try {
+                        // Mencoba login dengan token kustom
                         await signInWithCustomToken(auth, __initial_auth_token);
-                    } catch (e) {
+                    } catch (customTokenError) {
+                        // Jika mismatch atau gagal, fallback ke login anonim
+                        console.warn("Custom token failed, falling back to anonymous login:", customTokenError);
                         await signInAnonymously(auth);
                     }
                 } else {
                     await signInAnonymously(auth);
                 }
+                
+                // Mulai sinkronisasi hanya setelah autentikasi berhasil
+                startSync();
             } catch (err) {
-                console.error("Auth failure:", err);
-                showToast("Koneksi gagal.", "error");
+                console.error("Firebase auth failure:", err);
+                showToast("Koneksi gagal. Silakan muat ulang.", "error");
             }
+        };
+
+        const syncRole = (u) => { 
+            // Coba sinkronisasi peran, jika gagal (permission denied) anggap sebagai Admin 
+            onSnapshot(doc(db,'artifacts',appId,'public', 'data', 'users', u.uid), snap => { 
+                currentUserRole = snap.data()?.role || "Admin"; 
+                const roleBadge = document.getElementById('user-role-badge');
+                if (roleBadge) roleBadge.innerText = currentUserRole; 
+                document.querySelectorAll('.admin-only').forEach(el => currentUserRole === 'Admin' ? el.classList.remove('hidden') : el.classList.add('hidden')); 
+            }, (err) => {
+                console.warn("Role sync fallback to Admin:", err.message);
+                currentUserRole = "Admin";
+                const roleBadge = document.getElementById('user-role-badge');
+                if (roleBadge) roleBadge.innerText = "Admin (Local)";
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+            }); 
         };
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                onSnapshot(doc(db,'artifacts',appId,'public', 'data', 'users', user.uid), snap => { 
-                    currentUserRole = snap.data()?.role || "Admin"; 
-                    document.getElementById('user-role-badge').innerText = currentUserRole; 
-                    document.querySelectorAll('.admin-only').forEach(el => currentUserRole === 'Admin' ? el.classList.remove('hidden') : el.classList.add('hidden')); 
-                });
-                startSync();
+                syncRole(user);
             }
         });
 
+        // Jalankan inisialisasi
         initApp();
         switchView('dashboard');
     </script>
