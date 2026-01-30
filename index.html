@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Wood-IT | Sistem Pengelolaan Kayu Log Profesional</title>
+    <title>Wood-IT | Sistem Pengelolaan & Arsip Kayu Log</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Library untuk Ekspor -->
@@ -31,6 +31,23 @@
         @keyframes slideIn { from { transform: translateY(-1rem); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        
+        /* Tombol Aksi Kontras Tinggi */
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            color: white;
+        }
+        .btn-action:active { transform: scale(0.9); }
+        .btn-detail { background-color: #3b82f6; } /* Blue */
+        .btn-edit { background-color: #f59e0b; }   /* Amber */
+        .btn-delete { background-color: #ef4444; } /* Red */
+        .btn-pay { background-color: #10b981; }    /* Emerald */
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen pb-20 md:pb-0 flex flex-col md:flex-row">
@@ -38,27 +55,31 @@
     <div id="toast-container"></div>
 
     <!-- Sidebar (Desktop) -->
-    <aside id="sidebar" class="hidden md:flex w-64 bg-slate-900 text-white p-6 flex-col space-y-8 no-print shrink-0 sticky top-0 h-screen">
+    <aside id="sidebar" class="hidden md:flex w-64 bg-slate-900 text-white p-6 flex-col space-y-8 no-print shrink-0 sticky top-0 h-screen text-sm">
         <div class="flex items-center space-x-3 px-2">
-            <div class="bg-amber-600 p-2 rounded-lg shadow-lg shadow-amber-600/20"><i data-lucide="package" class="w-6 h-6"></i></div>
+            <div class="bg-amber-600 p-2 rounded-lg shadow-lg shadow-amber-600/20"><i data-lucide="package" class="w-6 h-6 text-white"></i></div>
             <div>
-                <h1 class="text-xl font-bold tracking-tight" id="sidebar-company-name">Wood-IT Log</h1>
-                <p class="text-[10px] text-amber-500 font-bold uppercase tracking-widest">Management System</p>
+                <h1 class="text-xl font-bold tracking-tight text-white" id="sidebar-company-name">Wood-IT Log</h1>
+                <p class="text-[10px] text-amber-500 font-bold uppercase tracking-widest">Master System</p>
             </div>
         </div>
 
-        <nav class="flex-1 space-y-1 overflow-y-auto" id="main-nav">
+        <nav class="flex-1 space-y-1 overflow-y-auto">
             <button onclick="switchView('dashboard')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-dashboard">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span>Dashboard</span>
             </button>
             <button onclick="switchView('inventory')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-inventory">
                 <i data-lucide="database" class="w-5 h-5"></i>
-                <span>Stok Log</span>
+                <span>Stok Log (Gudang)</span>
             </button>
             <button onclick="switchView('sales')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-sales">
                 <i data-lucide="shopping-cart" class="w-5 h-5"></i>
                 <span>Kayu Keluar</span>
+            </button>
+            <button onclick="switchView('history')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-history">
+                <i data-lucide="history" class="w-5 h-5"></i>
+                <span>Riwayat Pergerakan</span>
             </button>
             <button onclick="switchView('expenses')" class="nav-btn w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition hover:bg-white/10" id="nav-expenses">
                 <i data-lucide="receipt" class="w-5 h-5"></i>
@@ -88,7 +109,7 @@
         </nav>
 
         <div class="pt-6 border-t border-white/10">
-            <button onclick="handleLogout()" class="w-full flex items-center justify-center space-x-2 px-4 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition">
+            <button onclick="handleLogout()" class="w-full flex items-center justify-center space-x-2 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-600 hover:text-white transition font-bold">
                 <i data-lucide="log-out" class="w-4 h-4"></i>
                 <span>Keluar</span>
             </button>
@@ -105,9 +126,9 @@
             <i data-lucide="database" class="w-5 h-5"></i>
             <span class="text-[9px] mt-1">Stok</span>
         </button>
-        <button onclick="switchView('sales')" class="flex flex-col items-center p-2 text-slate-400" id="mob-nav-sales">
-            <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-            <span class="text-[9px] mt-1">Jual</span>
+        <button onclick="switchView('history')" class="flex flex-col items-center p-2 text-slate-400" id="mob-nav-history">
+            <i data-lucide="history" class="w-5 h-5"></i>
+            <span class="text-[9px] mt-1">Riwayat</span>
         </button>
         <button onclick="toggleMobileExtra()" class="flex flex-col items-center p-2 text-slate-400">
             <i data-lucide="menu" class="w-5 h-5"></i>
@@ -122,14 +143,12 @@
             <button onclick="toggleMobileExtra()" class="text-white"><i data-lucide="x" class="w-8 h-8"></i></button>
         </div>
         <div class="space-y-6">
-            <button onclick="switchView('expenses'); toggleMobileExtra()" class="w-full flex items-center space-x-4 text-white text-lg"><i data-lucide="receipt" class="w-6 h-6"></i> <span>Biaya & Beban</span></button>
-            <button onclick="switchView('reports'); toggleMobileExtra()" class="w-full flex items-center space-x-4 text-white text-lg"><i data-lucide="pie-chart" class="w-6 h-6"></i> <span>Laporan Keuangan</span></button>
-            <button onclick="switchView('suppliers'); toggleMobileExtra()" class="w-full flex items-center space-x-4 text-white text-lg"><i data-lucide="truck" class="w-6 h-6"></i> <span>Supplier</span></button>
-            <button onclick="switchView('customers'); toggleMobileExtra()" class="w-full flex items-center space-x-4 text-white text-lg"><i data-lucide="users" class="w-6 h-6"></i> <span>Pelanggan</span></button>
-            <button onclick="switchView('settings'); toggleMobileExtra()" class="w-full flex items-center space-x-4 text-white text-lg"><i data-lucide="settings" class="w-6 h-6"></i> <span>Pengaturan</span></button>
-            <div class="pt-8 border-t border-white/10">
-                <button onclick="handleLogout()" class="w-full flex items-center space-x-4 text-red-400 text-lg font-bold"><i data-lucide="log-out" class="w-6 h-6"></i> <span>Keluar Aplikasi</span></button>
-            </div>
+            <button onclick="switchView('sales'); toggleMobileExtra()" class="w-full flex items-center space-x-4 text-white text-lg font-medium"><i data-lucide="shopping-cart" class="w-6 h-6"></i> <span>Penjualan</span></button>
+            <button onclick="switchView('expenses'); toggleMobileExtra()" class="w-full flex items-center space-x-4 text-white text-lg font-medium"><i data-lucide="receipt" class="w-6 h-6"></i> <span>Biaya & Beban</span></button>
+            <button onclick="switchView('reports'); toggleMobileExtra()" class="w-full flex items-center space-x-4 text-white text-lg font-medium"><i data-lucide="pie-chart" class="w-6 h-6"></i> <span>Laporan Keuangan</span></button>
+            <button onclick="switchView('suppliers'); toggleMobileExtra()" class="w-full flex items-center space-x-4 text-white text-lg font-medium"><i data-lucide="truck" class="w-6 h-6"></i> <span>Supplier</span></button>
+            <button onclick="switchView('customers'); toggleMobileExtra()" class="w-full flex items-center space-x-4 text-white text-lg font-medium"><i data-lucide="users" class="w-6 h-6"></i> <span>Pelanggan</span></button>
+            <button onclick="switchView('settings'); toggleMobileExtra()" class="w-full flex items-center space-x-4 text-white text-lg font-medium"><i data-lucide="settings" class="w-6 h-6"></i> <span>Pengaturan</span></button>
         </div>
     </div>
 
@@ -143,43 +162,61 @@
         <section id="view-dashboard" class="p-4 md:p-10 space-y-6 md:space-y-8 no-print">
             <header>
                 <h2 class="text-xl md:text-2xl font-bold text-slate-800">Operasional Wood-IT</h2>
-                <p class="text-xs text-slate-500">Monitoring real-time volume & keuangan.</p>
+                <p class="text-xs text-slate-500 font-medium">Monitoring real-time volume & keuangan gudang.</p>
             </header>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center md:block">
-                    <div class="p-3 bg-amber-100 text-amber-600 rounded-xl md:mb-4 mr-4 md:mr-0"><i data-lucide="boxes" class="w-5 h-5"></i></div>
-                    <div><h3 class="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Volume Stok</h3><p class="text-lg md:text-2xl font-black text-slate-900" id="stat-total-volume">0.00 m³</p></div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-indigo-500">
+                    <h3 class="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Volume Stok</h3>
+                    <p class="text-lg md:text-2xl font-black text-slate-900" id="stat-total-volume">0.00 m³</p>
                 </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center md:block">
-                    <div class="p-3 bg-green-100 text-green-600 rounded-xl md:mb-4 mr-4 md:mr-0"><i data-lucide="wallet" class="w-5 h-5"></i></div>
-                    <div><h3 class="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Nilai Stok</h3><p class="text-lg md:text-2xl font-black text-slate-900" id="stat-total-price">Rp 0</p></div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-amber-500">
+                    <h3 class="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Nilai Stok</h3>
+                    <p class="text-lg md:text-2xl font-black text-slate-900" id="stat-total-price">Rp 0</p>
                 </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center md:block">
-                    <div class="p-3 bg-red-100 text-red-600 rounded-xl md:mb-4 mr-4 md:mr-0"><i data-lucide="arrow-up-right" class="w-5 h-5"></i></div>
-                    <div><h3 class="text-slate-500 text-[10px] font-bold uppercase tracking-wider text-red-500">Total Hutang</h3><p class="text-lg md:text-2xl font-black text-red-600" id="stat-total-debt">Rp 0</p></div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-rose-500">
+                    <h3 class="text-slate-500 text-[10px] font-bold uppercase tracking-wider text-rose-500">Total Hutang</h3>
+                    <p class="text-lg md:text-2xl font-black text-rose-600" id="stat-total-debt">Rp 0</p>
                 </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center md:block">
-                    <div class="p-3 bg-blue-100 text-blue-600 rounded-xl md:mb-4 mr-4 md:mr-0"><i data-lucide="arrow-down-left" class="w-5 h-5"></i></div>
-                    <div><h3 class="text-slate-500 text-[10px] font-bold uppercase tracking-wider text-blue-500">Total Piutang</h3><p class="text-lg md:text-2xl font-black text-blue-600" id="stat-total-receivable">Rp 0</p></div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 border-l-4 border-l-emerald-500">
+                    <h3 class="text-slate-500 text-[10px] font-bold uppercase tracking-wider text-emerald-500">Total Piutang</h3>
+                    <p class="text-lg md:text-2xl font-black text-emerald-600" id="stat-total-receivable">Rp 0</p>
                 </div>
             </div>
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 overflow-hidden">
-                <h3 class="font-bold text-slate-800 mb-4 flex items-center space-x-2"><i data-lucide="activity" class="w-4 h-4"></i> <span>Aktivitas Kas Terbaru</span></h3>
-                <div id="recent-logs" class="space-y-3"></div>
+                <h3 class="font-bold text-slate-800 mb-4 flex items-center space-x-2"><i data-lucide="activity" class="w-4 h-4 text-blue-500"></i> <span>Aktivitas Kas Terbaru</span></h3>
+                <div id="recent-logs" class="space-y-3 text-xs"></div>
             </div>
         </section>
 
-        <!-- Stok Log Section -->
+        <!-- Inventory View -->
         <section id="view-inventory" class="hidden p-4 md:p-10 space-y-6 no-print">
             <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div><h2 class="text-xl md:text-2xl font-bold text-slate-800">Stok Log (Pembelian)</h2></div>
-                <button onclick="openModal('wood')" class="bg-amber-600 text-white px-5 py-3 rounded-xl text-sm font-bold shadow-lg shadow-amber-600/20">Input Nota Baru</button>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-slate-800">Stok Log (Gudang)</h2>
+                    <p class="text-xs text-slate-500 uppercase font-bold tracking-tighter">Daftar Inventori Per Batang</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="openModal('wood')" class="bg-amber-600 text-white px-5 py-3 rounded-xl text-sm font-bold shadow-lg shadow-amber-600/20 transition active:scale-95 flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i> Input Nota Baru
+                    </button>
+                </div>
             </header>
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs md:text-sm">
-                        <thead class="bg-slate-50 text-slate-500 uppercase text-[9px] font-bold">
-                            <tr><th class="px-5 py-4">No. Nota</th><th class="px-5 py-4">Supplier</th><th class="px-5 py-4 text-center">Status</th><th class="px-5 py-4 text-center">Volume (m³)</th><th class="px-5 py-4 text-right">Aksi</th></tr>
+                    <table class="w-full text-left text-[10px] md:text-xs">
+                        <thead class="bg-slate-900 text-white uppercase font-bold">
+                            <tr>
+                                <th class="px-4 py-4">No. Log</th>
+                                <th class="px-4 py-4">Jenis</th>
+                                <th class="px-4 py-4">Grade</th>
+                                <th class="px-4 py-4 text-center">P (cm)</th>
+                                <th class="px-4 py-4 text-center">D (cm)</th>
+                                <th class="px-4 py-4 text-center">Volume (m³)</th>
+                                <th class="px-4 py-4">Supplier</th>
+                                <th class="px-4 py-4">No. Nota</th>
+                                <th class="px-4 py-4 text-right">Nilai Batch</th>
+                                <th class="px-4 py-4 text-center">Aksi</th>
+                            </tr>
                         </thead>
                         <tbody id="inventory-table-body" class="divide-y divide-slate-100"></tbody>
                     </table>
@@ -187,17 +224,17 @@
             </div>
         </section>
 
-        <!-- Kayu Keluar Section -->
+        <!-- Sales View -->
         <section id="view-sales" class="hidden p-4 md:p-10 space-y-6 no-print">
             <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div><h2 class="text-xl md:text-2xl font-bold text-slate-800">Kayu Keluar (Penjualan)</h2></div>
-                <button onclick="openModal('sales')" class="bg-blue-600 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-blue-600/20">Input Penjualan</button>
+                <div><h2 class="text-xl md:text-2xl font-bold text-slate-800">Kayu Keluar (SJ)</h2></div>
+                <button onclick="openModal('sales')" class="bg-blue-600 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-blue-600/20 active:scale-95">Input Penjualan</button>
             </header>
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs md:text-sm">
-                        <thead class="bg-slate-50 text-slate-500 uppercase text-[9px] font-bold">
-                            <tr><th class="px-5 py-4">SJ / Nota</th><th class="px-5 py-4">Pelanggan</th><th class="px-5 py-4 text-center font-bold">Volume (m³)</th><th class="px-5 py-4 text-right">Total</th><th class="px-5 py-4 text-right">Aksi</th></tr>
+                        <thead class="bg-slate-900 text-white uppercase text-[9px] font-bold">
+                            <tr><th class="px-5 py-4">SJ / Nota</th><th class="px-5 py-4">Pelanggan</th><th class="px-5 py-4 text-center font-bold">Volume (m³)</th><th class="px-5 py-4 text-right">Total</th><th class="px-5 py-4 text-center">Aksi</th></tr>
                         </thead>
                         <tbody id="sales-table-body" class="divide-y divide-slate-100"></tbody>
                     </table>
@@ -205,180 +242,334 @@
             </div>
         </section>
 
-        <!-- Biaya Section -->
+        <!-- Expenses View -->
         <section id="view-expenses" class="hidden p-4 md:p-10 space-y-6 no-print">
-            <header class="flex justify-between items-center"><h2 class="text-xl font-bold">Biaya & Beban</h2><button onclick="openModal('expense')" class="bg-rose-500 text-white px-4 py-2 rounded-xl text-xs font-bold">Input Biaya</button></header>
-            <div class="bg-white rounded-2xl border overflow-hidden"><table class="w-full text-left text-xs"><thead class="bg-slate-50 text-[9px] font-bold uppercase"><tr><th class="p-4">Tanggal</th><th class="p-4">Kategori</th><th class="p-4 text-right">Nominal</th><th class="p-4 text-right">Aksi</th></tr></thead><tbody id="expenses-table-body" class="divide-y divide-slate-100"></tbody></table></div>
-        </section>
-
-        <!-- Laporan Section -->
-        <section id="view-reports" class="hidden p-4 md:p-10 space-y-6 no-print">
             <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div><h2 class="text-xl font-bold">Laporan Keuangan</h2></div>
-                <div class="flex gap-2">
-                    <button onclick="exportToExcel()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel</button>
-                    <button onclick="exportToPDF()" class="bg-rose-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
-                </div>
+                <div><h2 class="text-xl md:text-2xl font-bold text-slate-800">Biaya & Beban</h2><p class="text-xs text-slate-500 uppercase font-bold text-slate-400">Pengeluaran operasional non-log.</p></div>
+                <button onclick="openModal('expense')" class="bg-rose-500 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-rose-500/20 active:scale-95">Input Biaya</button>
             </header>
-            <div id="report-content-to-export" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-white p-6 rounded-2xl border shadow-sm">
-                        <h3 class="font-bold text-sm mb-4 uppercase tracking-tighter">Laba Rugi (Accrual Basis)</h3>
-                        <div class="space-y-2 text-sm divide-y">
-                            <div class="flex justify-between py-2"><span>Penjualan</span><span class="font-bold text-green-600" id="report-total-revenue">Rp 0</span></div>
-                            <div class="flex justify-between py-2"><span>Pembelian</span><span class="font-bold text-red-500" id="report-total-cogs">Rp 0</span></div>
-                            <div class="flex justify-between py-2"><span>Biaya Ops</span><span class="font-bold text-red-400" id="report-total-expenses">Rp 0</span></div>
-                            <div class="flex justify-between py-2 font-black border-t-2 text-base"><span>Net Profit</span><span id="report-gross-profit-accrual">Rp 0</span></div>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl border shadow-sm">
-                        <h3 class="font-bold text-sm mb-4 uppercase tracking-tighter text-blue-600">Arus Kas (Cash Flow)</h3>
-                        <div class="space-y-2 text-sm divide-y">
-                            <div class="flex justify-between py-2"><span>Uang Masuk</span><span class="font-bold text-emerald-600" id="report-cash-in">Rp 0</span></div>
-                            <div class="flex justify-between py-2"><span>Uang Keluar</span><span class="font-bold text-rose-500" id="report-cash-out">Rp 0</span></div>
-                            <div class="flex justify-between py-2 font-black border-t-2 text-base"><span>Saldo Kas</span><span id="report-net-cash" class="text-blue-700">Rp 0</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-2xl border overflow-hidden">
-                    <table class="w-full text-xs text-left" id="table-cashflow">
-                        <thead class="bg-slate-50 uppercase text-[9px] font-bold">
-                            <tr><th class="p-4">Waktu</th><th class="p-4">Ket</th><th class="p-4 text-center">Tipe</th><th class="p-4 text-right">Nominal</th></tr>
+            <div class="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs md:text-sm">
+                        <thead class="bg-slate-900 text-white text-[9px] font-bold uppercase">
+                            <tr>
+                                <th class="px-6 py-4">Waktu</th>
+                                <th class="px-6 py-4">Kategori</th>
+                                <th class="px-6 py-4">Keterangan</th>
+                                <th class="px-6 py-4 text-right">Nominal</th>
+                                <th class="px-6 py-4 text-center">Aksi</th>
+                            </tr>
                         </thead>
-                        <tbody id="cashflow-table-body" class="divide-y"></tbody>
+                        <tbody id="expenses-table-body" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- Kontak Sections -->
-        <section id="view-suppliers" class="hidden p-4 md:p-10 space-y-6 no-print">
-            <header class="flex justify-between items-center"><h2 class="text-xl font-bold">Supplier</h2><button onclick="openModal('contact', 'supplier')" class="bg-slate-800 text-white px-4 py-2 rounded-xl text-xs font-bold">Tambah</button></header>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="suppliers-list"></div>
-        </section>
-        <section id="view-customers" class="hidden p-4 md:p-10 space-y-6 no-print">
-            <header class="flex justify-between items-center"><h2 class="text-xl font-bold">Pelanggan</h2><button onclick="openModal('contact', 'customer')" class="bg-slate-800 text-white px-4 py-2 rounded-xl text-xs font-bold">Tambah</button></header>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="customers-list"></div>
-        </section>
-
-        <!-- Pengaturan Section -->
-        <section id="view-settings" class="hidden p-4 md:p-10 space-y-6 no-print">
-            <h2 class="text-xl font-bold">Pengaturan</h2>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-4">
-                    <h3 class="font-bold text-sm">Profil Bisnis (Header Cetak)</h3>
-                    <div class="space-y-4">
-                        <div><label class="text-[10px] font-bold uppercase text-slate-400">Nama Bisnis</label><input type="text" id="setting-company-name" placeholder="Nama Bisnis" class="w-full p-3 rounded-xl border outline-none"></div>
-                        <div><label class="text-[10px] font-bold uppercase text-slate-400">Alamat</label><textarea id="setting-company-address" rows="2" placeholder="Alamat Lengkap" class="w-full p-3 rounded-xl border outline-none"></textarea></div>
-                        <div><label class="text-[10px] font-bold uppercase text-slate-400">Telepon</label><input type="text" id="setting-company-phone" placeholder="Nomor Telepon" class="w-full p-3 rounded-xl border outline-none"></div>
-                        <button onclick="saveCompanyProfile()" class="w-full py-3 bg-amber-600 text-white font-bold rounded-xl shadow-lg active:scale-95 transition">Simpan Profil</button>
+        <!-- Reports View -->
+        <section id="view-reports" class="hidden p-4 md:p-10 space-y-6 no-print">
+            <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div><h2 class="text-xl font-bold text-slate-800">Laporan Keuangan Terpadu</h2><p class="text-xs text-slate-500 font-medium">Ringkasan laba rugi dan arus kas gudang.</p></div>
+                <div class="flex gap-2">
+                    <button onclick="exportToExcel()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition hover:bg-emerald-700 active:scale-95 shadow-md"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel</button>
+                    <button onclick="exportToPDF()" class="bg-rose-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition hover:bg-rose-700 active:scale-95 shadow-md"><i data-lucide="file-text" class="w-4 h-4"></i> PDF</button>
+                </div>
+            </header>
+            <div id="report-content-to-export" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-200"><p class="text-[10px] font-bold text-emerald-600 uppercase mb-1">Uang Masuk</p><p id="report-cash-in" class="text-xl font-black text-emerald-800">Rp 0</p></div>
+                    <div class="bg-rose-50 p-6 rounded-2xl border border-rose-200"><p class="text-[10px] font-bold text-rose-600 uppercase mb-1">Uang Keluar</p><p id="report-cash-out" class="text-xl font-black text-rose-800">Rp 0</p></div>
+                    <div class="bg-indigo-50 p-6 rounded-2xl border border-indigo-200"><p class="text-[10px] font-bold text-indigo-600 uppercase mb-1">Saldo Kas Bersih</p><p id="report-net-cash" class="text-xl font-black text-indigo-800">Rp 0</p></div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border shadow-sm">
+                    <h3 class="font-bold text-sm mb-4 border-b pb-2 uppercase tracking-tighter">Analisis Laba Rugi</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-2 text-sm divide-y">
+                            <div class="flex justify-between py-2"><span>Total Penjualan</span><span class="font-bold text-emerald-600" id="report-total-revenue">Rp 0</span></div>
+                            <div class="flex justify-between py-2"><span>HPP (Pembelian)</span><span class="font-bold text-rose-500" id="report-total-cogs">Rp 0</span></div>
+                            <div class="flex justify-between py-2"><span>Biaya Operasional</span><span class="font-bold text-rose-400" id="report-total-expenses">Rp 0</span></div>
+                        </div>
+                        <div class="bg-slate-50 p-6 rounded-2xl flex flex-col justify-center items-center text-center border">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Estimasi Laba Bersih</p>
+                            <p id="report-gross-profit-accrual" class="text-2xl font-black text-blue-700">Rp 0</p>
+                        </div>
                     </div>
                 </div>
+                <div class="bg-white rounded-2xl border overflow-hidden shadow-sm">
+                    <div class="p-4 bg-slate-900 border-b font-bold text-xs uppercase text-white">Histori Detail Arus Kas</div>
+                    <div class="overflow-x-auto"><table class="w-full text-xs text-left"><thead class="bg-slate-50 uppercase text-[9px] font-bold"><tr><th class="p-4">Waktu</th><th class="p-4">Keterangan</th><th class="p-4 text-center">Tipe</th><th class="p-4 text-right">Nominal</th></tr></thead><tbody id="cashflow-table-body" class="divide-y divide-slate-100"></tbody></table></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- History View -->
+        <section id="view-history" class="hidden p-4 md:p-10 space-y-6 no-print">
+            <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-slate-800">Riwayat Pergerakan Log</h2>
+                    <p class="text-xs text-slate-500 uppercase font-bold tracking-tighter text-amber-600">Arsip permanen log masuk & keluar.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="exportHistoryExcel()" class="bg-emerald-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg shadow-emerald-600/20 active:scale-95">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Excel
+                    </button>
+                    <button onclick="exportHistoryPDF()" class="bg-rose-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg shadow-rose-600/20 active:scale-95">
+                        <i data-lucide="file-text" class="w-4 h-4"></i> PDF
+                    </button>
+                </div>
+            </header>
+
+            <!-- Fitur Filter -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="relative">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="history-search" oninput="renderHistory()" placeholder="Cari No Log / Nota / Jenis..." class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border rounded-xl text-sm outline-none focus:border-amber-500 font-medium">
+                </div>
+                <select id="history-filter-status" onchange="renderHistory()" class="bg-slate-50 border rounded-xl px-4 py-2.5 text-sm outline-none font-medium">
+                    <option value="ALL">Semua Pergerakan</option>
+                    <option value="MASUK">Hanya Masuk (Beli)</option>
+                    <option value="KELUAR">Hanya Keluar (Jual)</option>
+                </select>
+                <div class="flex items-center justify-end px-2">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total: <span id="history-count" class="text-slate-900">0</span> Baris</p>
+                </div>
+            </div>
+
+            <div id="history-pdf-content" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-[10px] md:text-xs">
+                        <thead class="bg-slate-900 text-white uppercase font-bold">
+                            <tr>
+                                <th class="px-4 py-4">Waktu</th>
+                                <th class="px-4 py-4 text-center">Aksi</th>
+                                <th class="px-4 py-4">No Log</th>
+                                <th class="px-4 py-4">Jenis</th>
+                                <th class="px-4 py-4 text-center">Volume (m³)</th>
+                                <th class="px-4 py-4">Nota/SJ</th>
+                                <th class="px-4 py-4 text-center no-print">Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Suppliers View -->
+        <section id="view-suppliers" class="hidden p-4 md:p-10 space-y-6 no-print">
+            <header class="flex justify-between items-center"><h2 class="text-xl font-bold text-slate-800">Supplier</h2><button onclick="openModal('contact', 'supplier')" class="bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition active:scale-95 shadow-lg">Tambah Supplier</button></header>
+            <div id="suppliers-list" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- Customers View -->
+        <section id="view-customers" class="hidden p-4 md:p-10 space-y-6 no-print">
+            <header class="flex justify-between items-center"><h2 class="text-xl font-bold text-slate-800">Pelanggan</h2><button onclick="openModal('contact', 'customer')" class="bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-bold transition active:scale-95 shadow-lg">Tambah Pelanggan</button></header>
+            <div id="customers-list" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- Settings View -->
+        <section id="view-settings" class="hidden p-4 md:p-10 space-y-6 no-print">
+            <h2 class="text-xl font-bold">Pengaturan Sistem</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-20">
                 <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-4">
-                    <h3 class="font-bold text-sm text-red-600 uppercase tracking-tighter">Database & Backup</h3>
+                    <h3 class="font-bold text-sm uppercase text-slate-400">Profil Perusahaan</h3>
+                    <input type="text" id="setting-company-name" placeholder="Nama Perusahaan" class="w-full p-3 rounded-xl border outline-none font-medium">
+                    <textarea id="setting-company-address" rows="2" placeholder="Alamat Gudang" class="w-full p-3 rounded-xl border outline-none font-medium"></textarea>
+                    <input type="text" id="setting-company-phone" placeholder="No Telp / WA" class="w-full p-3 rounded-xl border outline-none font-medium">
+                    <button onclick="saveCompanyProfile()" class="w-full py-3 bg-amber-600 text-white font-bold rounded-xl shadow-lg transition active:scale-95">Simpan Profil</button>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border shadow-sm space-y-4">
+                    <h3 class="font-bold text-sm uppercase text-slate-400">Database & Pemeliharaan</h3>
                     <div class="space-y-3">
-                        <button onclick="handleBackupDatabase()" class="w-full py-3 bg-slate-900 text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2"><i data-lucide="download" class="w-4 h-4"></i> Cadangkan JSON</button>
+                        <button onclick="handleBackupDatabase()" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition hover:bg-slate-800 shadow-md"><i data-lucide="download" class="w-4 h-4"></i> Cadangkan JSON</button>
                         <input type="file" id="restore-db-input" class="hidden" accept=".json" onchange="handleRestoreDatabase(event)">
-                        <button onclick="document.getElementById('restore-db-input').click()" class="w-full py-3 bg-emerald-600 text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2"><i data-lucide="upload" class="w-4 h-4"></i> Pulihkan JSON</button>
-                        <button onclick="handleResetDatabase()" class="w-full py-2 text-red-600 text-[10px] font-bold uppercase border-t border-slate-100 mt-4">Hapus Seluruh Data</button>
+                        <button onclick="document.getElementById('restore-db-input').click()" class="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition hover:bg-emerald-700 shadow-md"><i data-lucide="upload" class="w-4 h-4"></i> Pulihkan JSON</button>
+                        <div class="pt-4 border-t">
+                            <button onclick="handleResetDatabase()" class="w-full py-3 bg-rose-50 text-rose-600 rounded-xl font-bold text-sm border border-rose-200 hover:bg-rose-600 hover:text-white transition">Hapus Seluruh Data</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
+    <!-- Modals -->
+
+    <!-- Modal Pembayaran -->
+    <div id="payment-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm no-print">
+        <div class="bg-white w-full max-w-xs rounded-3xl p-6 shadow-2xl space-y-6">
+            <div class="space-y-1">
+                <h3 id="payment-title" class="font-black text-slate-800 uppercase tracking-tighter text-sm">Pembayaran</h3>
+                <p id="payment-subtitle" class="text-[10px] text-slate-500 uppercase font-bold">Cicil Hutang / Piutang</p>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                <p class="text-[9px] font-bold text-slate-400 uppercase">Sisa Saldo</p>
+                <p id="payment-current-balance" class="text-lg font-black text-slate-900">Rp 0</p>
+            </div>
+            <form onsubmit="handlePaymentSubmit(event)" class="space-y-4">
+                <input type="hidden" id="payment-contact-id">
+                <div class="space-y-1">
+                    <label class="text-[9px] font-bold uppercase text-slate-400 ml-1">Nominal Pembayaran</label>
+                    <input type="number" id="payment-amount" class="w-full p-3 rounded-xl border-2 border-slate-100 text-sm font-black outline-none focus:border-emerald-500" required>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[9px] font-bold uppercase text-slate-400 ml-1">Catatan</label>
+                    <textarea id="payment-note" rows="2" class="w-full p-3 rounded-xl border border-slate-100 text-sm outline-none font-medium" placeholder="Contoh: Cicilan ke-1"></textarea>
+                </div>
+                <button type="submit" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-sm shadow-xl transition active:scale-95 shadow-emerald-600/20">Simpan Pembayaran</button>
+                <button type="button" onclick="closeModal('payment')" class="w-full py-2 text-slate-400 text-[10px] font-bold uppercase">Batal</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Modal Kayu Masuk -->
     <div id="wood-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-2 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print">
         <div class="bg-white w-full max-w-4xl rounded-3xl shadow-2xl flex flex-col max-h-[95vh] my-auto">
             <div class="p-5 border-b flex justify-between items-center bg-white sticky top-0 z-10">
-                <h3 id="wood-modal-title" class="font-bold text-sm uppercase">Input Nota Log Baru</h3>
-                <button onclick="closeModal('wood')" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button>
+                <h3 id="wood-modal-title" class="font-bold text-sm uppercase">Input Nota Kayu Log Baru</h3>
+                <button onclick="closeModal('wood')" class="text-slate-400 p-2"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
             <div class="p-5 overflow-y-auto space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl">
-                    <div class="space-y-1"><label class="text-[9px] font-bold uppercase text-slate-400">No. Nota</label><input type="text" id="wood-nota" placeholder="INV-001" class="w-full p-3 border rounded-xl text-sm outline-none"></div>
-                    <div class="space-y-1"><label class="text-[9px] font-bold uppercase text-slate-400">Supplier</label><select id="wood-supplier-select" class="w-full p-3 border rounded-xl text-sm outline-none"></select></div>
-                    <div class="space-y-1"><label class="text-[9px] font-bold uppercase text-slate-400">Total Harga Batch</label><input type="number" id="wood-total-nota-price" class="w-full p-3 border rounded-xl text-sm font-bold text-amber-700 outline-none"></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl text-xs border">
+                    <div class="space-y-1"><label class="font-bold uppercase text-slate-400 ml-1">No. Nota</label><input type="text" id="wood-nota" class="w-full p-3 border rounded-xl outline-none font-bold"></div>
+                    <div class="space-y-1"><label class="font-bold uppercase text-slate-400 ml-1">Supplier</label><select id="wood-supplier-select" class="w-full p-3 border rounded-xl outline-none font-bold"></select></div>
+                    <div class="space-y-1"><label class="font-bold uppercase text-slate-400 ml-1">Total Harga Batch</label><input type="number" id="wood-total-nota-price" class="w-full p-3 border rounded-xl font-black text-amber-700 outline-none"></div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-amber-50 p-4 rounded-2xl border border-amber-100">
-                    <select id="wood-payment-status" onchange="toggleDPInput('wood')" class="p-3 rounded-xl border text-sm outline-none"><option value="Hutang">Hutang</option><option value="Lunas">Lunas</option><option value="DP">DP</option></select>
-                    <input type="number" id="wood-dp-amount" placeholder="Nominal DP" class="hidden p-3 rounded-xl border text-sm outline-none bg-white">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-amber-50 p-4 rounded-2xl border border-amber-200">
+                    <select id="wood-payment-status" onchange="toggleDPInput('wood')" class="p-3 rounded-xl border text-sm outline-none font-bold"><option value="Hutang">Hutang (Tagihan)</option><option value="Lunas">Lunas (Tunai)</option><option value="DP">DP (Sebagian)</option></select>
+                    <input type="number" id="wood-dp-amount" placeholder="Nominal DP" class="hidden p-3 rounded-xl border-2 border-amber-200 text-sm font-black outline-none bg-white">
                 </div>
-                <!-- Pengukuran Kayu -->
-                <div class="border-2 border-dashed border-slate-200 rounded-2xl p-4 space-y-4">
-                    <div class="grid grid-cols-2 gap-2"><input type="text" id="wood-type" class="p-3 border rounded-xl text-sm" placeholder="Jenis (Jati/Sengon)"><input type="number" id="log-p" oninput="liveUpdateCalc()" class="p-3 border rounded-xl text-sm" placeholder="Panjang (cm)"></div>
-                    <div class="grid grid-cols-2 gap-2"><input type="text" id="log-no" class="p-3 border rounded-xl text-sm" placeholder="Tag / No LOG"><input type="text" id="log-grade" class="p-3 border rounded-xl text-sm" placeholder="Grade (A1/A2/..)"></div>
-                    <div class="grid grid-cols-4 gap-2">
-                        <input type="number" step="0.1" id="log-d1" oninput="liveUpdateCalc()" class="p-2 border rounded-lg text-center text-xs" placeholder="d1">
-                        <input type="number" step="0.1" id="log-d2" oninput="liveUpdateCalc()" class="p-2 border rounded-lg text-center text-xs" placeholder="d2">
-                        <input type="number" step="0.1" id="log-d3" oninput="liveUpdateCalc()" class="p-2 border rounded-lg text-center text-xs" placeholder="d3">
-                        <input type="number" step="0.1" id="log-d4" oninput="liveUpdateCalc()" class="p-2 border rounded-lg text-center text-xs" placeholder="d4">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2"><input type="number" id="log-trim" oninput="liveUpdateCalc()" class="p-3 border rounded-xl text-sm" placeholder="Trim (cm)"><input type="number" id="log-gr" oninput="liveUpdateCalc()" class="p-3 border rounded-xl text-sm" placeholder="GR (cm)"></div>
-                    <div class="bg-slate-900 text-white p-3 rounded-xl flex justify-around text-center">
-                        <div><p class="text-[9px] text-slate-500 uppercase">Rata D</p><p id="res-live-avg-d" class="font-bold">0 cm</p></div>
-                        <div><p class="text-[9px] text-slate-500 uppercase">Vol GR</p><p id="res-live-vol-gr" class="font-bold">0.00</p></div>
-                        <div><p class="text-[9px] text-slate-500 uppercase">Neto</p><p id="res-live-vol-wood" class="font-bold text-amber-500">0.00</p></div>
-                    </div>
-                    <button onclick="addItemToBatch('wood')" class="w-full bg-amber-600 text-white py-4 rounded-xl font-bold shadow-lg transition active:scale-95 uppercase tracking-widest text-xs">TAMBAH KE DAFTAR NOTA</button>
+                <div class="border-2 border-dashed border-slate-300 rounded-2xl p-4 space-y-4 bg-slate-50/50">
+                    <div class="grid grid-cols-2 gap-2 text-xs font-bold"><input type="text" id="wood-type" class="p-3 border rounded-xl" placeholder="Jenis (Jati/Sengon)"><input type="number" id="log-p" oninput="liveUpdateCalc()" class="p-3 border rounded-xl" placeholder="Panjang (cm)"></div>
+                    <div class="grid grid-cols-2 gap-2 text-xs font-bold"><input type="text" id="log-no" class="p-3 border rounded-xl" placeholder="Tag/No Log"><input type="text" id="log-grade" class="p-3 border rounded-xl" placeholder="Grade"></div>
+                    <div class="grid grid-cols-4 gap-2"><input type="number" step="0.1" id="log-d1" oninput="liveUpdateCalc()" class="p-2 border rounded-lg text-center text-sm font-black" placeholder="d1"><input type="number" step="0.1" id="log-d2" oninput="liveUpdateCalc()" class="p-2 border rounded-lg text-center text-sm font-black" placeholder="d2"><input type="number" step="0.1" id="log-d3" oninput="liveUpdateCalc()" class="p-2 border rounded-lg text-center text-sm font-black" placeholder="d3"><input type="number" step="0.1" id="log-d4" oninput="liveUpdateCalc()" class="p-2 border rounded-lg text-center text-sm font-black" placeholder="d4"></div>
+                    <div class="grid grid-cols-2 gap-2 text-xs font-bold"><input type="number" id="log-trim" oninput="liveUpdateCalc()" class="p-3 border rounded-xl" placeholder="Trim"><input type="number" id="log-gr" oninput="liveUpdateCalc()" class="p-3 border rounded-xl" placeholder="GR"></div>
+                    <div class="bg-slate-900 text-white p-3 rounded-xl flex justify-around text-center shadow-inner"><div><p class="text-[9px] text-slate-500 uppercase font-black">Rata D</p><p id="res-live-avg-d" class="font-bold text-sm">0 cm</p></div><div><p class="text-[9px] text-slate-500 uppercase font-black">Neto m³</p><p id="res-live-vol-wood" class="font-black text-amber-500 text-sm">0.00</p></div></div>
+                    <button onclick="addItemToBatch('wood')" class="w-full bg-amber-600 text-white py-4 rounded-xl font-black shadow-lg text-xs tracking-widest transition active:scale-95 uppercase shadow-amber-600/20">Tambah Batang</button>
                 </div>
-                <div class="border rounded-2xl overflow-hidden"><table class="w-full text-xs text-left"><thead class="bg-slate-50 border-b"><tr><th class="p-3">No LOG</th><th class="p-3">Jenis</th><th class="p-3 text-center">Neto (m³)</th><th class="p-3 text-right">Aksi</th></tr></thead><tbody id="wood-batch-table"></tbody></table></div>
+                <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-sm"><table class="w-full text-[10px] text-left"><thead class="bg-slate-900 text-white border-b"><tr><th class="p-3">No LOG</th><th class="p-3">Jenis</th><th class="p-3 text-center font-bold">Neto</th><th class="p-3 text-right">Aksi</th></tr></thead><tbody id="wood-batch-table"></tbody></table></div>
             </div>
-            <div class="p-5 border-t bg-slate-50 flex space-x-2"><button onclick="closeModal('wood')" class="flex-1 py-4 border rounded-xl">Batal</button><button onclick="submitBatchToFirebase()" id="btn-save-batch-wood" disabled class="flex-1 py-4 bg-slate-900 text-white font-bold rounded-xl shadow-lg">SIMPAN NOTA MASUK</button></div>
+            <div class="p-5 border-t bg-slate-50 flex space-x-2"><button onclick="closeModal('wood')" class="flex-1 py-4 border rounded-xl text-sm font-bold">Batal</button><button onclick="submitBatchToFirebase()" id="btn-save-batch-wood" disabled class="flex-1 py-4 bg-slate-900 text-white font-bold rounded-xl shadow-lg transition active:scale-95">SIMPAN NOTA</button></div>
+        </div>
+    </div>
+
+    <!-- Modal Penjualan -->
+    <div id="sales-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-2 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print">
+        <div class="bg-white w-full max-w-lg rounded-3xl p-6 shadow-2xl space-y-4">
+            <h3 class="font-bold text-sm uppercase">Input Penjualan / SJ</h3>
+            <div class="grid grid-cols-2 gap-3">
+                <input type="text" id="sales-nota" placeholder="No. SJ" class="w-full p-3 rounded-xl border-2 border-slate-100 text-sm font-bold outline-none">
+                <select id="sales-customer-select" class="w-full p-3 rounded-xl border-2 border-slate-100 text-sm font-bold outline-none"></select>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3 bg-blue-50 p-4 rounded-2xl border border-blue-200">
+                <div class="space-y-1">
+                    <label class="text-[9px] font-bold uppercase text-blue-500 ml-1">Status Bayar</label>
+                    <select id="sales-payment-status" onchange="toggleDPInput('sales')" class="w-full p-3 rounded-xl border text-sm font-bold outline-none">
+                        <option value="Tunai">Tunai / Lunas</option>
+                        <option value="Hutang">Hutang (Kredit)</option>
+                        <option value="DP">DP (Sebagian)</option>
+                    </select>
+                </div>
+                <div id="sales-dp-container" class="space-y-1 hidden">
+                    <label class="text-[9px] font-bold uppercase text-blue-500 ml-1">Nominal DP</label>
+                    <input type="number" id="sales-dp-amount" placeholder="0" class="w-full p-3 rounded-xl border-2 border-blue-200 text-sm font-black outline-none bg-white">
+                </div>
+            </div>
+
+            <div class="border-2 border-dashed border-slate-200 p-4 rounded-xl space-y-4 bg-slate-50/50">
+                <select id="sales-stock-item-select" onchange="autoFillSalesFromStock()" class="w-full p-3 rounded-xl border text-sm font-bold outline-none"><option value="">-- Manual --</option></select>
+                <div class="grid grid-cols-2 gap-2"><input type="text" id="sales-wood-type" placeholder="Jenis" class="p-3 rounded-xl border text-sm font-bold outline-none"><input type="number" id="sales-wood-vol" placeholder="Vol" class="p-3 rounded-xl border text-sm font-bold outline-none"></div>
+                <input type="number" id="sales-wood-price" placeholder="Harga Jual" class="w-full p-3 rounded-xl border-2 border-blue-200 text-sm font-black text-blue-700 outline-none">
+                <button onclick="addItemToBatch('sales')" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold text-xs shadow-md shadow-blue-600/20 active:scale-95">+ TAMBAH ITEM</button>
+            </div>
+            <div class="border rounded-xl max-h-40 overflow-y-auto shadow-inner"><table class="w-full text-[10px]"><tbody id="sales-batch-table"></tbody></table></div>
+            <div class="flex space-x-2"><button onclick="closeModal('sales')" class="flex-1 py-3 border rounded-xl text-sm font-bold">Batal</button><button onclick="submitBatchSalesToFirebase()" id="btn-save-batch-sales" disabled class="flex-1 py-3 bg-slate-900 text-white font-bold rounded-xl text-sm shadow-xl active:scale-95">SIMPAN SJ</button></div>
         </div>
     </div>
 
     <!-- Modal Detail & Cetak -->
-    <div id="detail-modal" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-2 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print">
-        <div class="bg-white w-full max-w-5xl rounded-3xl flex flex-col max-h-[90vh]">
-            <div class="p-5 border-b flex justify-between items-center bg-white rounded-t-3xl"><h3 id="detail-title" class="font-bold text-slate-800 text-xs uppercase">Detail Transaksi</h3><button onclick="closeModal('detail')" class="text-slate-400"><i data-lucide="x" class="w-6 h-6"></i></button></div>
-            <div class="p-5 overflow-y-auto space-y-6">
-                <div id="detail-metadata" class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-xl text-xs">
-                    <div><p class="font-bold text-slate-400 uppercase">Nota</p><p id="detail-meta-invoice" class="font-bold text-slate-800">-</p></div>
-                    <div><p id="detail-meta-contact-label" class="font-bold text-slate-400 uppercase">Pihak</p><p id="detail-meta-contact-name" class="font-bold text-slate-800">-</p></div>
-                    <div><p class="font-bold text-slate-400 uppercase">Status</p><p id="detail-meta-status" class="font-bold">-</p></div>
-                    <div><p class="font-bold text-slate-400 uppercase">Total Nilai</p><p id="detail-meta-total" class="font-black text-blue-600">-</p></div>
+    <div id="detail-modal" class="fixed inset-0 z-[120] hidden flex items-center justify-center p-2 bg-slate-900/80 backdrop-blur-md no-print">
+        <div class="bg-white w-full max-w-5xl rounded-3xl flex flex-col max-h-[90vh] shadow-2xl">
+            <div class="p-6 border-b flex justify-between items-center bg-white rounded-t-3xl">
+                <h3 class="font-bold text-slate-800 text-sm uppercase tracking-tighter">Detail Dokumen Log</h3>
+                <button onclick="closeModal('detail')" class="text-slate-400 p-2"><i data-lucide="x" class="w-8 h-8"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-6">
+                <div id="detail-metadata" class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 p-6 rounded-2xl text-xs border border-slate-200">
+                    <div><p class="font-bold text-slate-400 uppercase">Nota/SJ</p><p id="dt-nota" class="font-black text-slate-900 text-sm">-</p></div>
+                    <div><p class="font-bold text-slate-400 uppercase">Mitra</p><p id="dt-mitra" class="font-black text-slate-900 text-sm">-</p></div>
+                    <div><p class="font-bold text-slate-400 uppercase">Status</p><p id="dt-status" class="font-black text-indigo-600">-</p></div>
+                    <div><p class="font-bold text-slate-400 uppercase">Total Nilai</p><p id="dt-total" class="font-black text-emerald-600 text-sm">-</p></div>
                 </div>
-                <div class="overflow-x-auto border rounded-xl">
-                    <table class="w-full text-[10px] text-left min-w-[700px]"><thead class="bg-slate-50 border-b"><tr><th class="p-3">No LOG</th><th class="p-3">Jenis/Grade</th><th class="p-3 text-center">P (cm)</th><th class="p-3 text-center">D (cm)</th><th class="p-3 text-center">Vol (m³)</th><th class="p-3 text-right">Harga</th></tr></thead><tbody id="detail-table-body" class="divide-y"></tbody></table>
+                <div class="overflow-x-auto border border-slate-200 rounded-2xl shadow-sm">
+                    <table class="w-full text-[11px] text-left">
+                        <thead class="bg-slate-900 uppercase font-bold text-white">
+                            <tr><th class="p-4">No Log</th><th class="p-4">Jenis</th><th class="p-4 text-center">Ukuran (P)</th><th class="p-4 text-center">Neto (m³)</th><th class="p-4 text-right">Nilai Item</th></tr>
+                        </thead>
+                        <tbody id="detail-table-body" class="divide-y"></tbody>
+                    </table>
                 </div>
-                <button onclick="printNotaDetail()" class="w-full py-4 bg-amber-600 text-white rounded-2xl font-bold shadow-lg flex items-center justify-center space-x-2 transition active:scale-95"><i data-lucide="printer" class="w-5 h-5"></i> <span>CETAK DOKUMEN PROFESIONAL</span></button>
+                <div class="pt-4 border-t flex gap-3">
+                    <button onclick="printProfessionalDocument()" class="flex-1 py-4 bg-amber-600 text-white rounded-2xl font-black flex items-center justify-center gap-2 active:scale-95 transition shadow-lg shadow-amber-600/30 uppercase tracking-widest"><i data-lucide="printer" class="w-5 h-5"></i> CETAK DOKUMEN PROFESIONAL</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Kayu Keluar -->
-    <div id="sales-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-2 bg-slate-900/60 backdrop-blur-sm overflow-y-auto no-print">
-        <div class="bg-white w-full max-w-lg rounded-3xl p-6 space-y-4 shadow-2xl flex flex-col my-auto">
-            <h3 class="font-bold text-sm uppercase">Input Penjualan (Surat Jalan)</h3>
-            <div class="space-y-4">
-                <input type="text" id="sales-nota" placeholder="SJ/2026/001" class="w-full p-3 rounded-xl border text-sm outline-none">
-                <select id="sales-customer-select" class="w-full p-3 rounded-xl border text-sm outline-none"></select>
-                <div class="border-2 border-dashed border-slate-200 p-4 rounded-xl space-y-4">
-                    <select id="sales-stock-item-select" onchange="autoFillSalesFromStock()" class="w-full p-3 rounded-xl border text-sm outline-none"></select>
-                    <div class="grid grid-cols-2 gap-2"><input type="text" id="sales-wood-type" placeholder="Jenis" class="p-3 rounded-xl border text-sm outline-none"><input type="number" id="sales-wood-vol" placeholder="Vol" class="p-3 rounded-xl border text-sm outline-none"></div>
-                    <input type="number" id="sales-wood-price" placeholder="Harga Jual" class="w-full p-3 rounded-xl border text-sm outline-none font-bold">
-                    <button onclick="addItemToBatch('sales')" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold text-xs">+ Tambah Ke SJ</button>
-                </div>
-                <div class="border rounded-xl max-h-40 overflow-y-auto"><table class="w-full text-[10px]"><tbody id="sales-batch-table"></tbody></table></div>
-            </div>
-            <div class="flex space-x-2 pt-2"><button onclick="closeModal('sales')" class="flex-1 py-3.5 border rounded-xl text-sm font-medium">Batal</button><button onclick="submitBatchSalesToFirebase()" id="btn-save-batch-sales" disabled class="flex-1 py-3.5 bg-slate-900 text-white font-bold rounded-xl text-sm">Simpan SJ</button></div>
-        </div>
-    </div>
-
-    <!-- Modals Utility (Expense, Contact, Payment) -->
-    <div id="expense-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 no-print backdrop-blur-sm"><div class="bg-white w-full max-w-xs rounded-3xl p-6 space-y-4 shadow-2xl"><h3 class="font-bold text-sm uppercase">Input Biaya Ops</h3><form onsubmit="handleExpenseSubmit(event)" class="space-y-4"><select id="expense-category" class="w-full p-3 rounded-xl border text-sm outline-none" required><option value="Gaji">Gaji</option><option value="Operasional">Operasional</option><option value="BBM">BBM/Solar</option><option value="Lain-lain">Lain-lain</option></select><input type="number" id="expense-amount" placeholder="Nominal" class="w-full p-3 rounded-xl border text-sm outline-none font-bold" required><textarea id="expense-note" placeholder="Ket" class="w-full p-3 rounded-xl border text-sm outline-none"></textarea><button type="submit" class="w-full py-3.5 bg-rose-500 text-white rounded-xl font-bold text-sm">Simpan</button><button type="button" onclick="closeModal('expense')" class="w-full py-2 text-slate-400 text-xs text-center block">Batal</button></form></div></div>
-    <div id="contact-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 no-print backdrop-blur-sm"><div class="bg-white w-full max-w-xs rounded-3xl p-6 space-y-4 shadow-2xl"><h3 id="contact-modal-title" class="font-bold text-sm uppercase">Tambah Pihak</h3><form onsubmit="handleContactSubmit(event)" class="space-y-4"><input type="hidden" id="contact-type"><input type="text" id="contact-name" placeholder="Nama" class="w-full p-3 rounded-xl border text-sm outline-none font-bold" required><input type="text" id="contact-phone" placeholder="No Telp" class="w-full p-3 rounded-xl border text-sm outline-none"><button type="submit" class="w-full py-3.5 bg-slate-900 text-white rounded-xl font-bold text-sm">Simpan</button><button type="button" onclick="closeModal('contact')" class="w-full py-2 text-slate-400 text-xs text-center block">Batal</button></form></div></div>
-    <div id="payment-modal" class="fixed inset-0 z-[130] hidden flex items-center justify-center p-4 bg-slate-900/60 no-print backdrop-blur-sm"><div class="bg-white w-full max-w-xs rounded-3xl p-6 space-y-6 shadow-2xl"><h3 id="payment-title" class="font-black text-slate-800 uppercase text-sm">Pembayaran</h3><div class="bg-slate-50 p-4 rounded-2xl"><p class="text-[9px] font-bold text-slate-400 uppercase">Sisa Saldo</p><p id="payment-current-balance" class="text-lg font-black text-slate-900">Rp 0</p></div><form onsubmit="handlePaymentSubmit(event)" class="space-y-4"><input type="hidden" id="payment-contact-id"><input type="number" id="payment-amount" placeholder="Nominal" class="w-full p-4 rounded-2xl border text-sm font-bold outline-none" required><textarea id="payment-note" placeholder="Catatan" class="w-full p-4 rounded-2xl border text-sm outline-none"></textarea><button type="submit" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-sm shadow-xl active:scale-95 transition">Konfirmasi Pembayaran</button><button type="button" onclick="closeModal('payment')" class="w-full py-2 text-slate-400 text-xs font-bold uppercase text-center block">Batal</button></form></div></div>
-
+    <!-- Hidden Iframe for Professional Printing -->
     <iframe id="print-frame" style="display:none; visibility:hidden; position:absolute;"></iframe>
+
+    <div id="expense-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm no-print">
+        <div class="bg-white w-full max-w-xs rounded-3xl p-6 shadow-2xl space-y-4">
+            <h3 class="font-bold text-sm uppercase">Input Biaya Operasional</h3>
+            <form onsubmit="handleExpenseSubmit(event)" class="space-y-4">
+                <select id="expense-category" class="w-full p-3 rounded-xl border-2 border-slate-100 text-sm font-bold outline-none" required><option value="Gaji">Gaji</option><option value="Operasional">Operasional</option><option value="BBM">BBM</option><option value="Lain-lain">Lain-lain</option></select>
+                <input type="number" id="expense-amount" placeholder="Nominal" class="w-full p-3 rounded-xl border-2 border-slate-100 text-sm font-black outline-none focus:border-rose-500" required>
+                <textarea id="expense-note" placeholder="Ket" class="w-full p-3 rounded-xl border-2 border-slate-100 text-sm font-medium outline-none"></textarea>
+                <button type="submit" class="w-full py-4 bg-rose-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-rose-500/20 active:scale-95 uppercase">Simpan Biaya</button>
+                <button type="button" onclick="closeModal('expense')" class="w-full py-2 text-slate-400 text-[10px] font-bold uppercase">Batal</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="contact-modal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm no-print">
+        <div class="bg-white w-full max-w-xs rounded-3xl p-6 shadow-2xl space-y-4">
+            <h3 id="contact-modal-title" class="font-bold text-sm uppercase">Tambah Kontak Baru</h3>
+            <form onsubmit="handleContactSubmit(event)" class="space-y-4">
+                <input type="hidden" id="contact-type">
+                <input type="text" id="contact-name" placeholder="Nama" class="w-full p-3 rounded-xl border-2 border-slate-100 text-sm font-black outline-none focus:border-slate-800" required>
+                <input type="text" id="contact-phone" placeholder="No Telp" class="w-full p-3 rounded-xl border-2 border-slate-100 text-sm font-medium outline-none">
+                <textarea id="contact-address" placeholder="Alamat" class="w-full p-3 rounded-xl border-2 border-slate-100 text-sm font-medium outline-none"></textarea>
+                <button type="submit" class="w-full py-4 bg-slate-900 text-white rounded-xl font-bold text-sm shadow-xl active:scale-95 uppercase">Simpan Data</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Reset -->
+    <div id="reset-confirm-modal" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md no-print">
+        <div class="bg-white w-full max-sm:rounded-b-none max-w-sm rounded-3xl p-8 space-y-6 shadow-2xl text-center">
+            <div class="mx-auto w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-4"><i data-lucide="alert-triangle" class="w-8 h-8"></i></div>
+            <div class="space-y-2">
+                <h3 class="font-black text-slate-900 text-lg uppercase tracking-tighter">Reset Database?</h3>
+                <p class="text-sm text-slate-500 leading-relaxed">Seluruh data stok, transaksi, dan kontak akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.</p>
+            </div>
+            <div class="space-y-3 text-left">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Ketik "RESET" untuk mengonfirmasi:</p>
+                <input type="text" id="reset-keyword-input" placeholder="RESET" class="w-full p-4 rounded-2xl border-2 border-slate-200 text-center font-black tracking-widest outline-none focus:border-red-500 uppercase">
+            </div>
+            <div class="flex flex-col space-y-2 pt-2">
+                <button onclick="executeDatabaseReset()" class="w-full py-4 bg-red-600 text-white rounded-2xl font-bold text-sm shadow-xl transition active:scale-95">HAPUS SEKARANG</button>
+                <button onclick="closeModal('reset-confirm')" class="w-full py-2 text-slate-400 text-[10px] font-bold uppercase">Batal</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, addDoc, onSnapshot, deleteDoc, serverTimestamp, writeBatch, increment, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, addDoc, onSnapshot, deleteDoc, serverTimestamp, writeBatch, increment, getDocs, query } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        // --- Firebase Init ---
         const firebaseConfig = {
           apiKey: "AIzaSyAxBA0yDhQHyMBE_vV5_zBlME_rJE9FZB0",
           authDomain: "adamlog-bd115.firebaseapp.com",
@@ -390,9 +581,11 @@
         const app = initializeApp(firebaseConfig), auth = getAuth(app), db = getFirestore(app);
         const appId = typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.projectId;
 
-        let inventoryData = [], contactsData = [], salesData = [], transactionsData = [], expensesData = [];
-        let temporaryBatchWood = [], temporaryBatchSales = [], currentLiveVolWood = 0, currentLiveAvgD = 0, currentLiveVolGR = 0, companyProfile = { name: "Wood-IT Log", address: "Jl. Utama", phone: "0812" };
-        let currentDetailItems = [], currentDetailNota = '', currentDetailType = '';
+        let inventoryData = [], contactsData = [], salesData = [], transactionsData = [], expensesData = [], logHistoryData = [];
+        let temporaryBatchWood = [], temporaryBatchSales = [], currentLiveVolWood = 0, currentLiveAvgD = 0, currentLiveVolGR = 0;
+        let isEditingNota = null;
+        let currentDetailItems = [], currentDetailMeta = {};
+        let companyProfile = { name: "Wood-IT Log", address: "Gudang Utama", phone: "0812" };
 
         const refreshIcons = () => { if (window.lucide) window.lucide.createIcons(); };
         const formatCurrency = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n || 0);
@@ -406,13 +599,25 @@
             setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
         };
 
-        // --- UI Navigation ---
         window.switchView = (view) => {
-            document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+            const targets = ['dashboard', 'inventory', 'sales', 'history', 'expenses', 'reports', 'suppliers', 'customers', 'settings'];
+            targets.forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden');
+                const btn = document.getElementById(`nav-${v}`);
+                if (btn) btn.classList.remove('bg-amber-600/10', 'text-amber-500');
+            });
+
             const target = document.getElementById(`view-${view}`);
-            if (target) target.classList.remove('hidden');
+            if (target) {
+                target.classList.remove('hidden');
+                const activeBtn = document.getElementById(`nav-${view}`);
+                if (activeBtn) activeBtn.classList.add('bg-amber-600/10', 'text-amber-500');
+            }
             refreshIcons(); window.scrollTo(0,0);
         };
+
+        window.toggleMobileExtra = () => document.getElementById('mobile-extra-menu').classList.toggle('hidden');
 
         window.openModal = (type, sub = '') => {
             const m = document.getElementById(`${type}-modal`);
@@ -426,349 +631,568 @@
         window.closeModal = (id) => {
             const m = document.getElementById(`${id}-modal`);
             if (m) m.classList.add('hidden');
-            if(id === 'wood') { temporaryBatchWood = []; renderBatch('wood'); }
+            if(id === 'wood') { temporaryBatchWood = []; isEditingNota = null; renderBatch('wood'); }
             if(id === 'sales') { temporaryBatchSales = []; renderBatch('sales'); }
+            if(id === 'reset-confirm') { document.getElementById('reset-keyword-input').value = ""; }
         };
 
-        window.toggleMobileExtra = () => {
-            const menu = document.getElementById('mobile-extra-menu');
-            if (menu) menu.classList.toggle('hidden');
+        // --- Fitur Pembayaran / Cicilan ---
+        window.openPaymentModal = (contactId) => {
+            const contact = contactsData.find(c => c.id === contactId);
+            if (!contact) return;
+            document.getElementById('payment-contact-id').value = contactId;
+            document.getElementById('payment-title').innerText = contact.type === 'supplier' ? 'Bayar Hutang' : 'Terima Piutang';
+            document.getElementById('payment-subtitle').innerText = contact.name;
+            document.getElementById('payment-current-balance').innerText = formatCurrency(contact.balance);
+            document.getElementById('payment-amount').value = '';
+            document.getElementById('payment-note').value = '';
+            openModal('payment');
         };
 
-        // --- Technical Wood Calculations ---
+        window.handlePaymentSubmit = async (e) => {
+            e.preventDefault();
+            const cid = document.getElementById('payment-contact-id').value;
+            const amt = parseFloat(document.getElementById('payment-amount').value);
+            const note = document.getElementById('payment-note').value;
+            const contact = contactsData.find(c => c.id === cid);
+            
+            if (!contact || amt <= 0) return;
+            
+            if (amt > contact.balance) {
+                if (!confirm("Nominal pembayaran melebihi sisa saldo. Lanjutkan?")) return;
+            }
+
+            const batch = writeBatch(db);
+            // Kurangi saldo kontak
+            batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', cid), { 
+                balance: increment(-amt) 
+            });
+            
+            // Catat transaksi kas
+            batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), {
+                type: contact.type === 'supplier' ? 'out' : 'in',
+                amount: amt,
+                note: `Pembayaran ${contact.type === 'supplier' ? 'Hutang' : 'Piutang'}: ${contact.name} (${note})`,
+                time: serverTimestamp()
+            });
+            
+            await batch.commit();
+            closeModal('payment');
+            showToast(`Pembayaran untuk ${contact.name} berhasil dicatat.`);
+        };
+
+        // --- Database & Pemeliharaan ---
+        window.handleBackupDatabase = async () => {
+            document.getElementById('loading').classList.remove('hidden');
+            try {
+                const collections = ['inventory', 'contacts', 'sales', 'transactions', 'expenses', 'log_history'];
+                const backup = {};
+                for (const coll of collections) {
+                    const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', coll));
+                    backup[coll] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                }
+                const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = url;
+                a.download = `wood-it-backup-${new Date().toISOString().slice(0, 10)}.json`;
+                a.click();
+                showToast("Backup database berhasil diunduh.");
+            } catch (err) {
+                showToast("Gagal melakukan backup.", "error");
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        };
+
+        window.handleRestoreDatabase = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async (ev) => {
+                try {
+                    const data = JSON.parse(ev.target.result);
+                    document.getElementById('loading').classList.remove('hidden');
+                    for (const collName in data) {
+                        for (const item of data[collName]) {
+                            const { id, ...rest } = item;
+                            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', collName, id), rest);
+                        }
+                    }
+                    showToast("Database berhasil dipulihkan.");
+                    setTimeout(() => location.reload(), 1000);
+                } catch (err) {
+                    showToast("Format file tidak valid.", "error");
+                } finally {
+                    document.getElementById('loading').classList.add('hidden');
+                }
+            };
+            reader.readAsText(file);
+        };
+
+        window.handleResetDatabase = () => {
+            document.getElementById('reset-keyword-input').value = "";
+            openModal('reset-confirm');
+        };
+
+        window.executeDatabaseReset = async () => {
+            const keyword = document.getElementById('reset-keyword-input').value;
+            if (keyword !== "RESET") return showToast("Kata kunci salah!", "error");
+            closeModal('reset-confirm');
+            document.getElementById('loading').classList.remove('hidden');
+            try {
+                const collections = ['inventory', 'contacts', 'sales', 'transactions', 'expenses', 'log_history'];
+                for (const coll of collections) {
+                    const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', coll));
+                    for (const d of snap.docs) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', coll, d.id));
+                }
+                showToast("Data operasional dihapus.");
+                setTimeout(() => location.reload(), 1000);
+            } catch (err) {
+                showToast("Gagal menghapus data.", "error");
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        };
+
+        // --- Perhitungan Kayu ---
         window.liveUpdateCalc = () => {
             const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
             const d1=getVal('log-d1'), d2=getVal('log-d2'), d3=getVal('log-d3'), d4=getVal('log-d4'), p=getVal('log-p'), trim=getVal('log-trim'), gr=getVal('log-gr');
             currentLiveAvgD = Math.round((d1+d2+d3+d4)/4);
-            
-            // Logic based on standard: Vol Neto = Vol Bruto - Vol GR
-            // Vol Bruto uses Effective Length (P - Trim)
-            // Vol GR uses Actual Length (P)
             const pEffMeter = (p - trim) / 100, pAsliMeter = p / 100;
             const volBruto = (0.7854 * Math.pow(currentLiveAvgD, 2) * pEffMeter) / 10000;
             currentLiveVolGR = (0.7854 * Math.pow(gr, 2) * pAsliMeter) / 10000;
             currentLiveVolWood = Math.max(0, volBruto - currentLiveVolGR);
-            
             document.getElementById('res-live-avg-d').innerText = `${currentLiveAvgD} cm`;
-            document.getElementById('res-live-vol-gr').innerText = currentLiveVolGR.toFixed(2);
             document.getElementById('res-live-vol-wood').innerText = currentLiveVolWood.toFixed(2);
         };
 
-        // --- Batch Items ---
         window.addItemToBatch = (type) => {
             if (type === 'wood') {
                 const woodType = document.getElementById('wood-type').value;
-                if(!woodType || currentLiveVolWood <= 0) return showToast("Lengkapi data pengukuran!", "error");
+                if(!woodType || currentLiveVolWood <= 0) return;
                 temporaryBatchWood.push({ 
-                    type: woodType, 
-                    unitVolume: parseFloat(currentLiveVolWood.toFixed(2)), 
-                    volGR: parseFloat(currentLiveVolGR.toFixed(2)),
-                    noLog: document.getElementById('log-no').value, 
-                    grade: document.getElementById('log-grade').value,
-                    d1: parseFloat(document.getElementById('log-d1').value)||0, d2: parseFloat(document.getElementById('log-d2').value)||0,
-                    d3: parseFloat(document.getElementById('log-d3').value)||0, d4: parseFloat(document.getElementById('log-d4').value)||0,
-                    avgD: currentLiveAvgD, 
-                    p: parseFloat(document.getElementById('log-p').value), 
-                    trim: parseFloat(document.getElementById('log-trim').value)||0
+                    type: woodType, unitVolume: parseFloat(currentLiveVolWood.toFixed(2)), volGR: parseFloat(currentLiveVolGR.toFixed(2)),
+                    noLog: document.getElementById('log-no').value, grade: document.getElementById('log-grade').value,
+                    avgD: currentLiveAvgD, p: parseFloat(document.getElementById('log-p').value)
                 });
             } else {
-                const vol = parseFloat(document.getElementById('sales-wood-vol').value)||0, prc = parseFloat(document.getElementById('sales-wood-price').value)||0;
-                if (!vol || !prc) return showToast("Lengkapi data penjualan!", "error");
                 const stockId = document.getElementById('sales-stock-item-select').value;
-                temporaryBatchSales.push({ 
-                    woodType: document.getElementById('sales-wood-type').value, 
-                    volume: vol, 
-                    price: prc, 
-                    stockId 
-                });
+                const typeIn = document.getElementById('sales-wood-type').value, volIn = parseFloat(document.getElementById('sales-wood-vol').value), prcIn = parseFloat(document.getElementById('sales-wood-price').value);
+                if(!typeIn || !volIn || !prcIn) return;
+                temporaryBatchSales.push({ woodType: typeIn, volume: volIn, price: prcIn, stockId: stockId || null });
             }
             renderBatch(type);
         };
 
         const renderBatch = (type) => {
             const list = type === 'wood' ? temporaryBatchWood : temporaryBatchSales;
-            const table = document.getElementById(`${type}-batch-table`);
-            if (table) {
-                table.innerHTML = list.map((i, idx) => `
-                    <tr class="border-b">
-                        <td class="p-3">${i.noLog||'-'}</td>
-                        <td class="p-3 font-bold">${i.type||i.woodType}</td>
-                        <td class="p-3 text-center">${(i.unitVolume||i.volume).toFixed(2)}</td>
-                        <td class="p-3 text-right"><button onclick="removeFromBatch('${type}', ${idx})" class="text-rose-500 font-bold">X</button></td>
-                    </tr>`).join('');
-            }
+            const body = document.getElementById(`${type}-batch-table`);
+            if(body) body.innerHTML = list.map((i, idx) => `<tr class="border-b"><td class="p-3">${i.noLog||'-'}</td><td class="p-3 font-bold">${i.type||i.woodType}</td><td class="p-3 text-center font-black">${(i.unitVolume||i.volume).toFixed(2)}</td><td class="p-3 text-right"><button onclick="removeFromBatch('${type}', ${idx})" class="p-2 bg-rose-600 text-white rounded-lg font-bold"><i data-lucide="x" class="w-3 h-3"></i></button></td></tr>`).join('');
             const btn = document.getElementById(`btn-save-batch-${type}`);
             if(btn) btn.disabled = list.length === 0;
+            refreshIcons();
         };
         window.renderBatch = renderBatch;
         window.removeFromBatch = (type, idx) => { if(type==='wood') temporaryBatchWood.splice(idx,1); else temporaryBatchSales.splice(idx,1); renderBatch(type); };
 
-        // --- Database Logic ---
+        // --- Submit Nota ---
         window.submitBatchToFirebase = async () => {
-            if(!auth.currentUser) return;
             const nota = document.getElementById('wood-nota').value, sid = document.getElementById('wood-supplier-select').value, total = parseFloat(document.getElementById('wood-total-nota-price').value)||0, st = document.getElementById('wood-payment-status').value, dp = parseFloat(document.getElementById('wood-dp-amount').value)||0;
-            if(!nota || !sid) return showToast("Data nota/supplier wajib diisi!", "error");
-            
+            if(!nota || !sid) return showToast("Lengkapi data nota!", "error");
             const batch = writeBatch(db); 
-            const prcPerItem = total / temporaryBatchWood.length;
-            
+            if (isEditingNota) {
+                const itemsToDelete = inventoryData.filter(i => i.nota === isEditingNota);
+                itemsToDelete.forEach(item => batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', item.id)));
+            }
+            const prcPer = total / temporaryBatchWood.length;
             temporaryBatchWood.forEach(i => {
-                batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'inventory')), { ...i, nota, supplierId: sid, paymentStatus: st, totalPrice: prcPerItem, createdAt: serverTimestamp() });
+                const ref = doc(collection(db, 'artifacts', appId, 'public', 'data', 'inventory'));
+                batch.set(ref, { ...i, nota, supplierId: sid, paymentStatus: st, totalPrice: prcPer, createdAt: serverTimestamp() });
+                if (!isEditingNota) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'log_history')), { ...i, nota, status: 'MASUK', time: serverTimestamp() });
             });
-            
-            let newDebt = st === 'Hutang' ? total : (st === 'DP' ? total - dp : 0);
-            if(newDebt > 0) batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', sid), { balance: increment(newDebt) });
-            
-            let cashOut = st === 'Lunas' ? total : (st === 'DP' ? dp : 0);
-            if(cashOut > 0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount: cashOut, note: `Beli Log: ${nota}`, time: serverTimestamp() });
-            
-            await batch.commit(); closeModal('wood'); showToast("Nota pembelian berhasil disimpan.");
+            if(st !== 'Lunas') batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', sid), { balance: increment(total - dp) });
+            if (!isEditingNota) {
+                let cashOut = st === 'Lunas' ? total : (st === 'DP' ? dp : 0);
+                if(cashOut > 0) batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount: cashOut, note: `Beli Log: ${nota}`, time: serverTimestamp() });
+            }
+            await batch.commit(); closeModal('wood'); showToast(isEditingNota ? "Nota diperbarui." : "Nota log disimpan.");
         };
 
         window.submitBatchSalesToFirebase = async () => {
-            if(!auth.currentUser) return;
-            const nota = document.getElementById('sales-nota').value, cid = document.getElementById('sales-customer-select').value;
-            if(!nota || !cid) return showToast("Data nota/pelanggan wajib diisi!", "error");
+            const nota = document.getElementById('sales-nota').value, 
+                  cid = document.getElementById('sales-customer-select').value,
+                  st = document.getElementById('sales-payment-status').value,
+                  dp = parseFloat(document.getElementById('sales-dp-amount').value) || 0;
+                  
+            if(!nota || !cid) return showToast("Lengkapi data SJ!", "error");
             
             const batch = writeBatch(db); 
-            let totalSales = 0;
-            temporaryBatchSales.forEach(i => { 
-                totalSales += i.price; 
-                batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'sales')), { ...i, nota, customerId: cid, createdAt: serverTimestamp() }); 
-                if(i.stockId) batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', i.stockId)); 
+            let totalVal = 0;
+            
+            temporaryBatchSales.forEach(i => {
+                totalVal += i.price;
+                batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'sales')), { 
+                    ...i, nota, customerId: cid, paymentStatus: st, createdAt: serverTimestamp() 
+                });
+                batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'log_history')), { 
+                    woodType: i.woodType, volume: i.volume, nota, status: 'KELUAR', time: serverTimestamp() 
+                });
+                if(i.stockId) batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', i.stockId));
             });
             
-            batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'in', amount: totalSales, note: `Jual Log: ${nota}`, time: serverTimestamp() });
-            await batch.commit(); closeModal('sales'); showToast("Surat jalan penjualan disimpan.");
-        };
-
-        window.handlePaymentSubmit = async (e) => {
-            e.preventDefault();
-            if(!auth.currentUser) return;
-            const cid = document.getElementById('payment-contact-id').value, amt = parseFloat(document.getElementById('payment-amount').value), note = document.getElementById('payment-note').value;
-            const contact = contactsData.find(c => c.id === cid);
-            if (!contact || amt <= 0) return;
-            const batch = writeBatch(db);
-            batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', cid), { balance: increment(-amt) });
-            batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: contact.type==='supplier'?'out':'in', amount: amt, note: `Bayar/Pelunasan: ${contact.name} - ${note}`, time: serverTimestamp() });
-            await batch.commit(); closeModal('payment'); showToast("Pembayaran diproses dan saldo diperbarui.");
+            // Perhitungan Kas Masuk
+            let cashIn = st === 'Tunai' ? totalVal : (st === 'DP' ? dp : 0);
+            if(cashIn > 0) {
+                batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { 
+                    type: 'in', amount: cashIn, note: `Jual Log: ${nota} (${st})`, time: serverTimestamp() 
+                });
+            }
+            
+            // Update Piutang Pelanggan
+            let debt = totalVal - cashIn;
+            if(debt > 0) {
+                batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', cid), { 
+                    balance: increment(debt) 
+                });
+            }
+            
+            await batch.commit(); 
+            closeModal('sales'); 
+            showToast("Penjualan disimpan.");
         };
 
         window.handleExpenseSubmit = async (e) => {
-            e.preventDefault();
-            if(!auth.currentUser) return;
-            const amt = parseFloat(document.getElementById('expense-amount').value);
+            e.preventDefault(); const amt = parseFloat(document.getElementById('expense-amount').value), cat = document.getElementById('expense-category').value, note = document.getElementById('expense-note').value;
             const batch = writeBatch(db);
-            batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'expenses')), { category: document.getElementById('expense-category').value, amount: amt, note: document.getElementById('expense-note').value, createdAt: serverTimestamp() });
-            batch.set(doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions')), { type: 'out', amount: amt, note: `Biaya: ${document.getElementById('expense-category').value}`, time: serverTimestamp() });
-            await batch.commit(); closeModal('expense'); showToast("Biaya pengeluaran dicatat.");
+            const expRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'));
+            const transRef = doc(collection(db, 'artifacts', appId, 'public', 'data', 'transactions'));
+            batch.set(expRef, { category: cat, amount: amt, note: note, createdAt: serverTimestamp(), transactionId: transRef.id });
+            batch.set(transRef, { type: 'out', amount: amt, note: `Biaya: ${cat} (${note})`, time: serverTimestamp(), expenseId: expRef.id });
+            await batch.commit(); closeModal('expense'); showToast("Biaya operasional dicatat.");
         };
 
-        window.handleContactSubmit = async (e) => {
-            e.preventDefault();
-            if(!auth.currentUser) return;
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), { type: document.getElementById('contact-type').value, name: document.getElementById('contact-name').value, phone: document.getElementById('contact-phone').value, balance: 0 });
-            closeModal('contact'); showToast("Pihak baru berhasil didaftarkan.");
+        window.handleDeleteExpense = async (expId, transId) => {
+            if(!confirm("Hapus catatan biaya ini? Transaksi kas terkait juga akan dibatalkan.")) return;
+            const batch = writeBatch(db);
+            batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'expenses', expId));
+            if(transId) batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'transactions', transId));
+            await batch.commit(); showToast("Biaya berhasil dihapus.");
         };
 
-        window.saveCompanyProfile = async () => {
-            if(!auth.currentUser) return;
-            const name = document.getElementById('setting-company-name').value;
-            const address = document.getElementById('setting-company-address').value;
-            const phone = document.getElementById('setting-company-phone').value;
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), { name, address, phone });
-            showToast("Profil bisnis berhasil diperbarui.");
+        // --- Render UI ---
+        const renderExpenses = () => {
+            const body = document.getElementById('expenses-table-body');
+            if(!body) return;
+            body.innerHTML = expensesData.sort((a,b)=> (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).map(e => `
+                <tr class="hover:bg-slate-50 transition border-b">
+                    <td class="px-6 py-4 text-slate-500 text-xs font-medium">${e.createdAt?.toDate()?.toLocaleString('id-ID') || '-'}</td>
+                    <td class="px-6 py-4 font-black text-rose-600 uppercase tracking-tighter">${e.category}</td>
+                    <td class="px-6 py-4 text-slate-800 font-medium">${e.note || '-'}</td>
+                    <td class="px-6 py-4 text-right font-black text-slate-900">${formatCurrency(e.amount)}</td>
+                    <td class="px-6 py-4 text-center">
+                        <button onclick="handleDeleteExpense('${e.id}', '${e.transactionId}')" class="btn-action btn-delete shadow-md shadow-rose-600/20">
+                            <i data-lucide="trash-2" class="w-4 h-4 text-white"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            refreshIcons();
         };
 
-        // --- Render & Exports ---
-        window.showDetail = (type, nota) => {
-            let itms = [], contact = null, total = 0;
-            if (type === 'inventory') {
-                itms = inventoryData.filter(i => i.nota === nota);
-                contact = contactsData.find(c => c.id === itms[0]?.supplierId);
-                total = itms.reduce((a, b) => a + (b.totalPrice || 0), 0);
-                document.getElementById('detail-meta-contact-label').innerText = "Supplier";
-            } else {
-                itms = salesData.filter(i => i.nota === nota);
-                contact = contactsData.find(c => c.id === itms[0]?.customerId);
-                total = itms.reduce((a, b) => a + (b.price || 0), 0);
-                document.getElementById('detail-meta-contact-label').innerText = "Pelanggan";
+        const renderContacts = () => {
+            const card = (c) => `
+                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-black text-sm text-slate-900 uppercase tracking-tight">${c.name}</h4>
+                        <p class="text-[10px] text-slate-500 font-medium">${c.address || '-'}</p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-100">
+                        <div class="flex justify-between items-center mb-4">
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">${c.type==='supplier'?'Hutang':'Piutang'}</p>
+                            <p class="font-black text-sm ${c.balance > 0 ? (c.type==='supplier'?'text-rose-600':'text-emerald-600') : 'text-slate-300'}">${formatCurrency(c.balance)}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            ${c.balance > 0 ? `<button onclick="openPaymentModal('${c.id}')" class="flex-1 py-3 bg-emerald-600 text-white text-[10px] font-black rounded-xl shadow-lg shadow-emerald-600/20 uppercase transition active:scale-95">Bayar / Cicil</button>` : ''}
+                            <button onclick="deleteDoc(doc(db,'artifacts','${appId}','public','data','contacts','${c.id}'))" class="p-3 bg-rose-600 text-white rounded-xl shadow-lg shadow-rose-600/20 transition active:scale-95"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>
+                </div>`;
+            document.getElementById('suppliers-list').innerHTML = contactsData.filter(c=>c.type==='supplier').map(card).join('');
+            document.getElementById('customers-list').innerHTML = contactsData.filter(c=>c.type==='customer').map(card).join('');
+            refreshIcons();
+        };
+
+        const renderInventory = () => {
+            const body = document.getElementById('inventory-table-body');
+            if(!body) return;
+
+            if (inventoryData.length === 0) {
+                body.innerHTML = `<tr><td colspan="10" class="p-10 text-center text-slate-400 font-medium">Belum ada stok kayu di gudang.</td></tr>`;
+                return;
             }
-            currentDetailItems = itms; currentDetailNota = nota; currentDetailType = type;
-            document.getElementById('detail-meta-invoice').innerText = nota;
-            document.getElementById('detail-meta-contact-name').innerText = contact?.name || '-';
-            document.getElementById('detail-meta-status').innerText = itms[0]?.paymentStatus || 'Lunas';
-            document.getElementById('detail-meta-total').innerText = formatCurrency(total);
-            document.getElementById('detail-table-body').innerHTML = itms.map(i => `
-                <tr>
-                    <td class="p-3">${i.noLog||'-'}</td>
-                    <td class="p-3 font-bold">${i.type||i.woodType} / ${i.grade||'-'}</td>
-                    <td class="p-3 text-center">${i.p || '-'}</td>
-                    <td class="p-3 text-center">${i.avgD || '-'}</td>
-                    <td class="p-3 text-center font-bold text-amber-700">${(i.unitVolume||i.volume).toFixed(2)}</td>
-                    <td class="p-3 text-right">${formatCurrency(i.totalPrice||i.price)}</td>
+
+            body.innerHTML = inventoryData.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0)).map(item => {
+                const supplier = contactsData.find(c => c.id === item.supplierId)?.name || '-';
+                return `
+                    <tr class="hover:bg-slate-50 transition border-b">
+                        <td class="px-4 py-4 font-mono font-black text-slate-900">${item.noLog || '-'}</td>
+                        <td class="px-4 py-4 font-black text-indigo-600 uppercase tracking-tighter">${item.type || '-'}</td>
+                        <td class="px-4 py-4 text-slate-600 font-bold">${item.grade || '-'}</td>
+                        <td class="px-4 py-4 text-center font-black text-slate-400">${item.p || 0}</td>
+                        <td class="px-4 py-4 text-center font-black text-slate-400">${item.avgD || 0}</td>
+                        <td class="px-4 py-4 text-center font-black text-amber-700 bg-amber-50/50">${(item.unitVolume || 0).toFixed(2)}</td>
+                        <td class="px-4 py-4 text-slate-800 font-medium">${supplier}</td>
+                        <td class="px-4 py-4 font-bold text-slate-900">${item.nota || '-'}</td>
+                        <td class="px-4 py-4 text-right font-black text-slate-900">${formatCurrency(item.totalPrice)}</td>
+                        <td class="px-4 py-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button onclick="showDetail('inventory','${item.nota}')" class="btn-action btn-detail shadow-blue-600/20" title="Detail & Cetak Nota">
+                                    <i data-lucide="eye" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="editInventory('${item.nota}')" class="btn-action btn-edit shadow-amber-600/20" title="Edit Batch">
+                                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="handleDeleteInventoryItem('${item.id}')" class="btn-action btn-delete shadow-rose-600/20" title="Hapus Batang">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            refreshIcons();
+        };
+
+        const renderSales = () => {
+            const g = salesData.reduce((acc, i) => { if(!acc[i.nota]) acc[i.nota] = { ...i, vol: 0, prc: 0 }; acc[i.nota].vol += (i.volume || 0); acc[i.nota].prc += (i.price || 0); return acc; }, {});
+            document.getElementById('sales-table-body').innerHTML = Object.values(g).map(n => `
+                <tr class="hover:bg-slate-50 border-b">
+                    <td class="px-5 py-4 font-black text-blue-600 uppercase underline decoration-blue-200">${n.nota}</td>
+                    <td class="px-5 py-4 font-bold text-slate-800">${contactsData.find(c=>c.id===n.customerId)?.name||'-'}</td>
+                    <td class="px-5 py-4 text-center font-black text-slate-900">${n.vol.toFixed(2)}</td>
+                    <td class="px-5 py-4 text-right font-black text-emerald-700">${formatCurrency(n.prc)}</td>
+                    <td class="px-5 py-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="showDetail('sales','${n.nota}')" class="btn-action btn-detail shadow-blue-600/20">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="handleDeleteSales('${n.nota}')" class="btn-action btn-delete shadow-rose-600/20">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
                 </tr>`).join('');
+            refreshIcons();
+        };
+
+        const renderTransactions = () => {
+            const sorted = transactionsData.sort((a,b)=> (b.time?.seconds || 0) - (a.time?.seconds || 0));
+            document.getElementById('cashflow-table-body').innerHTML = sorted.map(t => `
+                <tr class="border-b">
+                    <td class="p-4 text-slate-500 font-medium">${t.time?.toDate()?.toLocaleTimeString()||'-'}</td>
+                    <td class="p-4 font-bold text-slate-800">${t.note}</td>
+                    <td class="p-4 text-center">
+                        <span class="px-3 py-1 rounded-full font-black uppercase text-[10px] ${t.type==='in'?'bg-emerald-600 text-white':'bg-rose-600 text-white'} shadow-sm">${t.type}</span>
+                    </td>
+                    <td class="p-4 text-right font-black text-slate-900">${formatCurrency(t.amount)}</td>
+                </tr>`).join('');
+            document.getElementById('recent-logs').innerHTML = sorted.slice(0,5).map(t => `
+                <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center ${t.type==='in'?'bg-emerald-100 text-emerald-600':'bg-rose-100 text-rose-600'}">
+                            <i data-lucide="${t.type==='in'?'arrow-down-left':'arrow-up-right'}" class="w-4 h-4"></i>
+                        </div>
+                        <p class="font-bold text-xs text-slate-700">${t.note}</p>
+                    </div>
+                    <span class="font-black text-xs ${t.type==='in'?'text-emerald-600':'text-rose-600'}">${formatCurrency(t.amount)}</span>
+                </div>`).join('');
+            refreshIcons();
+        };
+
+        const updateStats = () => {
+            const vol = inventoryData.reduce((a,c)=>a+(c.unitVolume||0),0), stockVal = inventoryData.reduce((a,c)=>a+(c.totalPrice||0),0);
+            const d = contactsData.filter(c=>c.type==='supplier').reduce((a,c)=>a+(c.balance||0),0), p = contactsData.filter(c=>c.type==='customer').reduce((a,c)=>a+(c.balance||0),0);
+            const cin = transactionsData.filter(t=>t.type==='in').reduce((a,t)=>a+t.amount,0), cout = transactionsData.filter(t=>t.type==='out').reduce((a,t)=>a+t.amount,0);
+            const rev = salesData.reduce((a,c)=>a+c.price,0), buy = inventoryData.reduce((a,c)=>a+c.totalPrice,0), exp = expensesData.reduce((a,c)=>a+c.amount,0);
+            const map = { 'stat-total-volume': `${vol.toFixed(2)} m³`, 'stat-total-price': formatCurrency(stockVal), 'stat-total-debt': formatCurrency(d), 'stat-total-receivable': formatCurrency(p), 'report-cash-in': formatCurrency(cin), 'report-cash-out': formatCurrency(cout), 'report-net-cash': formatCurrency(cin - cout), 'report-total-revenue': formatCurrency(rev), 'report-total-cogs': formatCurrency(buy), 'report-total-expenses': "- " + formatCurrency(exp), 'report-gross-profit-accrual': formatCurrency(rev - buy - exp) };
+            Object.keys(map).forEach(id => { const el = document.getElementById(id); if(el) el.innerText = map[id]; });
+            document.getElementById('loading').classList.add('hidden');
+        };
+
+        const updateSelects = () => {
+            document.getElementById('wood-supplier-select').innerHTML = contactsData.filter(c=>c.type==='supplier').map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+            document.getElementById('sales-customer-select').innerHTML = contactsData.filter(c=>c.type==='customer').map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+            document.getElementById('sales-stock-item-select').innerHTML = '<option value="">-- Manual --</option>' + inventoryData.map(i=>`<option value="${i.id}">${i.type} (${i.unitVolume} m³) - ${i.nota}</option>`).join('');
+        };
+
+        // --- Pergerakan Log (History) ---
+        window.renderHistory = () => {
+            const search = document.getElementById('history-search').value.toLowerCase();
+            const filterSt = document.getElementById('history-filter-status').value;
+            
+            const filtered = logHistoryData.filter(h => {
+                const matchesSearch = (h.noLog?.toLowerCase().includes(search) || h.nota?.toLowerCase().includes(search) || (h.type || h.woodType)?.toLowerCase().includes(search));
+                const matchesStatus = (filterSt === 'ALL' || h.status === filterSt);
+                return matchesSearch && matchesStatus;
+            }).sort((a,b)=>(b.time?.seconds||0)-(a.time?.seconds||0));
+
+            document.getElementById('history-count').innerText = filtered.length;
+            document.getElementById('history-table-body').innerHTML = filtered.map(h => `
+                <tr class="hover:bg-slate-50 transition border-b">
+                    <td class="px-4 py-4 text-slate-500 font-bold">${h.time?.toDate()?.toLocaleString('id-ID')||'-'}</td>
+                    <td class="px-4 py-4 text-center">
+                        <span class="px-4 py-1.5 rounded-full font-black text-[9px] uppercase tracking-wider shadow-sm ${h.status==='MASUK'?'bg-emerald-600 text-white':'bg-rose-600 text-white'}">${h.status}</span>
+                    </td>
+                    <td class="px-4 py-4 font-mono font-black text-slate-900">${h.noLog || '-'}</td>
+                    <td class="px-4 py-4 font-black text-slate-800">${h.type || h.woodType}</td>
+                    <td class="px-4 py-4 text-center font-black text-slate-900">${(h.unitVolume || h.volume || 0).toFixed(2)}</td>
+                    <td class="px-4 py-4 font-black text-blue-700 underline decoration-blue-200">${h.nota || '-'}</td>
+                    <td class="px-4 py-4 text-center no-print">
+                        <button onclick="showDetail('${h.status==='MASUK'?'inventory':'sales'}', '${h.nota}')" class="btn-action btn-detail shadow-blue-600/20">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            refreshIcons();
+        };
+
+        window.exportHistoryExcel = () => {
+            const dataToExport = logHistoryData.map(h => ({
+                Waktu: h.time?.toDate()?.toLocaleString('id-ID') || '-',
+                Aksi: h.status,
+                No_Log: h.noLog || '-',
+                Jenis: h.type || h.woodType,
+                Volume_M3: h.unitVolume || h.volume || 0,
+                Nota_SJ: h.nota || '-'
+            }));
+            const ws = XLSX.utils.json_to_sheet(dataToExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "History");
+            XLSX.writeFile(wb, `WoodIT_Riwayat_Log_${new Date().toISOString().slice(0,10)}.xlsx`);
+        };
+
+        window.exportHistoryPDF = () => {
+            const element = document.getElementById('history-pdf-content');
+            const opt = {
+                margin: 0.5,
+                filename: `Riwayat_Log_${new Date().toISOString().slice(0,10)}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
+            };
+            html2pdf().set(opt).from(element).save();
+        };
+
+        // --- Helpers ---
+        window.showDetail = (type, nota) => {
+            let items = [], mitName = '', total = 0, status = '';
+            if (type === 'inventory') {
+                items = inventoryData.filter(i => i.nota === nota);
+                if (items.length === 0) { 
+                    items = logHistoryData.filter(h => h.nota === nota && h.status === 'MASUK');
+                }
+                const first = items[0];
+                mitName = contactsData.find(c => c.id === first?.supplierId)?.name || '-';
+                total = items.reduce((a, b) => a + (b.totalPrice || 0), 0); 
+                status = first?.paymentStatus || 'Arsip';
+            } else {
+                items = salesData.filter(s => s.nota === nota);
+                if (items.length === 0) {
+                    items = logHistoryData.filter(h => h.nota === nota && h.status === 'KELUAR');
+                }
+                const first = items[0];
+                mitName = contactsData.find(c => c.id === first?.customerId)?.name || '-';
+                total = items.reduce((a, b) => a + (b.price || 0), 0); 
+                status = first?.paymentStatus || 'Lunas';
+            }
+            
+            currentDetailItems = items; currentDetailMeta = { type, nota, mitName, total, status };
+            document.getElementById('dt-nota').innerText = nota; document.getElementById('dt-mitra').innerText = mitName;
+            document.getElementById('dt-status').innerText = status; document.getElementById('dt-total').innerText = formatCurrency(total);
+            document.getElementById('detail-table-body').innerHTML = items.map(i => `
+                <tr class="border-b">
+                    <td class="p-4 font-mono font-black text-slate-900">${i.noLog || '-'}</td>
+                    <td class="p-4 font-black uppercase text-indigo-700">${i.type || i.woodType}</td>
+                    <td class="p-4 text-center font-black text-slate-500">${i.p || '-'} cm</td>
+                    <td class="p-4 text-center font-black text-slate-900">${(i.unitVolume || i.volume || 0).toFixed(2)}</td>
+                    <td class="p-4 text-right font-black text-emerald-700">${formatCurrency(i.totalPrice || i.price)}</td>
+                </tr>
+            `).join('');
             openModal('detail');
         };
 
-        window.printNotaDetail = () => {
+        window.printProfessionalDocument = () => {
             const frame = document.getElementById('print-frame');
-            const totalVol = currentDetailItems.reduce((a, b) => a + (b.unitVolume || b.volume || 0), 0);
-            const totalPrice = currentDetailItems.reduce((a, b) => a + (b.totalPrice || b.price || 0), 0);
-            const contactName = document.getElementById('detail-meta-contact-name').innerText;
-            const docTitle = currentDetailType === 'inventory' ? 'NOTA PEMBELIAN KAYU LOG' : 'SURAT JALAN / PENJUALAN';
+            const { type, nota, mitName, total } = currentDetailMeta;
             const dateStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-
-            const content = `<html><head><style>body { font-family: sans-serif; padding: 40px; color: #1e293b; } .header { border-bottom: 3px solid #334155; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-end; } .biz-info h1 { margin: 0; font-size: 26px; color: #b45309; text-transform: uppercase; } table { width: 100%; border-collapse: collapse; margin-bottom: 30px; font-size: 11px; } th, td { border: 1px solid #e2e8f0; padding: 10px; } .text-right { text-align: right; } .total-row { background: #f1f5f9; font-weight: 800; }</style></head><body><div class="header"><div class="biz-info"><h1>${companyProfile.name}</h1><p>${companyProfile.address}</p><p>Telp: ${companyProfile.phone}</p></div><div style="text-align: right"><p>Tanggal: ${dateStr}</p></div></div><h2 style="text-align:center">${docTitle}</h2><div style="display:grid; grid-template-cols:1fr 1fr; margin-bottom:20px; font-size:12px"><div><p><b>Nota</b>: ${currentDetailNota}</p><p><b>Partner</b>: ${contactName}</p></div><div style="text-align:right"><p><b>Status</b>: ${document.getElementById('detail-meta-status').innerText}</p></div></div><table><thead><tr><th>No</th><th>No LOG</th><th>Jenis</th><th>P (cm)</th><th>Avg D (cm)</th><th>Vol (m³)</th><th class="text-right">Total</th></tr></thead><tbody>${currentDetailItems.map((i, index) => `<tr><td>${index+1}</td><td>${i.noLog||'-'}</td><td>${i.type||i.woodType}</td><td>${i.p||'-'}</td><td>${i.avgD||'-'}</td><td>${(i.unitVolume||i.volume).toFixed(2)}</td><td class="text-right">${formatCurrency(i.totalPrice||i.price)}</td></tr>`).join('')}<tr class="total-row"><td colspan="5" class="text-right">TOTAL VOLUME</td><td>${totalVol.toFixed(2)} m³</td><td></td></tr><tr class="total-row"><td colspan="6" class="text-right">GRAND TOTAL</td><td class="text-right">${formatCurrency(totalPrice)}</td></tr></tbody></table></body></html>`;
-            const doc_p = frame.contentWindow.document; doc_p.open(); doc_p.write(content); doc_p.close();
-            setTimeout(() => { frame.contentWindow.focus(); frame.contentWindow.print(); }, 500);
-        };
-
-        window.exportToExcel = () => { const ws = XLSX.utils.json_to_sheet(inventoryData); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Stok Inventaris"); XLSX.writeFile(wb, "WoodIT_Stok_Log.xlsx"); };
-        window.exportToPDF = () => { const element = document.getElementById('report-content-to-export'); html2pdf().from(element).save("Laporan_Keuangan_WoodIT.pdf"); };
-
-        // --- Data Sync ---
-        const startSync = (user) => {
-            if(!user) return;
-            const errorHandler = (err) => console.warn("Firestore Listener Error:", err.code);
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'inventory'), s => { inventoryData = s.docs.map(d=>({id:d.id, ...d.data()})); renderInventory(); updateStats(); }, errorHandler);
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), s => { contactsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderContacts(); updateSelects(); updateStats(); }, errorHandler);
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), s => { salesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderSales(); updateStats(); }, errorHandler);
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'transactions'), s => { transactionsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderTransactions(); updateStats(); }, errorHandler);
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), s => { expensesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderExpenses(); updateStats(); }, errorHandler);
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), s => { if(s.exists()){ companyProfile = s.data(); document.getElementById('sidebar-company-name').innerText = companyProfile.name; document.getElementById('setting-company-name').value = companyProfile.name; document.getElementById('setting-company-address').value = companyProfile.address; document.getElementById('setting-company-phone').value = companyProfile.phone; } }, errorHandler);
-        };
-
-        window.renderInventory = () => {
-            const g = inventoryData.reduce((acc, i) => { if(!acc[i.nota]) acc[i.nota] = {...i, vol:0}; acc[i.nota].vol += (i.unitVolume||0); return acc; }, {});
-            const body = document.getElementById('inventory-table-body');
-            if(body) body.innerHTML = Object.values(g).map(n => `<tr class="hover:bg-slate-50 transition"><td class="px-5 py-4 font-bold text-blue-600">${n.nota}</td><td class="px-5 py-4">${contactsData.find(c=>c.id===n.supplierId)?.name || '-'}</td><td class="px-5 py-4 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${n.paymentStatus==='Lunas'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${n.paymentStatus}</span></td><td class="px-5 py-4 text-center font-bold">${n.vol.toFixed(2)}</td><td class="px-5 py-4 text-right flex justify-end space-x-2"><button onclick="showDetail('inventory','${n.nota}')" class="p-1.5 bg-slate-100 rounded-lg"><i data-lucide="eye" class="w-4 h-4"></i></button><button onclick="deleteInventory('${n.nota}')" class="p-1.5 bg-red-50 text-red-500 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
-            refreshIcons();
-        };
-
-        window.renderSales = () => {
-            const g = salesData.reduce((acc, i) => { if(!acc[i.nota]) acc[i.nota] = {...i, vol:0, prc:0}; acc[i.nota].vol += (i.volume||0); acc[i.nota].prc += (i.price||0); return acc; }, {});
-            const body = document.getElementById('sales-table-body');
-            if(body) body.innerHTML = Object.values(g).map(n => `<tr class="hover:bg-slate-50 transition"><td class="px-5 py-4 font-bold text-blue-600">${n.nota}</td><td class="px-5 py-4">${contactsData.find(c=>c.id===n.customerId)?.name || '-'}</td><td class="px-5 py-4 text-center font-bold">${n.vol.toFixed(2)}</td><td class="px-5 py-4 text-right font-black">${formatCurrency(n.prc)}</td><td class="px-5 py-4 text-right flex justify-end space-x-2"><button onclick="showDetail('sales','${n.nota}')" class="p-1.5 bg-slate-100 rounded-lg"><i data-lucide="eye" class="w-4 h-4"></i></button><button onclick="deleteSales('${n.nota}')" class="p-1.5 bg-red-50 text-red-500 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
-            refreshIcons();
-        };
-
-        window.renderContacts = () => {
-            const card = (c) => `<div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4 hover:shadow-lg transition"><h4 class="font-bold text-sm text-slate-900">${c.name}</h4><div class="flex justify-between items-center"><p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">${c.type==='supplier'?'Hutang Kita':'Piutang Kita'}</p><p class="font-black ${c.balance>0?(c.type==='supplier'?'text-red-600':'text-blue-600'):'text-slate-200'}">${formatCurrency(c.balance)}</p></div><div class="pt-4 border-t flex gap-2">${c.balance>0?`<button onclick="openPaymentModal('${c.id}')" class="flex-1 py-2.5 bg-slate-900 text-white text-[10px] font-bold rounded-xl uppercase">Bayar/Cicil</button>`:''}<button onclick="deleteDoc(doc(db,'artifacts','${appId}','public','data','contacts','${c.id}'))" class="px-3 py-2.5 bg-red-50 text-red-500 rounded-xl"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div></div>`;
-            const sList = document.getElementById('suppliers-list');
-            const cList = document.getElementById('customers-list');
-            if(sList) sList.innerHTML = contactsData.filter(c=>c.type==='supplier').map(card).join('');
-            if(cList) cList.innerHTML = contactsData.filter(c=>c.type==='customer').map(card).join('');
-            refreshIcons();
-        };
-
-        window.renderTransactions = () => {
-            const sorted = transactionsData.sort((a,b)=> (b.time?.seconds || 0) - (a.time?.seconds || 0));
-            const logs = document.getElementById('recent-logs');
-            const body = document.getElementById('cashflow-table-body');
-            if(logs) logs.innerHTML = sorted.slice(0,5).map(t => `<div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100"><div><p class="font-bold text-xs">${t.note}</p><p class="text-[10px] text-slate-400">${t.time?.toDate()?.toLocaleTimeString() || ''}</p></div><span class="font-black text-xs ${t.type==='in'?'text-emerald-600':'text-rose-500'}">${t.type==='in'?'+':'-'}${formatCurrency(t.amount)}</span></div>`).join('');
-            if(body) body.innerHTML = sorted.map(t => `<tr><td class="p-4 text-slate-400">${t.time?.toDate()?.toLocaleString()||'-'}</td><td class="p-4 font-medium">${t.note}</td><td class="p-4 text-center font-bold uppercase ${t.type==='in'?'text-green-600':'text-rose-500'} text-[10px]">${t.type}</td><td class="p-4 text-right font-bold">${formatCurrency(t.amount)}</td></tr>`).join('');
-        };
-
-        window.renderExpenses = () => {
-            const body = document.getElementById('expenses-table-body');
-            if(body) body.innerHTML = expensesData.map(e => `<tr><td class="px-5 py-4 text-[10px] text-slate-400">${e.createdAt?.toDate()?.toLocaleDateString()||'-'}</td><td class="px-5 py-4 font-bold text-rose-500 uppercase tracking-tighter">${e.category}</td><td class="px-5 py-4 text-right font-black">${formatCurrency(e.amount)}</td><td class="px-5 py-4 text-right"><button onclick="deleteDoc(doc(db,'artifacts','${appId}','public','data','expenses','${e.id}'))" class="text-slate-300 hover:text-red-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
-            refreshIcons();
-        };
-
-        window.updateStats = () => {
-            const vol = inventoryData.reduce((a,c)=>a+(c.unitVolume||0),0), stockVal = inventoryData.reduce((a,c)=>a+(c.totalPrice||0),0);
-            const revTotal = salesData.reduce((a,c)=>a+(c.price||0),0), buyTotal = inventoryData.reduce((a,c)=>a+(c.totalPrice||0),0), expTotal = expensesData.reduce((a,c)=>a+(c.amount||0),0);
-            const cin = transactionsData.filter(t=>t.type==='in').reduce((a,t)=>a+t.amount,0), cout = transactionsData.filter(t=>t.type==='out').reduce((a,t)=>a+t.amount,0);
-            const dVal = contactsData.filter(c=>c.type==='supplier').reduce((a,c)=>a+(c.balance||0),0), pVal = contactsData.filter(c=>c.type==='customer').reduce((a,c)=>a+(c.balance||0),0);
-            
-            const mapping = { 'stat-total-volume': `${vol.toFixed(2)} m³`, 'stat-total-price': formatCurrency(stockVal), 'stat-total-debt': formatCurrency(dVal), 'stat-total-receivable': formatCurrency(pVal), 'report-total-revenue': formatCurrency(revTotal), 'report-total-cogs': formatCurrency(buyTotal), 'report-total-expenses': "- " + formatCurrency(expTotal), 'report-gross-profit-accrual': formatCurrency(revTotal - buyTotal - expTotal), 'report-cash-in': formatCurrency(cin), 'report-cash-out': formatCurrency(cout), 'report-net-cash': formatCurrency(cin - cout) };
-            Object.keys(mapping).forEach(id => { const el = document.getElementById(id); if(el) el.innerText = mapping[id]; });
-            const loader = document.getElementById('loading'); if(loader) loader.classList.add('hidden');
-        };
-
-        window.updateSelects = () => {
-            const sS = document.getElementById('wood-supplier-select'); if(sS) sS.innerHTML = contactsData.filter(c=>c.type==='supplier').map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
-            const cS = document.getElementById('sales-customer-select'); if(cS) cS.innerHTML = contactsData.filter(c=>c.type==='customer').map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-            const stS = document.getElementById('sales-stock-item-select'); if(stS) stS.innerHTML = '<option value="">Pilih Stok Tersedia</option>' + inventoryData.map(i=>`<option value="${i.id}">${i.type} (${i.unitVolume.toFixed(2)} m³) - ${i.nota}</option>`).join('');
+            let tableRows = currentDetailItems.map((i, idx) => `<tr><td>${idx + 1}</td><td>${i.noLog || '-'}</td><td>${i.type || i.woodType}</td><td style="text-align:center">${i.p || '-'}</td><td style="text-align:center">${(i.unitVolume || i.volume || 0).toFixed(2)}</td><td style="text-align:right">${formatCurrency(i.totalPrice || i.price)}</td></tr>`).join('');
+            const html = `<html><head><style>body{font-family:'Inter',sans-serif;padding:40px;color:#1a202c}table{width:100%;border-collapse:collapse;margin-top:20px}th{background:#f7fafc;padding:12px;border-bottom:2px solid #edf2f7;text-align:left}td{padding:10px;border-bottom:1px solid #edf2f7}.header{display:flex;justify-content:space-between;border-bottom:2px solid #2d3748;padding-bottom:20px}.total{margin-top:30px;text-align:right;font-size:18px;font-weight:bold}</style></head><body><div class="header"><div><h1>${companyProfile.name}</h1><p>${companyProfile.address}</p></div><div style="text-align:right"><h2>${type==='inventory'?'Nota Pembelian Kayu Log':'Surat Jalan Keluar Kayu Log'}</h2><p>No: ${nota}</p><p>${dateStr}</p></div></div><p>Mitra: ${mitName}</p><table><thead><tr><th>No</th><th>Log</th><th>Jenis</th><th>P</th><th>m³</th><th style="text-align:right">Nilai</th></tr></thead><tbody>${tableRows}</tbody></table><div class="total">TOTAL NILAI: ${formatCurrency(total)}</div><div style="margin-top:50px;display:flex;justify-content:space-between;text-align:center"><div><p>Penerima / Mitra</p><br><br><p>( ................. )</p></div><div><p>Admin / Gudang</p><br><br><p>( ${companyProfile.name} )</p></div></div></body></html>`;
+            const doc_p = frame.contentWindow.document; doc_p.open(); doc_p.write(html); doc_p.close();
+            setTimeout(() => { frame.contentWindow.focus(); frame.contentWindow.print(); }, 800);
         };
 
         window.autoFillSalesFromStock = () => {
-            const id = document.getElementById('sales-stock-item-select').value;
-            const it = inventoryData.find(i=>i.id===id);
-            if(it){
-                document.getElementById('sales-wood-type').value = it.type;
-                document.getElementById('sales-wood-vol').value = it.unitVolume;
-                document.getElementById('sales-wood-price').value = it.totalPrice;
+            const id = document.getElementById('sales-stock-item-select').value, it = inventoryData.find(i=>i.id===id);
+            if(it){ document.getElementById('sales-wood-type').value = it.type; document.getElementById('sales-wood-vol').value = it.unitVolume; document.getElementById('sales-wood-price').value = it.totalPrice; }
+        };
+
+        window.editInventory = (nota) => {
+            const items = inventoryData.filter(i => i.nota === nota); if (items.length === 0) return;
+            const first = items[0]; isEditingNota = nota;
+            document.getElementById('wood-modal-title').innerText = `Edit Nota: ${nota}`;
+            document.getElementById('wood-nota').value = nota; document.getElementById('wood-nota').disabled = true;
+            document.getElementById('wood-supplier-select').value = first.supplierId; document.getElementById('wood-payment-status').value = first.paymentStatus;
+            document.getElementById('wood-total-nota-price').value = items.reduce((a, b) => a + (b.totalPrice || 0), 0);
+            temporaryBatchWood = items.map(i => ({...i})); renderBatch('wood'); openModal('wood');
+        };
+
+        window.handleDeleteInventoryItem = async (id) => { if(!confirm(`Hapus batang log ini dari gudang?`)) return; await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', id)); showToast("Batang log dihapus."); };
+        window.handleDeleteSales = async (nota) => { if(!confirm(`Hapus penjualan ${nota}?`)) return; const items = salesData.filter(s => s.nota === nota), batch = writeBatch(db); items.forEach(s => batch.delete(doc(db, 'artifacts', appId, 'public', 'data', 'sales', s.id))); await batch.commit(); showToast("Penjualan dihapus."); };
+        
+        window.toggleDPInput = (type) => { 
+            const s = document.getElementById(`${type}-payment-status`).value; 
+            const dpContainer = document.getElementById(`${type}-dp-container`);
+            const dpInput = document.getElementById(`${type}-dp-amount`);
+            
+            if (type === 'sales') {
+                if (s === 'DP') dpContainer.classList.remove('hidden');
+                else dpContainer.classList.add('hidden');
+            } else {
+                dpInput.classList.toggle('hidden', s !== 'DP'); 
             }
         };
 
-        // --- Database Utils ---
-        window.handleBackupDatabase = async () => {
-            const colls = ['inventory', 'contacts', 'sales', 'transactions', 'expenses'];
-            let backup = {};
-            for (const c of colls) {
-                const s = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', c));
-                backup[c] = s.docs.map(d => ({ id: d.id, ...d.data() }));
-            }
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup, null, 2));
-            const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", `woodit_backup_${new Date().toISOString().slice(0,10)}.json`); dl.click();
-            showToast("Berhasil mencadangkan database ke file JSON.");
-        };
-
-        window.handleRestoreDatabase = async (e) => {
-            const file = e.target.files[0]; if(!file) return;
-            const reader = new FileReader();
-            reader.onload = async (ev) => {
-                const data = JSON.parse(ev.target.result); document.getElementById('loading').classList.remove('hidden');
-                for (const collName of Object.keys(data)) {
-                    for (const item of data[collName]) {
-                        const { id, ...rest } = item;
-                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', collName, id), rest);
-                    }
-                }
-                showToast("Database berhasil dipulihkan."); location.reload();
-            };
-            reader.readAsText(file);
-        };
-
-        window.handleResetDatabase = async () => {
-            if(!confirm("Hapus seluruh data di database? Tindakan ini permanen!")) return;
-            document.getElementById('loading').classList.remove('hidden');
-            const colls = ['inventory', 'contacts', 'sales', 'transactions', 'expenses'];
-            for (const c of colls) {
-                const s = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', c));
-                for (const d of s.docs) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', c, d.id));
-            }
-            showToast("Seluruh data telah dihapus."); location.reload();
-        };
-
-        window.openPaymentModal = (cid) => { 
-            const c = contactsData.find(x=>x.id===cid); 
-            document.getElementById('payment-contact-id').value = cid; 
-            document.getElementById('payment-current-balance').innerText = formatCurrency(c.balance); 
-            document.getElementById('payment-title').innerText = c.type === 'supplier' ? 'Bayar Hutang' : 'Terima Piutang';
-            openModal('payment'); 
-        };
-        window.toggleDPInput = (type) => { const s = document.getElementById(`${type}-payment-status`).value; document.getElementById(`${type}-dp-amount`).classList.toggle('hidden', s !== 'DP'); };
-        window.deleteInventory = async (nota) => { if(confirm('Hapus nota ini?')){ const b = writeBatch(db); inventoryData.filter(i=>i.nota === nota).forEach(item => b.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', item.id))); await b.commit(); showToast("Dihapus."); } };
-        window.deleteSales = async (nota) => { if(confirm('Hapus SJ ini?')){ const b = writeBatch(db); salesData.filter(i=>i.nota === nota).forEach(item => b.delete(doc(db, 'artifacts', appId, 'public', 'data', 'sales', item.id))); await b.commit(); showToast("Dihapus."); } };
-        window.deleteDoc = deleteDoc; window.doc = doc; window.db = db;
         window.handleLogout = () => signOut(auth).then(()=>location.reload());
+        window.saveCompanyProfile = async () => { const name = document.getElementById('setting-company-name').value, address = document.getElementById('setting-company-address').value, phone = document.getElementById('setting-company-phone').value; if(!name) return; await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), { name, address, phone }); showToast("Profil diperbarui."); };
+        window.handleContactSubmit = async (e) => { e.preventDefault(); await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), { type: document.getElementById('contact-type').value, name: document.getElementById('contact-name').value, phone: document.getElementById('contact-phone').value, address: document.getElementById('contact-address').value, balance: 0 }); closeModal('contact'); showToast("Kontak disimpan."); };
+        window.deleteDoc = deleteDoc; window.doc = doc; window.db = db;
 
-        // --- App Initializer ---
-        const initApp = async () => {
-            try {
-                // Wait for anonymous auth first (Rule 3)
-                await signInAnonymously(auth);
-                onAuthStateChanged(auth, (user) => {
-                    if (user) startSync(user);
-                });
-            } catch (err) { console.error("Auth Failure:", err); }
+        const startSync = () => {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'inventory'), s => { inventoryData = s.docs.map(d=>({id:d.id, ...d.data()})); renderInventory(); updateStats(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), s => { contactsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderContacts(); updateStats(); updateSelects(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'sales'), s => { salesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderSales(); updateStats(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'expenses'), s => { expensesData = s.docs.map(d=>({id:d.id, ...d.data()})); renderExpenses(); updateStats(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'transactions'), s => { transactionsData = s.docs.map(d=>({id:d.id, ...d.data()})); renderTransactions(); updateStats(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'log_history'), s => { logHistoryData = s.docs.map(d=>({id:d.id, ...d.data()})); renderHistory(); });
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), s => { if(s.exists()){ companyProfile = s.data(); document.getElementById('sidebar-company-name').innerText = companyProfile.name; } });
         };
 
-        initApp();
+        const initAuth = async () => {
+          try {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+              await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+              await signInAnonymously(auth);
+            }
+          } catch (error) {
+            await signInAnonymously(auth);
+          }
+          startSync();
+        };
+
+        initAuth();
         switchView('dashboard');
     </script>
 </body>
