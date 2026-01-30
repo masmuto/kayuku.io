@@ -521,6 +521,7 @@
         
         const showToast = (msg, type = 'success') => {
             const container = document.getElementById('toast-container');
+            if (!container) return;
             const toast = document.createElement('div');
             toast.className = `toast ${type==='success'?'bg-emerald-600':'bg-rose-600'} text-white px-5 py-3 rounded-2xl shadow-xl mb-3 flex items-center space-x-3`;
             toast.innerHTML = `<i data-lucide="${type==='success'?'check-circle':'alert-circle'}" class="w-4 h-4"></i><span class="text-xs font-bold">${msg}</span>`;
@@ -569,7 +570,10 @@
             if(id==='sales') { temporaryBatchSales = []; renderBatch('sales'); }
         };
         
-        window.toggleMobileExtra = () => document.getElementById('mobile-extra-menu').classList.toggle('hidden');
+        window.toggleMobileExtra = () => {
+            const menu = document.getElementById('mobile-extra-menu');
+            if (menu) menu.classList.toggle('hidden');
+        };
 
         // --- Logika Perhitungan ---
         window.liveUpdateCalc = () => {
@@ -732,6 +736,171 @@
             reader.readAsText(file);
         };
 
+        // --- Fitur Detail, Edit, & Delete (WINDOW SCOPED) ---
+
+        window.showDetail = (t, n) => {
+            const m = document.getElementById('detail-modal'); 
+            if (!m) return;
+            let itms = [], c = null, total = 0;
+            const labelEl = document.getElementById('detail-meta-contact-label');
+            const invEl = document.getElementById('detail-meta-invoice');
+            const nameEl = document.getElementById('detail-meta-contact-name');
+            const totEl = document.getElementById('detail-meta-total');
+            const statEl = document.getElementById('detail-meta-status');
+            const bodyEl = document.getElementById('detail-table-body');
+            
+            if(t === 'inventory'){ 
+                itms = inventoryData.filter(i=>i.nota === n); 
+                c = contactsData.find(x=>x.id===itms[0]?.supplierId); 
+                total = itms.reduce((a,b)=>a+(b.totalPrice || 0),0); 
+                if (labelEl) labelEl.innerText = "Supplier"; 
+            } else { 
+                itms = salesData.filter(i=>i.nota === n); 
+                c = contactsData.find(x=>x.id===itms[0]?.customerId); 
+                total = itms.reduce((a,b)=>a+(b.price || 0),0); 
+                if (labelEl) labelEl.innerText = "Pelanggan"; 
+            }
+            
+            currentDetailItems = itms; currentDetailNota = n; currentDetailType = t;
+            if (invEl) invEl.innerText = n; 
+            if (nameEl) nameEl.innerText = c?.name||'-'; 
+            if (totEl) totEl.innerText = formatCurrency(total);
+            if (statEl) statEl.innerText = itms[0]?.paymentStatus || 'Lunas';
+            if (bodyEl) bodyEl.innerHTML = itms.map(i => `<tr><td class="p-3">${i.noLog||'-'}</td><td class="p-3 font-bold">${i.type||i.woodType} / ${i.grade||'-'}</td><td class="p-3 text-center">${i.d1||'-'}</td><td class="p-3 text-center">${i.d2||'-'}</td><td class="p-3 text-center">${i.d3||'-'}</td><td class="p-3 text-center">${i.d4||'-'}</td><td class="p-3 text-center">${i.trim||'-'}</td><td class="p-3 text-center text-slate-400 italic">${(i.volGR||0).toFixed(2)}</td><td class="p-3 text-center font-bold text-amber-700">${(i.unitVolume||i.volume||0).toFixed(2)}</td><td class="p-3 text-right font-medium">${formatCurrency(i.totalPrice||i.price)}</td></tr>`).join('');
+            m.classList.remove('hidden'); 
+            refreshIcons();
+        };
+
+        window.editInventoryBatch = (nota) => {
+            const items = inventoryData.filter(i => i.nota === nota); if (!items.length) return;
+            const first = items[0]; isEditingNota = nota;
+            const titleEl = document.getElementById('wood-modal-title');
+            const notaInp = document.getElementById('wood-nota');
+            const sidSel = document.getElementById('wood-supplier-select');
+            const prInp = document.getElementById('wood-total-nota-price');
+            const statSel = document.getElementById('wood-payment-status');
+            const dpInp = document.getElementById('wood-dp-amount');
+            
+            if (titleEl) titleEl.innerText = `Edit Nota: ${nota}`;
+            if (notaInp) { notaInp.value = nota; notaInp.disabled = true; }
+            if (sidSel) sidSel.value = first.supplierId;
+            if (prInp) prInp.value = items.reduce((a,b)=>a+(b.totalPrice || 0),0);
+            if (statSel) statSel.value = first.paymentStatus;
+            if (dpInp) dpInp.value = first.dpAmount || 0;
+            
+            window.toggleDPInput('wood');
+            temporaryBatchWood = items.map(i => ({...i}));
+            renderBatch('wood'); openModal('wood');
+        };
+
+        window.handleDeleteInventory = async (nota) => { 
+            if(!auth.currentUser) return;
+            if(confirm('Hapus seluruh nota ini?')){ 
+                const b = writeBatch(db); 
+                inventoryData.filter(i=>i.nota === nota).forEach(item => b.delete(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', item.id))); 
+                await b.commit(); showToast("Nota dihapus."); 
+            } 
+        };
+        window.handleDeleteSales = async (nota) => { 
+            if(!auth.currentUser) return;
+            if(confirm('Hapus SJ ini?')){ 
+                const b = writeBatch(db); 
+                salesData.filter(i=>i.nota === nota).forEach(item => b.delete(doc(db, 'artifacts', appId, 'public', 'data', 'sales', item.id))); 
+                await b.commit(); showToast("SJ dihapus."); 
+            } 
+        };
+        window.handleDeleteContact = async (id) => { 
+            if(!auth.currentUser) return;
+            if(confirm('Hapus kontak?')) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', id)); 
+        };
+        window.handleDeleteExpense = async (id) => { 
+            if(!auth.currentUser) return;
+            if(confirm('Hapus biaya?')) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'expenses', id)); 
+        };
+
+        window.printNotaDetail = () => {
+            const frame = document.getElementById('print-frame');
+            if(!frame) return;
+            const total = currentDetailItems.reduce((a,b)=>a+(b.totalPrice || b.price || 0), 0);
+            const content = `<html><head><style>body { font-family: sans-serif; padding: 40px; } table { width: 100%; border-collapse: collapse; margin-top: 20px; } th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }</style></head><body><h2>${currentDetailType==='inventory'?'NOTA MASUK':'SURAT JALAN'}</h2><p>Nota: ${currentDetailNota}</p><table><thead><tr><th>No LOG</th><th>Jenis</th><th>Volume</th><th>Harga</th></tr></thead><tbody>${currentDetailItems.map(i=>`<tr><td>${i.noLog||'-'}</td><td>${i.type||i.woodType}</td><td>${(i.unitVolume||i.volume || 0).toFixed(2)}</td><td>${formatCurrency(i.totalPrice||i.price)}</td></tr>`).join('')}</tbody></table><h3>TOTAL: ${formatCurrency(total)}</h3></body></html>`;
+            const doc_p = frame.contentWindow.document; doc_p.open(); doc_p.write(content); doc_p.close();
+            setTimeout(() => { frame.contentWindow.focus(); frame.contentWindow.print(); }, 500);
+        };
+
+        window.exportToExcel = () => { 
+            const dataToExport = transactionsData.map(t => ({ 
+                Waktu: t.time?.toDate()?.toLocaleString() || '-', 
+                Keterangan: t.note, 
+                Tipe: t.type === 'in' ? 'Masuk' : 'Keluar', 
+                Nominal: t.amount 
+            }));
+            const ws = XLSX.utils.json_to_sheet(dataToExport); 
+            const wb = XLSX.utils.book_new(); 
+            XLSX.utils.book_append_sheet(wb, ws, "Arus Kas"); 
+            XLSX.writeFile(wb, "Arus_Kas_WoodIT.xlsx"); 
+        };
+        
+        window.exportToPDF = () => { 
+            const el = document.getElementById('report-content-to-export'); 
+            const opt = { margin: 1, filename: 'Laporan_Keuangan_WoodIT.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' } };
+            html2pdf().set(opt).from(el).save();
+        };
+
+        window.exportInventoryToExcel = () => {
+            const data = inventoryData.map(i => ({ Nota: i.nota, Supplier: contactsData.find(c=>c.id===i.supplierId)?.name || '-', Jenis: i.type, NoLog: i.noLog, Vol: i.unitVolume, Harga: i.totalPrice }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Stok_Log");
+            XLSX.writeFile(wb, "Data_Stok_WoodIT.xlsx");
+        };
+
+        window.toggleDPInput = (type) => { 
+            const el = document.getElementById(`${type}-payment-status`); 
+            if (!el) return; 
+            const s = el.value; 
+            const dpInput = document.getElementById(`${type}-dp-amount`); 
+            if (dpInput) dpInput.classList.toggle('hidden', s !== 'DP'); 
+        };
+
+        window.autoFillSalesFromStock = () => { 
+            const select = document.getElementById('sales-stock-item-select');
+            if(!select) return;
+            const id = select.value; 
+            const it = inventoryData.find(i=>i.id===id); 
+            if(it){ 
+                const typeEl = document.getElementById('sales-wood-type');
+                const volEl = document.getElementById('sales-wood-vol');
+                if (typeEl) typeEl.value = it.type; 
+                if (volEl) volEl.value = it.unitVolume; 
+            } 
+        };
+
+        window.openPaymentModal = (cid) => {
+            const contact = contactsData.find(c => c.id === cid);
+            if (!contact) return;
+            const idInput = document.getElementById('payment-contact-id');
+            const balEl = document.getElementById('payment-current-balance');
+            const titleEl = document.getElementById('payment-title');
+            const subEl = document.getElementById('payment-subtitle');
+            
+            if (idInput) idInput.value = cid;
+            if (balEl) balEl.innerText = formatCurrency(contact.balance);
+            if (titleEl) titleEl.innerText = contact.type === 'supplier' ? 'Bayar Hutang' : 'Terima Piutang';
+            if (subEl) subEl.innerText = contact.type === 'supplier' ? 'Pembayaran ke Supplier' : 'Pembayaran dari Pelanggan';
+            openModal('payment');
+        };
+
+        window.saveCompanyProfile = async () => { 
+            if(!auth.currentUser) return; 
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'company'), { 
+                name: document.getElementById('setting-company-name').value, 
+                address: document.getElementById('setting-company-address').value, 
+                phone: document.getElementById('setting-company-phone').value, 
+                updatedAt: serverTimestamp() 
+            }); 
+            showToast("Profil diperbarui."); 
+        };
+
         // --- Sync & Render ---
         const startSync = () => {
             if(!auth.currentUser) return; // Guard
@@ -746,7 +915,14 @@
                 if(s.exists()){ 
                     companyProfile = s.data(); 
                     const nameEl = document.getElementById('sidebar-company-name');
+                    const settingName = document.getElementById('setting-company-name');
+                    const settingAddress = document.getElementById('setting-company-address');
+                    const settingPhone = document.getElementById('setting-company-phone');
+                    
                     if (nameEl) nameEl.innerText = companyProfile.name; 
+                    if (settingName) settingName.value = companyProfile.name || '';
+                    if (settingAddress) settingAddress.value = companyProfile.address || '';
+                    if (settingPhone) settingPhone.value = companyProfile.phone || '';
                 } 
             }, errorCb);
         };
@@ -831,11 +1007,10 @@
             if (loader) loader.classList.add('hidden');
         };
 
-        // --- Helpers ---
         window.updateSelects = () => {
             const sS = document.getElementById('wood-supplier-select'); if(sS) sS.innerHTML = contactsData.filter(c=>c.type==='supplier').map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
             const cS = document.getElementById('sales-customer-select'); if(cS) cS.innerHTML = contactsData.filter(c=>c.type==='customer').map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
-            const stS = document.getElementById('sales-stock-item-select'); if(stS) stS.innerHTML = '<option value="">Pilih Stok</option>' + inventoryData.map(i=>`<option value="${i.id}">${i.type} (${(i.unitVolume||0).toFixed(2)}) - ${n.nota}</option>`).join('');
+            const stS = document.getElementById('sales-stock-item-select'); if(stS) stS.innerHTML = '<option value="">Pilih Stok</option>' + inventoryData.map(i=>`<option value="${i.id}">${i.type} (${(i.unitVolume||0).toFixed(2)}) - ${i.nota}</option>`).join('');
         };
 
         window.handleLogout = () => { signOut(auth).then(() => location.reload()); };
@@ -892,7 +1067,7 @@
 
         // Jalankan inisialisasi
         initApp();
-        switchView('dashboard');
+        switchView('landing');
     </script>
 </body>
 </html>
